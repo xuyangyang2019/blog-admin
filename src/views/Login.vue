@@ -38,6 +38,7 @@
     <div class="login-mask"></div>
   </div>
 </template>
+
 <script>
 import { mapState, mapActions } from "vuex";
 export default {
@@ -90,37 +91,22 @@ export default {
   }
 };
 </script>
+
 <style lang="scss" scoped>
 .login {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 0 auto;
-  background: #21282d;
+
   height: 100%;
+  // height: 100%;
   overflow: hidden;
   background: url("/img/login-bg.jpeg") 0 0 no-repeat;
   background-size: 100% 100%;
   color: #ffffff;
+  border: solid red 1px;
 }
-.err {
-  color: red;
-  position: absolute;
-  top: 100%;
-  left: 0;
-  font-size: 14px;
-}
-.err-validate {
-  color: red;
-  font-size: 14px;
-}
-.input-box {
-  display: inline-block;
-  position: relative;
-  width: 100%;
-  flex-shrink: 1;
-  margin-left: 80px;
-}
+
 .form-content {
   box-sizing: border-box;
   position: relative;
@@ -131,30 +117,71 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
-}
-.input,
-.pwd {
-  display: flex;
-  align-items: center;
-  margin-top: 25px;
-  width: 100%;
-  label {
-    position: absolute;
-    display: inline-block;
-    width: 75px;
-    text-align: right;
-    font-size: 14px;
-  }
-  input {
-    box-sizing: border-box;
-    flex-shrink: 1;
+  .input,
+  .pwd {
+    display: flex;
+    align-items: center;
+    margin-top: 25px;
     width: 100%;
-    outline: none;
-    padding: 10px;
-    border: 1px solid #ffffff;
-    border-radius: 5px;
+
+    label {
+      position: absolute;
+      display: inline-block;
+      width: 75px;
+      text-align: right;
+      font-size: 14px;
+    }
+
+    input {
+      box-sizing: border-box;
+      flex-shrink: 1;
+      width: 100%;
+      outline: none;
+      padding: 10px;
+      border: 1px solid #ffffff;
+      border-radius: 5px;
+    }
+
+    .input-box {
+      display: inline-block;
+      position: relative;
+      width: 100%;
+      flex-shrink: 1;
+      margin-left: 80px;
+      .err {
+        color: red;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        font-size: 14px;
+      }
+
+      .err-validate {
+        color: red;
+        font-size: 14px;
+      }
+    }
+  }
+  .submit {
+    margin-top: 25px;
+    button {
+      outline: none;
+      padding: 5px 25px;
+      border: 1px solid #46afcb;
+      border-radius: 5px;
+      cursor: pointer;
+      background: #46afcb;
+      color: #ffffff;
+    }
+    button:hover {
+      opacity: 0.9;
+    }
+    button[disabled] {
+      cursor: wait;
+    }
   }
 }
+
 .login-mask {
   position: fixed;
   top: 0;
@@ -163,24 +190,7 @@ export default {
   width: 100%;
   background: rgba(0, 0, 0, 0.4);
 }
-.submit {
-  margin-top: 25px;
-  button {
-    outline: none;
-    padding: 5px 25px;
-    border: 1px solid #46afcb;
-    border-radius: 5px;
-    cursor: pointer;
-    background: #46afcb;
-    color: #ffffff;
-  }
-  button:hover {
-    opacity: 0.9;
-  }
-  button[disabled] {
-    cursor: wait;
-  }
-}
+
 @media screen and(max-width: 767px) {
   .form-content {
     width: 100%;
