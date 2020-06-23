@@ -2,7 +2,7 @@ import Vue from "vue";
 import Router from "vue-router";
 
 // 正常加载
-import Home from "./views/Home.vue";
+import Admin from "./views/Admin.vue";
 
 // 按需（懒）加载（vue实现）推荐
 // 没有指定webpackChunkName,每个组件打包成一个js文件
@@ -26,9 +26,9 @@ const router = new Router({
       redirect: "/login"
     },
     {
-      path: "/home",
-      name: "home",
-      component: Home,
+      path: "/admin",
+      name: "admin",
+      component: Admin,
       meta: { requireAuth: true }
     },
     {
