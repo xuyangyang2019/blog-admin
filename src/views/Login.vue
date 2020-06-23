@@ -87,11 +87,10 @@ export default {
         this.$store.dispatch("axios/Login", payload).then(data => {
           this.btnInfo = { text: "登录", disabled: false };
           if (data.code === 200) {
-            console.log(data);
-            // this.setToken(data);
+            // console.log(data);
+            this.setToken(data);
             // 页面跳转
-            console.log(toPath);
-            // this.$router.push({ path: toPath });
+            this.$router.push({ path: toPath });
           } else if (data.code === 401) {
             // 错误提示
             this.err.validate = "用户名或密码不正确";
