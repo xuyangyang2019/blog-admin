@@ -1,6 +1,5 @@
 import Vue from "vue";
 import Router from "vue-router";
-import store from "./store";
 
 // 正常加载
 import Home from "./views/Home.vue";
@@ -24,15 +23,17 @@ const router = new Router({
   routes: [
     {
       path: "/",
+      redirect: "/login"
+    },
+    {
+      path: "/home",
       name: "home",
-      component: Home
+      component: Home,
+      meta: { requireAuth: true }
     },
     {
       path: "/login",
       name: "login",
-      // route level code-splitting
-      // this generates a separate chunk (login.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
       component: () =>
         import(/* webpackChunkName: "login" */ "./views/Login.vue")
     }
@@ -41,26 +42,18 @@ const router = new Router({
 
 // 全局前置守卫
 router.beforeEach((to, from, next) => {
-  // console.log('全局前置守卫:router.beforeEach')
-  // console.log(from.path)
-  // console.log(to.path)
-  const token = store.getters.token;
-  if (token) {
-    // console.log('有token', token)
-    if (to.path == "/login") {
-      next("/conversation");
-    } else {
+  // 如果要去的路由 需要验证
+  if (to.matched.some(res => res.meta.requireAuth)) {
+    if (localStorage.getItem("validate-info-tk")) {
       next();
+    } else {
+      next({
+        path: "/login"
+        // query: { redirect: to.fullPath }
+      });
     }
   } else {
-    // console.log('没有token 跳转到登陆页面')
-    if (to.path == "/login") {
-      //如果是登录页面路径，就直接next()
-      next();
-    } else {
-      //不然就跳转到登录；
-      next("/login");
-    }
+    next();
   }
 });
 
