@@ -6,12 +6,12 @@ import modules from "./modules";
 
 // state
 const state = {
-  token: "" // token
+  toPath: "/admin"
 };
 
 // getters
 const getters = {
-  token: state => state.token
+  toPath: state => state.toPath
 };
 
 // actions
