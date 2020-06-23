@@ -40,32 +40,40 @@
 </template>
 
 <script>
-import { mapState, mapActions } from "vuex";
+import { mapGetters } from "vuex";
+
 export default {
   data() {
     return {
-      user: "",
-      password: "",
-      err: { user: "", password: "", validate: "" },
-      btnInfo: { text: "登录", disabled: false }
+      user: "", // 用户名
+      password: "", // 密码
+      err: { user: "", password: "", validate: "" }, // 错误信息
+      btnInfo: { text: "登录", disabled: false } // 登录按钮的状态
     };
   },
   computed: {
-    ...mapState(["toPath"])
+    // ...mapState(["toPath"])
+    ...mapGetters({
+      toPath: "toPath"
+    })
   },
   methods: {
-    ...mapActions(["login"]),
+    // ...mapActions(["axios/Login"]),
+    // ...mapActions({
+    //   login: "axios/Login"
+    // }),
+    // 设置token
     setToken: function(user) {
       localStorage.setItem("validate-info-tk", user.token);
       localStorage.setItem("userName", user.name);
       localStorage.setItem("lastLogin", user.lastLogin);
     },
+    // 表单验证
     validate: function(toPath) {
       let payload = {
         user: this.user,
         password: this.password
       };
-      let that = this;
       if (!this.user) {
         this.err.user = "请填写用户名";
       }
@@ -73,18 +81,25 @@ export default {
         this.err.password = "请填写密码";
       }
       if (!!this.password && !!this.user) {
+        // 修改按钮显示的文字 不能再次点击
         this.btnInfo = { text: "登录中...", disabled: true };
-        this.login(payload).then(data => {
-          that.btnInfo = { text: "登录", disabled: false };
+        // axios 登陆
+        this.$store.dispatch("axios/Login", payload).then(data => {
+          this.btnInfo = { text: "登录", disabled: false };
           if (data.code === 200) {
-            that.setToken(data);
-            that.$router.push({ path: toPath });
+            console.log(data);
+            // this.setToken(data);
+            // 页面跳转
+            console.log(toPath);
+            // this.$router.push({ path: toPath });
           } else if (data.code === 401) {
-            that.err.validate = "用户名或密码不正确";
+            // 错误提示
+            this.err.validate = "用户名或密码不正确";
           }
         });
       }
     },
+    // 清除错误信息
     clearErr: function() {
       this.err = { user: "", password: "", validate: "" };
     }
@@ -97,14 +112,11 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-
   height: 100%;
-  // height: 100%;
   overflow: hidden;
   background: url("/img/login-bg.jpeg") 0 0 no-repeat;
   background-size: 100% 100%;
   color: #ffffff;
-  border: solid red 1px;
 }
 
 .form-content {
