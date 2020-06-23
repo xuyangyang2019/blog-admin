@@ -4,22 +4,19 @@
     <div class="admin-header">
       <div class="admin-header-left">
         <i class="fa fa-home fa-2x" aria-hidden="true" title="管理首页"></i>
-        <span>XYY Admin</span>
+        <span class="xyy-admin can-not-select">管理首页</span>
       </div>
-
-      <div class="admin-header-right">
-        <span class="phone-greet">{{ greet }}好，My Lord！</span>
-        <div class="admin-info">
-          <img
-            src="/img/logo.png"
-            style="width: 20px;height: 20px;vertical-align: middle"
-            alt
-          />
-          <span>{{ greet }}好，My Lord！上次登录是：{{ lastLogin }}</span>
-          <span class="icon-exit" @click="exit" title="退出后台管理"></span>
-        </div>
+      <!-- 手机上的问好 -->
+      <span class="phone-greet">{{ greet }}好，{{ userName }}！</span>
+      <!-- 管理员的信息 -->
+      <div class="admin-info">
+        <img
+          src="/img/logo.png"
+          style="width: 20px;height: 20px;vertical-align: middle"
+          alt="xyy"
+        />
+        <span>{{ greet }}好，{{ userName }}！上次登录是：{{ lastLogin }}</span>
       </div>
-
       <!-- 面包屑导航 -->
       <div class="toggle-btn" @click="showList = !showList">
         <div class="btn-box">
@@ -206,13 +203,14 @@ import { mapState, mapActions } from "vuex";
 export default {
   data() {
     return {
+      lastLogin: localStorage.getItem("lastLogin") || "My Lord", // 最近一次的登陆时间
+      userName: localStorage.getItem("userName") || "", // 最近一次的登陆时间
       show: false,
       location: [],
       choseType: "key",
       searchKey: "",
       date: { from: "", to: "" },
       err: { from: false, to: false },
-      lastLogin: "",
       showList: false
     };
   },
@@ -226,7 +224,6 @@ export default {
     // this.analysisRoute(this.$route);
     // this.getTagsclass({ publish: true });
     // this.getNews();
-    // this.lastLogined();
   },
 
   //离开路由则解绑事件
@@ -255,24 +252,22 @@ export default {
     activeBg() {
       return !this.show && this.$route.path.indexOf("allArticles") !== -1;
     },
+    // 问候语
     greet() {
       let hour = new Date().getHours();
       if (hour >= 0 && hour < 6) {
         return "凌晨";
-      }
-      if (hour >= 6 && hour < 11) {
+      } else if (hour >= 6 && hour < 11) {
         return "上午";
-      }
-      if (hour >= 11 && hour < 14) {
+      } else if (hour >= 11 && hour < 14) {
         return "中午";
-      }
-      if (hour >= 14 && hour < 18) {
+      } else if (hour >= 14 && hour < 18) {
         return "下午";
-      }
-      if (hour >= 18 && hour < 24) {
+      } else if (hour >= 18 && hour < 24) {
         return "晚上";
+      } else {
+        return "";
       }
-      return "";
     }
   },
   watch: {
@@ -361,12 +356,6 @@ export default {
       }
     },
 
-    lastLogined: function() {
-      if (localStorage.getItem("lastLogin")) {
-        this.lastLogin = localStorage.getItem("lastLogin");
-      }
-    },
-
     showListDelay: function() {
       setTimeout(() => {
         this.showList = !this.showList;
@@ -446,17 +435,16 @@ input {
       .fa-home {
         margin-right: 8px;
       }
-      // font-size: 16px;
-      // border: solid red 1px;
+      .xyy-admin {
+        font-weight: 600;
+        font-size: 22px;
+      }
     }
 
-    .admin-header-right {
-      border: solid red 1px;
-      .admin-info {
-        margin-right: 20px;
-        span {
-          vertical-align: middle;
-        }
+    .admin-info {
+      margin-right: 20px;
+      span {
+        vertical-align: middle;
       }
     }
 
@@ -717,33 +705,27 @@ input {
 }
 
 @media screen and(max-width: 767px) {
-  .toggle-btn {
-    display: block;
-  }
   .admin-header {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     z-index: 100;
-  }
-
-  .admin-header-pic {
-    border: solid green 1px;
-    // h1 {
-    //   display: none;
-    // }
-    // h3 {
-    //   display: inline-block;
-    // }
+    .xyy-admin {
+      display: none;
+    }
+    .admin-info {
+      display: none;
+    }
+    .toggle-btn {
+      display: block !important;
+    }
   }
 
   .location {
     display: none;
   }
-  .admin-info {
-    display: none;
-  }
+
   .admin-body {
     display: block;
     margin-top: 55px;
