@@ -84,7 +84,7 @@ export default {
         // 修改按钮显示的文字 不能再次点击
         this.btnInfo = { text: "登录中...", disabled: true };
         // axios 登陆
-        this.$store.dispatch("axios/Login", payload).then(data => {
+        this.$store.dispatch("axios/Login", payload).then((data) => {
           this.btnInfo = { text: "登录", disabled: false };
           if (data.code === 200) {
             // console.log(data);

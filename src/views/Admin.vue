@@ -29,26 +29,38 @@
 
     <!-- main -->
     <div class="admin-body">
-      <!--  -->
+      <!-- aside -->
       <div
         class="admin-list"
         ref="list"
         :class="{ 'admin-list-animation': showList }"
       >
-        <!-- <ul class="admin-handle" @click="showListDelay">
+        <ul class="admin-handle" @click="showListDelay">
           <li class="list-first" @click.stop="showPublish">
-            <a href="javascript: void(0)" :class="{ 'router-link-active': activeBg }">
+            <a
+              href="javascript: void(0)"
+              :class="{ 'router-link-active': activeBg }"
+            >
               <span class="span-box">
                 <span
                   class="icon-folder-outline icon-folder-outline-l"
-                  :class="{ 'icon-folder-open-o icon-folder-open-o-l': show }"
+                  :class="{
+                    'icon-folder-open-o icon-folder-open-o-l': show
+                  }"
                 ></span>
                 <span>已发表</span>
               </span>
-              <span class="icon-keyboard_arrow_right arrow-list" :class="{ 'icon-rotate': show }"></span>
+              <span
+                class="icon-keyboard_arrow_right arrow-list"
+                :class="{ 'icon-rotate': show }"
+              ></span>
             </a>
           </li>
-          <div class="classify-menu" :class="{ 'classify-menu-animation': show }">
+
+          <div
+            class="classify-menu"
+            :class="{ 'classify-menu-animation': show }"
+          >
             <ul>
               <li>
                 <router-link to="/admin/allArticles" exact>
@@ -57,7 +69,11 @@
                       <span class="icon-file-text2 icon-file-text2-l"></span>
                       <span>全部文章</span>
                     </span>
-                    <span class="articles-sum">（共 {{ tagsObj.articlesSum | ifZero }} 篇）</span>
+                    <span class="articles-sum">
+                      （共
+                      {{ tagsObj.articlesSum | ifZero }}
+                      篇）
+                    </span>
                   </div>
                 </router-link>
               </li>
@@ -65,7 +81,9 @@
                 <router-link
                   :to="{
                     name: 'eachTag',
-                    params: { tag: item.tag === '生活' ? 'life' : item.tag }
+                    params: {
+                      tag: item.tag === '生活' ? 'life' : item.tag
+                    }
                   }"
                 >
                   <div class="eachTag-box">
@@ -79,6 +97,7 @@
               </li>
             </ul>
           </div>
+
           <li>
             <router-link to="/admin/draft">
               <span class="span-box">
@@ -87,6 +106,7 @@
               </span>
             </router-link>
           </li>
+
           <li>
             <router-link to="/admin/msgBoard">
               <span class="span-box">
@@ -107,7 +127,10 @@
             <router-link to="/admin/newMsg">
               <span class="span-box span-box-news">
                 <span class="icon-bell icon-bell-l"></span>
-                <sup class="sup" v-if="redSup.c || redSup.m || redSup.l || redSup.p"></sup>
+                <sup
+                  class="sup"
+                  v-if="redSup.c || redSup.m || redSup.l || redSup.p"
+                ></sup>
                 <span>新消息</span>
               </span>
             </router-link>
@@ -136,9 +159,9 @@
               </span>
             </a>
           </li>
-        </ul>-->
+        </ul>
       </div>
-      <!--  -->
+      <!-- content -->
       <!-- <div class="admin-content" ref="content">
         <div class="location-search">
           <div class="location">
@@ -329,7 +352,10 @@ export default {
         if (!this.searchKey.length) {
           return;
         }
-        this.$router.push({ name: "search", params: { base: this.searchKey } });
+        this.$router.push({
+          name: "search",
+          params: { base: this.searchKey }
+        });
       } else {
         if (!this.date.from) {
           this.err.from = true;
@@ -345,7 +371,10 @@ export default {
 
     back: function(pathName, params) {
       if (pathName === "eachTag") {
-        this.$router.push({ name: pathName, params: { tag: params.tag } });
+        this.$router.push({
+          name: pathName,
+          params: { tag: params.tag }
+        });
       } else if (pathName === "review") {
         this.$router.push({
           name: pathName,
@@ -377,7 +406,11 @@ export default {
             }
             this.location = [
               first,
-              { pathName: "eachTag", showName: tag, params: { tag: tag } }
+              {
+                pathName: "eachTag",
+                showName: tag,
+                params: { tag: tag }
+              }
             ];
           }
 
