@@ -15,6 +15,24 @@ import Admin from "./views/Admin.vue";
 // 按需（懒）加载（webpack动态导入）不推荐
 // const Login = resolve => { require.ensure([], () => { resolve(require('./views/Login.vue')) }, 'login') }
 
+//后台管理界面
+const miss = (resolve) => require(["@/components/base/miss"], resolve);
+const allArticles = (resolve) =>
+  require(["@/components/article/allArticles"], resolve);
+const eachTag = (resolve) => require(["@/components/article/eachTag"], resolve);
+const draft = (resolve) => require(["@/components/article/draft"], resolve);
+const review = (resolve) => require(["@/components/article/review"], resolve);
+const initEditor = (resolve) =>
+  require(["@/components/ue/initEditor"], resolve);
+const adminMsgBoard = (resolve) =>
+  require(["@/components/msgboard/adminMsgBoard"], resolve);
+const comments = (resolve) =>
+  require(["@/components/comment/comments"], resolve);
+const newMsg = (resolve) => require(["@/components/news/newMsg"], resolve);
+const adminSet = (resolve) =>
+  require(["@/components/adminSet/adminSet"], resolve);
+const search = (resolve) => require(["@/components/search/search"], resolve);
+
 Vue.use(Router);
 
 const router = new Router({
@@ -29,13 +47,130 @@ const router = new Router({
       path: "/admin",
       name: "admin",
       component: Admin,
-      meta: { requireAuth: true }
+      // redirect: "/admin/allArticles",
+      meta: {
+        requireAuth: true,
+        keepAlive: true
+      },
+      children: [
+        {
+          path: "allArticles",
+          name: "allArticles",
+          component: allArticles,
+          meta: {
+            requireAuth: true,
+            keepAlive: true
+          }
+        },
+        {
+          path: "allArticles/:tag",
+          name: "eachTag",
+          component: eachTag,
+          meta: {
+            requireAuth: true,
+            keepAlive: true
+          }
+        },
+        {
+          path: "review/:eTag/:articleId",
+          name: "review",
+          component: review,
+          meta: {
+            requireAuth: true,
+            keepAlive: true
+          }
+        },
+        {
+          path: "draft",
+          name: "draft",
+          component: draft,
+          meta: {
+            requireAuth: true,
+            keepAlive: true
+          }
+        },
+        {
+          path: "msgBoard",
+          name: "adminMsgBoard",
+          component: adminMsgBoard,
+          meta: {
+            requireAuth: true,
+            keepAlive: true
+          }
+        },
+        {
+          path: "comments",
+          name: "comments",
+          component: comments,
+          meta: {
+            requireAuth: true,
+            keepAlive: true
+          }
+        },
+        {
+          path: "newMsg",
+          name: "newMsg",
+          component: newMsg,
+          meta: {
+            requireAuth: true,
+            keepAlive: true
+          }
+        },
+        {
+          path: "adminSet",
+          name: "adminSet",
+          component: adminSet,
+          meta: {
+            requireAuth: true,
+            keepAlive: true
+          }
+        },
+        {
+          path: "/admin/search/:base",
+          name: "search",
+          component: search,
+          meta: {
+            requireAuth: true,
+            keepAlive: true
+          }
+        }
+      ]
+    },
+    //操作文章的路由
+    {
+      path: "/admin/publish",
+      name: "publish",
+      component: initEditor,
+      meta: {
+        requireAuth: true
+      }
+    },
+    {
+      path: "/admin/draftrevise",
+      name: "draftrevise",
+      component: initEditor,
+      meta: {
+        requireAuth: true
+      }
+    },
+    {
+      path: "/admin/update",
+      name: "update",
+      component: initEditor,
+      meta: {
+        requireAuth: true
+      }
     },
     {
       path: "/login",
       name: "login",
       component: () =>
         import(/* webpackChunkName: "login" */ "./views/Login.vue")
+    },
+    {
+      path: "/*",
+      name: "miss",
+      component: miss
     }
   ]
 });
@@ -43,7 +178,7 @@ const router = new Router({
 // 全局前置守卫
 router.beforeEach((to, from, next) => {
   // 如果要去的路由 需要验证
-  if (to.matched.some(res => res.meta.requireAuth)) {
+  if (to.matched.some((res) => res.meta.requireAuth)) {
     if (localStorage.getItem("validate-info-tk")) {
       next();
     } else {
@@ -72,7 +207,7 @@ router.beforeResolve((to, from, next) => {
 //     console.log(from)
 // })
 
-router.onError(e => {
+router.onError((e) => {
   console.log(e);
 });
 
