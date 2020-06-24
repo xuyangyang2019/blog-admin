@@ -30,136 +30,18 @@
     <!-- main -->
     <div class="admin-body">
       <!-- aside -->
-      <div
-        class="admin-list"
-        ref="list"
-        :class="{ 'admin-list-animation': showList }"
-      >
-        <ul class="admin-handle" @click="showListDelay">
-          <li class="list-first" @click.stop="showPublish">
-            <a
-              href="javascript: void(0)"
-              :class="{ 'router-link-active': activeBg }"
-            >
-              <span class="span-box">
-                <!-- <span
-                  class="icon-folder-outline icon-folder-outline-l"
-                  :class="{
-                    'icon-folder-open-o icon-folder-open-o-l': show
-                  }"
-                ></span>-->
-                <i class="fa fa-book" aria-hidden="true"></i>
-                <span>已发表</span>
-              </span>
-              <!-- <span
-                class="icon-keyboard_arrow_right arrow-list"
-                :class="{ 'icon-rotate': show }"
-              ></span>-->
-            </a>
-          </li>
-          <!-- <div
-            class="classify-menu"
-            :class="{ 'classify-menu-animation': show }"
+      <div class="admin-aside" ref="list">
+        <ul class="aside-menu" @click="showListDelay">
+          <li
+            class="aside-item"
+            v-for="(item, index) in menu"
+            :key="index"
+            @click="showPath(item)"
           >
-            <ul>
-              <li>
-                <router-link to="/admin/allArticles" exact>
-                  <div class="eachTag-box">
-                    <span>
-                      <span class="icon-file-text2 icon-file-text2-l"></span>
-                      <span>全部文章</span>
-                    </span>
-                    <span class="articles-sum">
-                      （共
-                      {{ tagsObj.articlesSum | ifZero }}
-                      篇）
-                    </span>
-                  </div>
-                </router-link>
-              </li>
-              <li v-for="(item, index) in tagsObj.tags" :key="index">
-                <router-link
-                  :to="{
-                    name: 'eachTag',
-                    params: {
-                      tag: item.tag === '生活' ? 'life' : item.tag
-                    }
-                  }"
-                >
-                  <div class="eachTag-box">
-                    <span>
-                      <span class="icon-file-text2 icon-file-text2-l"></span>
-                      <span>{{ item.tag }}</span>
-                    </span>
-                    <span class="eachTag-sum">（{{ item.num }} 篇）</span>
-                  </div>
-                </router-link>
-              </li>
-            </ul>
-          </div>-->
-
-          <li>
-            <router-link to="/admin/draft">
-              <span class="span-box">
-                <i class="fa fa-dashboard" aria-hidden="true"></i>
-                <span>草稿箱</span>
-              </span>
-            </router-link>
-          </li>
-
-          <li>
-            <router-link to="/admin/msgBoard">
-              <span class="span-box">
-                <i class="fa fa-comments-o" aria-hidden="true"></i>
-                <span>留言板</span>
-              </span>
-            </router-link>
-          </li>
-
-          <li>
-            <router-link to="/admin/comments">
-              <span class="span-box">
-                <i class="fa fa-commenting-o" aria-hidden="true"></i>
-                <span>文章评论</span>
-              </span>
-            </router-link>
-          </li>
-
-          <li>
-            <router-link to="/admin/newMsg">
-              <span class="span-box span-box-news">
-                <i class="fa fa-bell-o" aria-hidden="true"></i>
-                <!-- <sup class="sup" v-if="redSup.c || redSup.m || redSup.l || redSup.p"></sup> -->
-                <span>新消息</span>
-              </span>
-            </router-link>
-          </li>
-
-          <li>
-            <router-link to="/admin/publish">
-              <span class="span-box">
-                <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-                <span>发表文章</span>
-              </span>
-            </router-link>
-          </li>
-
-          <li class="list-last">
-            <router-link to="/admin/adminSet">
-              <span class="span-box">
-                <i class="fa fa-user" aria-hidden="true"></i>
-                <span>账户设置</span>
-              </span>
-            </router-link>
-          </li>
-
-          <li>
-            <a href="javascript:void(0)" @click="exit">
-              <span class="span-box">
-                <i class="fa fa-sign-out" aria-hidden="true"></i>
-                <span>退出系统</span>
-              </span>
-            </a>
+            <!-- <router-link :to="item.path"> -->
+            <i :class="item.icon" aria-hidden="true"></i>
+            <span v-text="item.name"></span>
+            <!-- </router-link> -->
           </li>
         </ul>
       </div>
@@ -238,7 +120,49 @@ export default {
       searchKey: "",
       date: { from: "", to: "" },
       err: { from: false, to: false },
-      showList: false
+      showList: false,
+      menu: [
+        {
+          name: "已发表",
+          icon: "fa fa-book",
+          path: "/admin"
+        },
+        {
+          name: "草稿箱",
+          icon: "fa fa-dashboard",
+          path: "/admin/draft"
+        },
+        {
+          name: "留言板",
+          icon: "fa fa-comments-o",
+          path: "/admin/msgBoard"
+        },
+        {
+          name: "文章评论",
+          icon: "fa fa-commenting-o",
+          path: "/admin/comments"
+        },
+        {
+          name: "新消息",
+          icon: "fa fa-bell-o",
+          path: "/admin/newMsg"
+        },
+        {
+          name: "发表文章",
+          icon: "fa fa-pencil-square-o",
+          path: "/admin/publish"
+        },
+        {
+          name: "账户设置",
+          icon: "fa fa-user",
+          path: "/admin/adminSet"
+        },
+        {
+          name: "退出系统",
+          icon: "fa fa-sign-out",
+          path: "/admin"
+        }
+      ]
     };
   },
 
@@ -306,6 +230,9 @@ export default {
   },
   methods: {
     ...mapActions(["getNews", "getTagsclass"]),
+    showPath(item) {
+      console.log(item);
+    },
 
     //不管什么情况下都把list高度设为首屏高度
     initHeight: function() {
@@ -447,11 +374,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-button,
-input {
-  outline: none;
-}
-
 .admin-page {
   font-size: 14px;
   font-family: Arial;
@@ -506,39 +428,27 @@ input {
   }
 }
 
-.exit {
-  display: flex;
-  justify-content: flex-end;
-  margin-right: 20px;
-}
-
-.icon-home {
-  font-size: 26px;
-  vertical-align: middle;
-  margin: 0 8px;
-  color: #ccc;
-}
-
-.icon-exit {
-  font-size: 24px;
-  cursor: pointer;
-  margin-left: 15px;
-  color: #ccc;
-}
-
 .admin-body {
   width: 100%;
   display: flex;
 
-  .location-search {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
+  .admin-aside {
+    width: 250px;
+    background: #1c2b36;
+    // transition: all ease 0.5s;
+
+    .aside-menu {
+      // border: solid red 1px;
+      .aside-item {
+        color: #ffffff;
+        font-family: Arial;
+        text-decoration: none;
+        padding: 15px;
+        // border: solid red 1px;
+      }
+    }
   }
-  .location div {
-    display: inline;
-  }
+
   .admin-content {
     background: #fff;
     box-sizing: border-box;
@@ -546,198 +456,11 @@ input {
     width: 85%;
     display: inline-block;
   }
-  .admin-list {
-    transition: all ease 0.5s;
-    width: 15%;
-    background: #1c2b36;
-    li {
-      list-style: none;
-    }
-  }
-  .classify-menu {
-    background: #1a272e;
-    overflow: hidden;
-    max-height: 0;
-    transition: all ease 0.5s;
-  }
-  .classify-menu-animation {
-    max-height: 500px;
-  }
-  .admin-list > ul > li > a {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    color: #ffffff;
-    font-family: Arial;
-    text-decoration: none;
-    padding: 15px;
-    position: relative;
-  }
-  .classify-menu > ul > li > a {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    color: #ffffff;
-    font-family: Arial;
-    text-decoration: none;
-    padding: 15px;
-    position: relative;
-  }
-  .eachTag-box {
-    display: flex;
-    min-width: 160px;
-    justify-content: space-between;
-    flex-wrap: wrap;
-  }
-  .span-box {
-    min-width: 100px;
-  }
-  .span-box-news {
-    position: relative;
-  }
-  .sup {
-    position: absolute;
-    top: 0;
-    left: 20px;
-    width: 6px;
-    height: 6px;
-    border-radius: 3px;
-    background: red;
-  }
-  .admin-info-pic {
-    display: inline-block;
-    background: #eeeeee;
-    width: 70px;
-    height: 70px;
-    border-radius: 35px;
-  }
-  .notice {
-    color: #444;
-  }
-  .list-first a {
-    padding-right: 5px;
-  }
-  .location {
-    color: #1a1a1a;
-    a {
-      text-decoration: none;
-      color: #6aa7fc;
-    }
-    a:hover {
-      color: #1717fa;
-    }
-  }
-  .search {
-    padding: 5px 0;
-    input {
-      color: #1a1a1a;
-      outline: none;
-      border: 1px solid #6aa7fc;
-      border-radius: 5px;
-      padding: 5px;
-    }
-    select {
-      outline: none;
-      cursor: pointer;
-      border: 1px solid #6aa7fc;
-      border-radius: 2px;
-      width: 60px;
-      padding: 2px;
-      appearance: none;
-      -moz-appearance: none; /*for firefox*/
-      -webkit-appearance: none; /*for chrome*/
-      background: url("/img/arrow-down.png") right no-repeat;
-    }
-    button {
-      background: #5bc0de;
-      color: #fff;
-      padding: 3px 10px;
-      margin-left: 5px;
-      border: 1px solid #46b8da;
-      border-radius: 4px;
-      outline: none;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #46afcb;
-    }
-  }
-  .search-key {
-    display: inline-block;
-    input {
-      width: 200px;
-    }
-  }
-  .search-time {
-    display: inline-block;
-    input {
-      height: 15px;
-      width: 150px;
-    }
-    input::-webkit-inner-spin-button {
-      visibility: hidden;
-    }
-    input::-ms-inner-spin-button {
-      visibility: hidden;
-    }
-    input::-moz-inner-spin-button {
-      visibility: hidden;
-    }
-    input::-webkit-clear-button {
-      display: none;
-    }
-    input::-moz-clear-button {
-      display: none;
-    }
-    input::-ms-clear-button {
-      display: none;
-    }
-    input::-o-clear-button {
-      display: none;
-    }
-  }
-  .err-border {
-    border: 1px solid red !important;
-  }
-  .icon-folder-outline-l,
-  .icon-quill-l,
-  .icon-messages-l,
-  .icon-commenting-o-l,
-  .icon-bell-l,
-  .icon-edit-l,
-  .icon-user-l,
-  .icon-file-text2-l,
-  .icon-folder-open-o-l,
-  .icon-bullhorn-l,
-  .icon-exit-l {
-    font-size: 16px;
-    color: #fff;
-    margin: 0 5px;
-  }
-
-  .arrow-list {
-    position: absolute;
-    right: 10px;
-    color: #eee;
-    font-size: 20px;
-    transition: all ease 0.5s;
-    cursor: pointer;
-  }
-  .icon-rotate {
-    transform: rotate(90deg);
-  }
-  .router-link-active {
-    background: #4895fc;
-  }
 }
 
 @media screen and(min-width: 768px) {
   .phone-greet {
     display: none;
-  }
-  .admin-list a:hover {
-    background: #0f1215;
   }
 }
 
@@ -771,37 +494,15 @@ input {
     width: 100%;
     padding: 5px;
   }
-  .admin-list {
-    position: fixed;
-    overflow: hidden;
-    top: 55px;
-    left: 0;
-    width: 100%;
-    max-height: 0;
-    z-index: 100;
-    background: rgba(28, 43, 54, 0.9);
-  }
-  .admin-list-animation {
-    max-height: 580px;
-    overflow-y: scroll !important;
-  }
-  .classify-menu-animation {
-    overflow-y: scroll !important;
-    max-height: 420px;
-  }
-  .admin-list > ul > li > a {
-    justify-content: center !important;
-  }
-  .classify-menu > ul > li > a {
-    justify-content: center !important;
-  }
-  .classify-menu {
-    a {
-      justify-content: center;
-    }
-    span {
-      display: inline-block;
-    }
-  }
+  // .admin-aside {
+  //   position: fixed;
+  //   overflow: hidden;
+  //   top: 55px;
+  //   left: 0;
+  //   width: 100%;
+  //   max-height: 0;
+  //   z-index: 100;
+  //   background: rgba(28, 43, 54, 0.9);
+  // }
 }
 </style>
