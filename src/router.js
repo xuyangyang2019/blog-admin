@@ -16,22 +16,21 @@ import Admin from "./views/Admin.vue";
 // const Login = resolve => { require.ensure([], () => { resolve(require('./views/Login.vue')) }, 'login') }
 
 //后台管理界面
-const miss = (resolve) => require(["@/components/base/miss"], resolve);
-const allArticles = (resolve) =>
+const miss = resolve => require(["@/components/base/miss"], resolve);
+const allArticles = resolve =>
   require(["@/components/article/allArticles"], resolve);
-const eachTag = (resolve) => require(["@/components/article/eachTag"], resolve);
-const draft = (resolve) => require(["@/components/article/draft"], resolve);
-const review = (resolve) => require(["@/components/article/review"], resolve);
-const initEditor = (resolve) =>
-  require(["@/components/ue/initEditor"], resolve);
-const adminMsgBoard = (resolve) =>
+const eachTag = resolve => require(["@/components/article/eachTag"], resolve);
+const draft = resolve => require(["@/components/article/draft"], resolve);
+const review = resolve => require(["@/components/article/review"], resolve);
+// const initEditor = (resolve) =>
+//   require(["@/components/ue/initEditor"], resolve);
+const adminMsgBoard = resolve =>
   require(["@/components/msgboard/adminMsgBoard"], resolve);
-const comments = (resolve) =>
-  require(["@/components/comment/comments"], resolve);
-const newMsg = (resolve) => require(["@/components/news/newMsg"], resolve);
-const adminSet = (resolve) =>
+const comments = resolve => require(["@/components/comment/comments"], resolve);
+const newMsg = resolve => require(["@/components/news/newMsg"], resolve);
+const adminSet = resolve =>
   require(["@/components/adminSet/adminSet"], resolve);
-const search = (resolve) => require(["@/components/search/search"], resolve);
+const search = resolve => require(["@/components/search/search"], resolve);
 
 Vue.use(Router);
 
@@ -137,30 +136,30 @@ const router = new Router({
       ]
     },
     //操作文章的路由
-    {
-      path: "/admin/publish",
-      name: "publish",
-      component: initEditor,
-      meta: {
-        requireAuth: true
-      }
-    },
-    {
-      path: "/admin/draftrevise",
-      name: "draftrevise",
-      component: initEditor,
-      meta: {
-        requireAuth: true
-      }
-    },
-    {
-      path: "/admin/update",
-      name: "update",
-      component: initEditor,
-      meta: {
-        requireAuth: true
-      }
-    },
+    // {
+    //   path: "/admin/publish",
+    //   name: "publish",
+    //   component: initEditor,
+    //   meta: {
+    //     requireAuth: true
+    //   }
+    // },
+    // {
+    //   path: "/admin/draftrevise",
+    //   name: "draftrevise",
+    //   component: initEditor,
+    //   meta: {
+    //     requireAuth: true
+    //   }
+    // },
+    // {
+    //   path: "/admin/update",
+    //   name: "update",
+    //   component: initEditor,
+    //   meta: {
+    //     requireAuth: true
+    //   }
+    // },
     {
       path: "/login",
       name: "login",
@@ -178,7 +177,7 @@ const router = new Router({
 // 全局前置守卫
 router.beforeEach((to, from, next) => {
   // 如果要去的路由 需要验证
-  if (to.matched.some((res) => res.meta.requireAuth)) {
+  if (to.matched.some(res => res.meta.requireAuth)) {
     if (localStorage.getItem("validate-info-tk")) {
       next();
     } else {
@@ -207,7 +206,7 @@ router.beforeResolve((to, from, next) => {
 //     console.log(from)
 // })
 
-router.onError((e) => {
+router.onError(e => {
   console.log(e);
 });
 
