@@ -42,22 +42,22 @@
               :class="{ 'router-link-active': activeBg }"
             >
               <span class="span-box">
-                <span
+                <!-- <span
                   class="icon-folder-outline icon-folder-outline-l"
                   :class="{
                     'icon-folder-open-o icon-folder-open-o-l': show
                   }"
-                ></span>
+                ></span>-->
+                <i class="fa fa-book" aria-hidden="true"></i>
                 <span>已发表</span>
               </span>
-              <span
+              <!-- <span
                 class="icon-keyboard_arrow_right arrow-list"
                 :class="{ 'icon-rotate': show }"
-              ></span>
+              ></span>-->
             </a>
           </li>
-
-          <div
+          <!-- <div
             class="classify-menu"
             :class="{ 'classify-menu-animation': show }"
           >
@@ -96,12 +96,12 @@
                 </router-link>
               </li>
             </ul>
-          </div>
+          </div>-->
 
           <li>
             <router-link to="/admin/draft">
               <span class="span-box">
-                <span class="icon-quill icon-quill-l"></span>
+                <i class="fa fa-dashboard" aria-hidden="true"></i>
                 <span>草稿箱</span>
               </span>
             </router-link>
@@ -110,59 +110,62 @@
           <li>
             <router-link to="/admin/msgBoard">
               <span class="span-box">
-                <span class="icon-messages icon-messages-l"></span>
+                <i class="fa fa-comments-o" aria-hidden="true"></i>
                 <span>留言板</span>
               </span>
             </router-link>
           </li>
+
           <li>
             <router-link to="/admin/comments">
               <span class="span-box">
-                <span class="icon-commenting-o icon-commenting-o-l"></span>
+                <i class="fa fa-commenting-o" aria-hidden="true"></i>
                 <span>文章评论</span>
               </span>
             </router-link>
           </li>
+
           <li>
             <router-link to="/admin/newMsg">
               <span class="span-box span-box-news">
-                <span class="icon-bell icon-bell-l"></span>
-                <sup
-                  class="sup"
-                  v-if="redSup.c || redSup.m || redSup.l || redSup.p"
-                ></sup>
+                <i class="fa fa-bell-o" aria-hidden="true"></i>
+                <!-- <sup class="sup" v-if="redSup.c || redSup.m || redSup.l || redSup.p"></sup> -->
                 <span>新消息</span>
               </span>
             </router-link>
           </li>
+
           <li>
             <router-link to="/admin/publish">
               <span class="span-box">
-                <span class="icon-edit icon-edit-l"></span>
+                <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
                 <span>发表文章</span>
               </span>
             </router-link>
           </li>
+
           <li class="list-last">
             <router-link to="/admin/adminSet">
               <span class="span-box">
-                <span class="icon-user icon-user-l"></span>
+                <i class="fa fa-user" aria-hidden="true"></i>
                 <span>账户设置</span>
               </span>
             </router-link>
           </li>
+
           <li>
             <a href="javascript:void(0)" @click="exit">
               <span class="span-box">
-                <span class="icon-exit icon-exit-l"></span>
+                <i class="fa fa-sign-out" aria-hidden="true"></i>
                 <span>退出系统</span>
               </span>
             </a>
           </li>
         </ul>
       </div>
+
       <!-- content -->
-      <!-- <div class="admin-content" ref="content">
+      <div class="admin-content" ref="content">
         <div class="location-search">
           <div class="location">
             <span>当前位置：</span>
@@ -211,11 +214,12 @@
             <button @click="search">查询</button>
           </div>
         </div>
+
         <keep-alive v-if="$route.meta.keepAlive">
           <router-view />
         </keep-alive>
         <router-view v-if="!$route.meta.keepAlive"></router-view>
-      </div>-->
+      </div>
     </div>
   </div>
 </template>
