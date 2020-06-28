@@ -32,16 +32,44 @@
       <!-- aside -->
       <div class="admin-aside" ref="list">
         <ul class="aside-menu" @click="showListDelay">
+          <!-- 文章列表 -->
+          <li class="already-item" @click="showChildMenu = !showChildMenu">
+            <div class="aside-menu">
+              <i class="fa fa fa-book" aria-hidden="true"></i>
+              <span class="item-name">已发表</span>
+              <i v-if="showChildMenu" class="fa fa-angle-double-down"></i>
+              <i v-else class="fa fa-angle-double-right"></i>
+            </div>
+            <ul v-if="showChildMenu" class="already-item-menu">
+              <li
+                class="child-menu"
+                @click.stop="showPath({ path: 'allArticles' })"
+              >
+                <td>全部文章</td>
+              </li>
+              <li
+                class="child-menu"
+                @click.stop="showPath({ path: 'allArticles' })"
+              >
+                <td>全部文章</td>
+              </li>
+            </ul>
+          </li>
+          <!-- 其他 -->
           <li
             class="aside-item"
+            :class="{ 'current-item': $route.path === item.path }"
             v-for="(item, index) in menu"
             :key="index"
             @click="showPath(item)"
           >
-            <!-- <router-link :to="item.path"> -->
             <i :class="item.icon" aria-hidden="true"></i>
-            <span v-text="item.name"></span>
-            <!-- </router-link> -->
+            <span class="item-name" v-text="item.name"></span>
+          </li>
+          <!-- 退出 -->
+          <li class="aside-item" @click="exit()">
+            <i class="fa fa-sign-out" aria-hidden="true"></i>
+            <span class="item-name">退出系统</span>
           </li>
         </ul>
       </div>
@@ -114,7 +142,7 @@ export default {
     return {
       lastLogin: localStorage.getItem("lastLogin") || "My Lord", // 最近一次的登陆时间
       userName: localStorage.getItem("userName") || "", // 最近一次的登陆时间
-      show: false,
+      showChildMenu: false,
       location: [],
       choseType: "key",
       searchKey: "",
@@ -122,11 +150,6 @@ export default {
       err: { from: false, to: false },
       showList: false,
       menu: [
-        {
-          name: "已发表",
-          icon: "fa fa-book",
-          path: "/admin"
-        },
         {
           name: "草稿箱",
           icon: "fa fa-dashboard",
@@ -156,33 +179,24 @@ export default {
           name: "账户设置",
           icon: "fa fa-user",
           path: "/admin/adminSet"
-        },
-        {
-          name: "退出系统",
-          icon: "fa fa-sign-out",
-          path: "/admin"
         }
       ]
     };
   },
-
   beforeRouteUpdate(to, from, next) {
     this.analysisRoute(to);
     next();
   },
-
   created() {
     // this.analysisRoute(this.$route);
     // this.getTagsclass({ publish: true });
     // this.getNews();
   },
-
   //离开路由则解绑事件
   beforeRouteLeave(to, from, next) {
     window.removeEventListener("resize", this.listen);
     next();
   },
-
   filters: {
     ifZero: function(value) {
       if (value > 0) {
@@ -192,16 +206,16 @@ export default {
       }
     }
   },
-
   mounted() {
     window.addEventListener("resize", this.listen);
     this.initHeight();
   },
-
   computed: {
     ...mapState(["tagsObj", "news", "redSup", "forLocation"]),
     activeBg() {
-      return !this.show && this.$route.path.indexOf("allArticles") !== -1;
+      return (
+        !this.showChildMenu && this.$route.path.indexOf("allArticles") !== -1
+      );
     },
     // 问候语
     greet() {
@@ -232,8 +246,8 @@ export default {
     ...mapActions(["getNews", "getTagsclass"]),
     showPath(item) {
       console.log(item);
+      this.$router.push({ path: item.path });
     },
-
     //不管什么情况下都把list高度设为首屏高度
     initHeight: function() {
       if (this.$route.name === "publish") {
@@ -247,7 +261,6 @@ export default {
         }
       }
     },
-
     //函数去抖，避免频繁触发拖垮浏览器
     debounce: function(func, delay) {
       let context = this,
@@ -262,22 +275,20 @@ export default {
         func.apply(context, args);
       }, delay);
     },
-
     listen: function() {
       this.debounce(this.initHeight, 500);
     },
-
-    exit: function() {
-      localStorage.removeItem("map_blog_token_info_item_name");
-      localStorage.removeItem("userName");
-      localStorage.removeItem("lastLogin");
-      this.$router.push({ name: "login" });
+    // 退出登录
+    exit() {
+      console.log("退出登录");
+      // localStorage.removeItem("map_blog_token_info_item_name");
+      // localStorage.removeItem("userName");
+      // localStorage.removeItem("lastLogin");
+      // this.$router.push({ name: "login" });
     },
-
     showPublish: function() {
-      this.show = !this.show;
+      this.showChildMenu = !this.showChildMenu;
     },
-
     search: function() {
       if (this.choseType === "key") {
         if (!this.searchKey.length) {
@@ -299,7 +310,6 @@ export default {
         this.$router.push({ name: "search", params: { base: date } });
       }
     },
-
     back: function(pathName, params) {
       if (pathName === "eachTag") {
         this.$router.push({
@@ -315,13 +325,11 @@ export default {
         this.$router.push({ name: pathName });
       }
     },
-
     showListDelay: function() {
       setTimeout(() => {
         this.showList = !this.showList;
       }, 350);
     },
-
     // eslint-disable-next-line no-unused-vars
     analysisRoute: function(to, from) {
       let first = { pathName: "allArticles", showName: "已发表文章" };
@@ -348,7 +356,6 @@ export default {
           break;
         case "review":
           this.location = this.forLocation;
-
           break;
         case "draft":
           this.location = [{ pathName: "draft", showName: "草稿箱" }];
@@ -435,16 +442,79 @@ export default {
   .admin-aside {
     width: 250px;
     background: #1c2b36;
-    // transition: all ease 0.5s;
+    transition: all ease 0.5s;
 
     .aside-menu {
-      // border: solid red 1px;
       .aside-item {
         color: #ffffff;
         font-family: Arial;
         text-decoration: none;
         padding: 15px;
-        // border: solid red 1px;
+        display: flex;
+        align-items: center;
+        position: relative;
+        .fa {
+          width: 20px;
+          font-size: 18px;
+        }
+        .item-name {
+          width: 80px;
+          font-size: 16px;
+          text-align: start;
+          margin-left: 10px;
+        }
+        &:hover {
+          background: #0f1215;
+        }
+      }
+      .current-item {
+        background: #4895fc;
+        &:hover {
+          background: #4895fc;
+        }
+      }
+
+      .already-item {
+        display: flex;
+        flex-direction: column;
+        .aside-menu {
+          color: #ffffff;
+          font-family: Arial;
+          text-decoration: none;
+          padding: 15px;
+          display: flex;
+          align-items: center;
+          position: relative;
+          .fa {
+            width: 20px;
+            font-size: 18px;
+          }
+          .item-name {
+            width: 80px;
+            font-size: 16px;
+            text-align: start;
+            margin-left: 10px;
+          }
+
+          .fa-angle-double-right,
+          .fa-angle-double-down {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+          }
+        }
+        .already-item-menu {
+          // margin-left: 35px;
+          border: solid red 1px;
+          .child-menu {
+            // border: solid red 1px;
+            // margin-left: 35px;
+            padding: 15px 15px 15px 35px;
+            &:hover {
+              background: #0f1215;
+            }
+          }
+        }
       }
     }
   }
