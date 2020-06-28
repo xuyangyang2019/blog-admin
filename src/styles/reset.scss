@@ -6,12 +6,6 @@ body {
 }
 
 // p,
-// ol,
-// ul,
-// li,
-// dl,
-// dt,
-// dd,
 // blockquote,
 // figure,
 // fieldset,
@@ -25,10 +19,16 @@ body {
 // h3,
 // h4,
 // h5,
-// h6 {
-//   margin: 0;
-//   padding: 0;
-// }
+// h6
+ol,
+ul,
+li,
+dl,
+dt,
+dd {
+  margin: 0;
+  padding: 0;
+}
 
 // h1,
 // h2,
