@@ -2,28 +2,27 @@
  * 封装axios
  */
 
-const qs = require("qs");
-const axios = require("axios");
+const qs = require("qs")
+const axios = require("axios")
 
-import router from "../router";
+import router from "../router"
 
-axios.defaults.headers.post["Content-Type"] =
-  "application/x-www-form-urlencoded; charset=UTF-8";
+axios.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded; charset=UTF-8"
 
 //拦截器，为后端每一个请求加上authorization
 axios.interceptors.request.use(
   config => {
-    const token = localStorage.getItem("validate-info-tk");
+    const token = localStorage.getItem("validateToken")
     if (token) {
-      config.headers.Authorization = token;
+      config.headers.Authorization = token
       // config.headers["x-access-token"] = token;
     }
-    return config;
+    return config
   },
   error => {
-    return Promise.reject(error);
+    return Promise.reject(error)
   }
-);
+)
 
 //拦截器，后端验证token失败后跳转到登录界面
 axios.interceptors.response.use(
@@ -31,7 +30,7 @@ axios.interceptors.response.use(
     // 如果返回401
     if (data.data.code && data.data.code === 401) {
       if (router.currentRoute.path !== "/login") {
-        router.push({ name: "login" });
+        router.push({ name: "login" })
       }
     }
     // 如果返回token错误或者失效
@@ -50,12 +49,12 @@ axios.interceptors.response.use(
     //   })
     //   .catch(() => { });
     // }
-    return data;
+    return data
   },
   error => {
-    return Promise.reject(error);
+    return Promise.reject(error)
   }
-);
+)
 
 function ajax(type, url, options) {
   return new Promise((resolve, reject) => {
@@ -68,15 +67,15 @@ function ajax(type, url, options) {
     })
       .then(res => {
         if (res.status === 200) {
-          resolve(res.data);
+          resolve(res.data)
         } else {
-          reject("request error in " + url);
+          reject("request error in " + url)
         }
       })
       .catch(err => {
-        console.log(err, url);
-      });
-  });
+        console.log(err, url)
+      })
+  })
 }
 
 const config = {
@@ -84,57 +83,57 @@ const config = {
     return new Promise((resolve, reject) => {
       ajax("get", url, options)
         .then(data => {
-          resolve(data);
+          resolve(data)
         })
         .catch(error => {
-          reject(error);
-        });
-    });
+          reject(error)
+        })
+    })
   },
   post(url, options) {
     return new Promise((resolve, reject) => {
       ajax("post", url, options)
         .then(data => {
-          resolve(data);
+          resolve(data)
         })
         .catch(error => {
-          reject(error);
-        });
-    });
+          reject(error)
+        })
+    })
   },
   put(url, options) {
     return new Promise((resolve, reject) => {
       ajax("put", url, options)
         .then(data => {
-          resolve(data);
+          resolve(data)
         })
         .catch(error => {
-          reject(error);
-        });
-    });
+          reject(error)
+        })
+    })
   },
   patch(url, options) {
     return new Promise((resolve, reject) => {
       ajax("patch", url, options)
         .then(data => {
-          resolve(data);
+          resolve(data)
         })
         .catch(error => {
-          reject(error);
-        });
-    });
+          reject(error)
+        })
+    })
   },
   delete(url, options) {
     return new Promise((resolve, reject) => {
       ajax("delete", url, options)
         .then(data => {
-          resolve(data);
+          resolve(data)
         })
         .catch(error => {
-          reject(error);
-        });
-    });
+          reject(error)
+        })
+    })
   }
-};
+}
 
-export default config;
+export default config
