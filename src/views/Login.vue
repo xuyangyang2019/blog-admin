@@ -4,13 +4,7 @@
       <div class="input">
         <label for="i">用户名 ：</label>
         <div class="input-box">
-          <input
-            type="text"
-            id="i"
-            v-model="user"
-            @focus="clearErr"
-            placeholder="请输入用户名"
-          />
+          <input type="text" id="i" v-model="user" @focus="clearErr" placeholder="请输入用户名" />
           <span class="err">{{ err.user }}</span>
         </div>
       </div>
@@ -30,9 +24,7 @@
         </div>
       </div>
       <div class="submit">
-        <button :disabled="btnInfo.disabled" @click="validate(toPath)">
-          {{ btnInfo.text }}
-        </button>
+        <button :disabled="btnInfo.disabled" @click="validate(toPath)">{{ btnInfo.text }}</button>
       </div>
     </div>
     <div class="login-mask"></div>
@@ -84,7 +76,7 @@ export default {
         // 修改按钮显示的文字 不能再次点击
         this.btnInfo = { text: "登录中...", disabled: true };
         // axios 登陆
-        this.$store.dispatch("axios/Login", payload).then((data) => {
+        this.$store.dispatch("axios/Login", payload).then(data => {
           this.btnInfo = { text: "登录", disabled: false };
           if (data.code === 200) {
             // console.log(data);

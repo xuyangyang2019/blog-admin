@@ -29,6 +29,6 @@ module.exports = {
   // always 总是有括号
   arrowParens: "avoid",
   // parser: "babel",
-  printWidth: 210
+  printWidth: 120
   // endOfLine: "lf"
 };

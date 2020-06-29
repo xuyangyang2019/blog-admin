@@ -10,11 +10,7 @@
       <span class="phone-greet">{{ greet }}好，{{ userName }}！</span>
       <!-- 管理员的信息 -->
       <div class="admin-info">
-        <img
-          src="/img/logo.png"
-          style="width: 20px;height: 20px;vertical-align: middle"
-          alt="xyy"
-        />
+        <img src="/img/logo.png" style="width: 20px;height: 20px;vertical-align: middle" alt="xyy" />
         <span>{{ greet }}好，{{ userName }}！上次登录是：{{ lastLogin }}</span>
       </div>
       <!-- 面包屑导航 -->
@@ -41,16 +37,10 @@
               <i v-else class="fa fa-angle-double-right"></i>
             </div>
             <ul v-if="showChildMenu" class="already-item-menu">
-              <li
-                class="child-menu"
-                @click.stop="showPath({ path: 'allArticles' })"
-              >
+              <li class="child-menu" @click.stop="showPath({ path: 'allArticles' })">
                 <td>全部文章</td>
               </li>
-              <li
-                class="child-menu"
-                @click.stop="showPath({ path: 'allArticles' })"
-              >
+              <li class="child-menu" @click.stop="showPath({ path: 'allArticles' })">
                 <td>全部文章</td>
               </li>
             </ul>
@@ -76,46 +66,26 @@
 
       <!-- content -->
       <div class="admin-content" ref="content">
+        <!-- 搜索 -->
         <div class="location-search">
+          <!-- 当前路由 -->
           <div class="location">
-            <span>当前位置：</span>
-            <a
-              href="javascript: void(0)"
-              @click="$router.push({ path: '/admin/allArticles' })"
-              >后台管理</a
-            >
+            <span style="color:black;">当前位置：</span>
+            <a href="javascript: void(0)" @click="$router.push({ path: '/admin/allArticles' })">后台管理</a>
             <div v-for="(item, index) in location" :key="index">
               ->
-              <a
-                href="javascript: void(0)"
-                @click="back(item.pathName, item.params)"
-                >{{ item.showName }}</a
-              >
+              <a href="javascript: void(0)" @click="back(item.pathName, item.params)">{{ item.showName }}</a>
             </div>
           </div>
+          <!-- 搜索框 -->
           <div class="search">
             <div class="search-key" v-show="choseType === 'key'">
-              <input
-                type="text"
-                placeholder="请输入关键词"
-                v-model="searchKey"
-                @keyup.enter="search"
-              />
+              <input type="text" placeholder="请输入关键词" v-model="searchKey" @keyup.enter="search" />
             </div>
             <div class="search-time" v-show="choseType === 'time'">
-              <input
-                type="date"
-                @focus="err.from = false"
-                v-model="date.from"
-                :class="{ 'err-border': err.from }"
-              />
+              <input type="date" @focus="err.from = false" v-model="date.from" :class="{ 'err-border': err.from }" />
               至
-              <input
-                @focus="err.to = false"
-                type="date"
-                v-model="date.to"
-                :class="{ 'err-border': err.to }"
-              />
+              <input @focus="err.to = false" type="date" v-model="date.to" :class="{ 'err-border': err.to }" />
             </div>
             <select name id v-model="choseType">
               <option value="key">关键字</option>
@@ -124,7 +94,7 @@
             <button @click="search">查询</button>
           </div>
         </div>
-
+        <!-- 子路由 -->
         <keep-alive v-if="$route.meta.keepAlive">
           <router-view />
         </keep-alive>
@@ -142,11 +112,11 @@ export default {
     return {
       lastLogin: localStorage.getItem("lastLogin") || "My Lord", // 最近一次的登陆时间
       userName: localStorage.getItem("userName") || "", // 最近一次的登陆时间
-      showChildMenu: false,
-      location: [],
+      showChildMenu: false, // 显示所有文章的子菜单
+      location: [], // 当前位置
       choseType: "key",
       searchKey: "",
-      date: { from: "", to: "" },
+      date: { from: "", to: "" }, // 搜索时间
       err: { from: false, to: false },
       showList: false,
       menu: [
@@ -213,9 +183,7 @@ export default {
   computed: {
     ...mapState(["tagsObj", "news", "redSup", "forLocation"]),
     activeBg() {
-      return (
-        !this.showChildMenu && this.$route.path.indexOf("allArticles") !== -1
-      );
+      return !this.showChildMenu && this.$route.path.indexOf("allArticles") !== -1;
     },
     // 问候语
     greet() {
@@ -254,8 +222,7 @@ export default {
         return;
       } else {
         if (document.body.clientWidth > 767) {
-          this.$refs.list.style.minHeight =
-            document.body.clientHeight - 55 + "px";
+          this.$refs.list.style.minHeight = document.body.clientHeight - 55 + "px";
         } else {
           this.$refs.list.style = "";
         }
@@ -523,8 +490,25 @@ export default {
     background: #fff;
     box-sizing: border-box;
     padding: 0 10px;
-    width: 85%;
-    display: inline-block;
+    flex: 1 1 auto;
+    // width: 85%;
+    // display: inline-block;
+    border: solid red 1px;
+
+    .location-search {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border: solid red 1px;
+      .location {
+        border: solid red 1px;
+        display: flex;
+      }
+      .search {
+        border: solid red 1px;
+        display: flex;
+      }
+    }
   }
 }
 
