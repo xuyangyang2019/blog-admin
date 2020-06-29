@@ -1,18 +1,24 @@
-import Vue from "vue";
-import Vuex from "vuex";
-import modules from "./modules";
+import Vue from "vue"
+import Vuex from "vuex"
+import modules from "./modules"
 
 // import { uploadFile } from "@/api/upload";
 
 // state
 const state = {
-  toPath: "/admin"
-};
+  toPath: "/admin",
+  tagsObj: {},
+  redSup: { c: false, m: false, l: false, p: false },
+  forLocation: []
+}
 
 // getters
 const getters = {
-  toPath: state => state.toPath
-};
+  toPath: state => state.toPath,
+  tagsObj: state => state.tagsObj,
+  redSup: state => state.redSup,
+  forLocation: state => state.forLocation
+}
 
 // actions
 const actions = {
@@ -29,17 +35,17 @@ const actions = {
   //       });
   //   });
   // }
-};
+}
 
 // mutations
 const mutations = {
   // 设置token
   SET_TOKEN: (state, token) => {
-    state.token = token;
+    state.token = token
   }
-};
+}
 
-Vue.use(Vuex);
+Vue.use(Vuex)
 
 export default new Vuex.Store({
   modules,
@@ -48,4 +54,4 @@ export default new Vuex.Store({
   mutations,
   actions,
   strict: process.env.NODE_ENV !== "production"
-});
+})
