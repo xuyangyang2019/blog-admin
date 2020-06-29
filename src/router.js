@@ -19,15 +19,16 @@ import Admin from "./views/Admin.vue"
 const miss = resolve => require(["@/components/base/miss"], resolve)
 const allArticles = resolve => require(["@/components/article/allArticles"], resolve)
 const eachTag = resolve => require(["@/components/article/eachTag"], resolve)
-const draft = resolve => require(["@/components/article/draft"], resolve)
 const review = resolve => require(["@/components/article/review"], resolve)
+const search = resolve => require(["@/components/search/search"], resolve)
 // const initEditor = (resolve) =>
 //   require(["@/components/ue/initEditor"], resolve);
-const adminMsgBoard = resolve => require(["@/components/msgboard/adminMsgBoard"], resolve)
-const comments = resolve => require(["@/components/comment/comments"], resolve)
-const newMsg = resolve => require(["@/components/news/newMsg"], resolve)
-const adminSet = resolve => require(["@/components/adminSet/adminSet"], resolve)
-const search = resolve => require(["@/components/search/search"], resolve)
+
+// const draft = resolve => require(["@/components/article/draft"], resolve)
+// const adminMsgBoard = resolve => require(["@/components/msgboard/adminMsgBoard"], resolve)
+// const comments = resolve => require(["@/components/comment/comments"], resolve)
+// const newMsg = resolve => require(["@/components/news/newMsg"], resolve)
+// const adminSet = resolve => require(["@/components/adminSet/adminSet"], resolve)
 
 Vue.use(Router)
 
@@ -76,46 +77,53 @@ const router = new Router({
             keepAlive: true
           }
         },
+        // 草稿箱
         {
           path: "draft",
           name: "draft",
-          component: draft,
+          // component: draft,
+          component: () => import(/* webpackChunkName: "admin" */ "./components/article/Draft.vue"),
           meta: {
             requireAuth: true,
             keepAlive: true
           }
         },
+        // 留言板
         {
           path: "msgBoard",
           name: "adminMsgBoard",
-          component: adminMsgBoard,
+          component: () => import(/* webpackChunkName: "admin" */ "./components/msgboard/AdminMsgBoard.vue"),
           meta: {
             requireAuth: true,
             keepAlive: true
           }
         },
+        // 文章评论
         {
           path: "comments",
           name: "comments",
-          component: comments,
+          component: () => import(/* webpackChunkName: "admin" */ "./components/comment/Comments.vue"),
           meta: {
             requireAuth: true,
             keepAlive: true
           }
         },
+        // 新消息
         {
           path: "newMsg",
           name: "newMsg",
-          component: newMsg,
+          // component: newMsg,
+          component: () => import(/* webpackChunkName: "admin" */ "./components/news/NewMsg.vue"),
           meta: {
             requireAuth: true,
             keepAlive: true
           }
         },
+        // 账户设置
         {
           path: "adminSet",
           name: "adminSet",
-          component: adminSet,
+          component: () => import(/* webpackChunkName: "admin" */ "./components/adminSet/AdminSet.vue"),
           meta: {
             requireAuth: true,
             keepAlive: true
@@ -160,7 +168,7 @@ const router = new Router({
     {
       path: "/login",
       name: "login",
-      component: () => import(/* webpackChunkName: "login" */ "./views/Login.vue")
+      component: () => import(/* webpackChunkName: "admin" */ "./views/Login.vue")
     },
     {
       path: "/*",
