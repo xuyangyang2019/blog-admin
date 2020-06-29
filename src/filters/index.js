@@ -2,21 +2,21 @@
 
 // 函数声明在JS解析时进行函数提升，因此在同一个作用域内，不管函数声明在哪里定义，该函数都可以进行调用
 // function ifZero(value) {
-//     if (value > 0) {
-//         return value;
-//     } else {
-//         return 0;
-//     }
-// };
+//   if (value > 0) {
+//     return value
+//   } else {
+//     return 0
+//   }
+// }
 
 // 函数表达式的值是在JS运行时确定，并且在表达式赋值完成后，该函数才能调用
 const ifZero = value => {
   if (value > 0) {
-    return value;
+    return value
   } else {
-    return 0;
+    return 0
   }
-};
+}
 
 // // 当前零点
 // let currentDay = () => {
@@ -206,4 +206,4 @@ const ifZero = value => {
 
 export default {
   ifZero
-};
+}

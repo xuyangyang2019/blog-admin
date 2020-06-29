@@ -105,7 +105,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from "vuex"
+import { mapState } from "vuex"
 
 export default {
   data() {
@@ -184,7 +184,18 @@ export default {
     }
   },
   methods: {
-    ...mapActions(["getNews", "getTagsclass"]),
+    // ...mapActions(["getNews", "getTagsclass"]),
+    // 退出登录
+    exit() {
+      console.log("退出登录")
+      console.log(localStorage.getItem("validateToken"))
+      // 删除本地保存的数据
+      localStorage.removeItem("validateToken")
+      localStorage.removeItem("userName")
+      localStorage.removeItem("lastLogin")
+      // 跳转到登陆页面
+      this.$router.push({ name: "login" })
+    },
     showPath(item) {
       console.log(item)
       this.$router.push({ path: item.path })
@@ -218,14 +229,7 @@ export default {
     listen: function() {
       this.debounce(this.initHeight, 500)
     },
-    // 退出登录
-    exit() {
-      console.log("退出登录")
-      // localStorage.removeItem("map_blog_token_info_item_name");
-      // localStorage.removeItem("userName");
-      // localStorage.removeItem("lastLogin");
-      // this.$router.push({ name: "login" });
-    },
+
     showPublish: function() {
       this.showChildMenu = !this.showChildMenu
     },
@@ -270,7 +274,6 @@ export default {
         this.showList = !this.showList
       }, 350)
     },
-    // eslint-disable-next-line no-unused-vars
     analysisRoute: function(to, from) {
       let first = { pathName: "allArticles", showName: "已发表文章" }
       switch (to.name) {
@@ -318,22 +321,25 @@ export default {
     }
   },
   created() {
-    // this.analysisRoute(this.$route);
-    // this.getTagsclass({ publish: true });
+    // 分析路由
+    this.analysisRoute(this.$route)
     // 获取最新的标签
     this.$store.dispatch("axios/GetTagsclass", { publish: true })
     // 获取最新的留言评论
     this.$store.dispatch("axios/GetNews")
   },
   mounted() {
+    // 添加监听事件
     window.addEventListener("resize", this.listen)
+    // 初始话height
     this.initHeight()
   },
+  // 导航守卫 更新之前
   beforeRouteUpdate(to, from, next) {
     this.analysisRoute(to)
     next()
   },
-  //离开路由则解绑事件
+  // 导航守卫 离开路由则解绑事件
   beforeRouteLeave(to, from, next) {
     window.removeEventListener("resize", this.listen)
     next()
