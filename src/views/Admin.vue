@@ -187,8 +187,6 @@ export default {
     // ...mapActions(["getNews", "getTagsclass"]),
     // 退出登录
     exit() {
-      console.log("退出登录")
-      console.log(localStorage.getItem("validateToken"))
       // 删除本地保存的数据
       localStorage.removeItem("validateToken")
       localStorage.removeItem("userName")
