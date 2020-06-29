@@ -38,10 +38,15 @@
             </div>
             <ul v-if="showChildMenu" class="already-item-menu">
               <li class="child-menu" @click.stop="showPath({ path: 'allArticles' })">
-                <td>全部文章</td>
+                <td>全部文章 {{ tagsObj.articlesSum }}</td>
               </li>
-              <li class="child-menu" @click.stop="showPath({ path: 'allArticles' })">
-                <td>全部文章</td>
+              <li
+                v-for="(tag, index) in tagsObj.tags"
+                :key="index"
+                class="child-menu"
+                @click.stop="showPath({ path: 'allArticles' })"
+              >
+                <td>{{ tag.tag }} {{ tag.num }}</td>
               </li>
             </ul>
           </li>
