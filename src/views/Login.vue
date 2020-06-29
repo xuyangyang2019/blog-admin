@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters } from "vuex"
 
 export default {
   data() {
@@ -41,7 +41,7 @@ export default {
       password: "", // 密码
       err: { user: "", password: "", validate: "" }, // 错误信息
       btnInfo: { text: "登录", disabled: false } // 登录按钮的状态
-    };
+    }
   },
   computed: {
     // ...mapState(["toPath"])
@@ -56,46 +56,46 @@ export default {
     // }),
     // 设置token
     setToken: function(user) {
-      localStorage.setItem("validate-info-tk", user.token);
-      localStorage.setItem("userName", user.name);
-      localStorage.setItem("lastLogin", user.lastLogin);
+      localStorage.setItem("validateToken", user.token)
+      localStorage.setItem("userName", user.name)
+      localStorage.setItem("lastLogin", user.lastLogin)
     },
     // 表单验证
     validate: function(toPath) {
       let payload = {
         user: this.user,
         password: this.password
-      };
+      }
       if (!this.user) {
-        this.err.user = "请填写用户名";
+        this.err.user = "请填写用户名"
       }
       if (!this.password) {
-        this.err.password = "请填写密码";
+        this.err.password = "请填写密码"
       }
       if (!!this.password && !!this.user) {
         // 修改按钮显示的文字 不能再次点击
-        this.btnInfo = { text: "登录中...", disabled: true };
+        this.btnInfo = { text: "登录中...", disabled: true }
         // axios 登陆
         this.$store.dispatch("axios/Login", payload).then(data => {
-          this.btnInfo = { text: "登录", disabled: false };
+          this.btnInfo = { text: "登录", disabled: false }
           if (data.code === 200) {
             // console.log(data);
-            this.setToken(data);
+            this.setToken(data)
             // 页面跳转
-            this.$router.push({ path: toPath });
+            this.$router.push({ path: toPath })
           } else if (data.code === 401) {
             // 错误提示
-            this.err.validate = "用户名或密码不正确";
+            this.err.validate = "用户名或密码不正确"
           }
-        });
+        })
       }
     },
     // 清除错误信息
     clearErr: function() {
-      this.err = { user: "", password: "", validate: "" };
+      this.err = { user: "", password: "", validate: "" }
     }
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>

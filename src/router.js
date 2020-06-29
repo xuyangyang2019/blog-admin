@@ -174,7 +174,7 @@ const router = new Router({
 router.beforeEach((to, from, next) => {
   // 如果要去的路由 需要验证
   if (to.matched.some(res => res.meta.requireAuth)) {
-    if (localStorage.getItem("validate-info-tk")) {
+    if (localStorage.getItem("validateToken")) {
       next()
     } else {
       next({
