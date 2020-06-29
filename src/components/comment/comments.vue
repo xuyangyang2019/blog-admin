@@ -1,35 +1,46 @@
 <template>
-	<msbdAndCmsList :mcList = "comments" :initTable = "_initTable"></msbdAndCmsList>
+  <msbdAndCmsList :mcList="comments" :initTable="_initTable"></msbdAndCmsList>
 </template>
+
 <script>
-	import { mapState,mapActions } from "vuex"
-	import msbdAndCmsList from "@/components/c-m-list/msbdAndCmsList"
-	export default {
-		components: {
-			msbdAndCmsList
-		},
-		data(){
-			return{
-				init: {th: ["序号","文章标题","昵称","评论","时间"]} 
-			}
-		},
-		beforeRouteEnter(to,from,next){
-			next((vm) => {
-				vm.getCommentsCount()
-				document.title = "后台管理 -文章评论"
-			})
-		},
-		created(){
-			this.getAdminComments({page:1})
-		},
-		computed: {
-			...mapState(["comments"]),
-			_initTable(){
-				return this.init
-			}
-		},
-		methods: {
-			...mapActions(["getAdminComments","getCommentsCount"])
-		}
-	}
+import { mapState, mapActions, mapGetters } from "vuex"
+
+import msbdAndCmsList from "@/components/c-m-list/msbdAndCmsList"
+
+export default {
+  data() {
+    return {
+      init: { th: ["序号", "文章标题", "昵称", "评论", "时间"] }
+    }
+  },
+  components: {
+    msbdAndCmsList
+  },
+  computed: {
+    // ...mapState(["comments"]),
+    ...mapGetters({
+      comments: "axios/comments"
+    }),
+    _initTable() {
+      return this.init
+    }
+  },
+  methods: {
+    ...mapActions({
+      getAdminComments: "axios/GetAdminComments",
+      getCommentsCount: "axios/GetCommentsCount"
+    })
+  },
+  created() {
+    // 获取评论
+    this.getAdminComments({ page: 1 })
+  },
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      // 获取评论数
+      vm.getCommentsCount()
+      document.title = "后台管理 -文章评论"
+    })
+  }
+}
 </script>
