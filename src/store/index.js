@@ -6,18 +6,12 @@ import modules from "./modules"
 
 // state
 const state = {
-  toPath: "/admin",
-  tagsObj: {},
-  redSup: { c: false, m: false, l: false, p: false },
-  forLocation: []
+  toPath: "/admin"
 }
 
 // getters
 const getters = {
-  toPath: state => state.toPath,
-  tagsObj: state => state.tagsObj,
-  redSup: state => state.redSup,
-  forLocation: state => state.forLocation
+  toPath: state => state.toPath
 }
 
 // actions

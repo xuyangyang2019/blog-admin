@@ -3,6 +3,9 @@ import fetch from "@/utils/fetch"
 
 // initial state
 const state = {
+  tagsObj: {}, // 标签
+  redSup: { c: false, m: false, l: false, p: false }, // 红点提示
+  forLocation: [], // location
   news: { pvNum: 0, comment: [], msgboard: [], like: [], pv: [] },
   articles: { all: [], drafts: [], tags: [], search: [], only: [] }, // 文章列表
   pageArray: [], // 已发表页码数组
@@ -12,6 +15,9 @@ const state = {
 
 // getters
 const getters = {
+  tagsObj: state => state.tagsObj,
+  redSup: state => state.redSup,
+  forLocation: state => state.forLocation,
   news: state => state.news,
   articles: state => state.articles,
   pageArray: state => state.pageArray,
