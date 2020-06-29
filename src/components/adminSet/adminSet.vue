@@ -52,7 +52,6 @@
       <h3>数据库备份</h3>
       <button @click="startCopy" :disabled="waitInfo.copy === '备份中...'">{{ waitInfo.copy }}</button>
       <a href="javascript: void(0)" @click="download" v-show="showDownload">下载到本地</a>
-      <!-- <button @click = "download">下载</button> -->
     </div>
     <transition name="set-mask">
       <div class="adminset-mask" v-show="adminSetMask.show">
@@ -64,8 +63,10 @@
     </transition>
   </div>
 </template>
+
 <script>
 import { mapActions } from "vuex"
+
 export default {
   data() {
     return {
@@ -138,7 +139,12 @@ export default {
   }
 }
 </script>
+
 <style lang="scss" scoped>
+.admin-set {
+  border: solid red 1px;
+}
+
 .revise-key {
   h3 {
     text-align: center;
