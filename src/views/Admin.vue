@@ -74,7 +74,10 @@
             <a href="javascript: void(0)" @click="$router.push({ path: '/admin/allArticles' })">后台管理</a>
             <div v-for="(item, index) in location" :key="index">
               ->
-              <a href="javascript: void(0)" @click="back(item.pathName, item.params)">{{ item.showName }}</a>
+              <a
+                href="javascript: void(0)"
+                @click="back(item.pathName, item.params)"
+              >{{ item.showName }}</a>
             </div>
           </div>
           <!-- 搜索框 -->
@@ -83,9 +86,19 @@
               <input type="text" placeholder="请输入关键词" v-model="searchKey" @keyup.enter="search" />
             </div>
             <div class="search-time" v-show="choseType === 'time'">
-              <input type="date" @focus="err.from = false" v-model="date.from" :class="{ 'err-border': err.from }" />
+              <input
+                type="date"
+                @focus="err.from = false"
+                v-model="date.from"
+                :class="{ 'err-border': err.from }"
+              />
               至
-              <input @focus="err.to = false" type="date" v-model="date.to" :class="{ 'err-border': err.to }" />
+              <input
+                @focus="err.to = false"
+                type="date"
+                v-model="date.to"
+                :class="{ 'err-border': err.to }"
+              />
             </div>
             <select name id v-model="choseType">
               <option value="key">关键字</option>
@@ -105,13 +118,13 @@
 </template>
 
 <script>
-import { mapState } from "vuex"
+import { mapGetters } from "vuex"
 
 export default {
   data() {
     return {
       lastLogin: localStorage.getItem("lastLogin") || "My Lord", // 最近一次的登陆时间
-      userName: localStorage.getItem("userName") || "", // 最近一次的登陆时间
+      userName: localStorage.getItem("userName") || "", // 用户名
       showChildMenu: false, // 显示所有文章的子菜单
       location: [], // 当前位置
       choseType: "key",
@@ -154,10 +167,12 @@ export default {
     }
   },
   computed: {
-    ...mapState(["tagsObj", "news", "redSup", "forLocation"]),
-    activeBg() {
-      return !this.showChildMenu && this.$route.path.indexOf("allArticles") !== -1
-    },
+    ...mapGetters({
+      tagsObj: "tagsObj",
+      news: "news",
+      redSup: "redSup",
+      forLocation: "forLocation"
+    }),
     // 问候语
     greet() {
       let hour = new Date().getHours()
@@ -194,86 +209,15 @@ export default {
       // 跳转到登陆页面
       this.$router.push({ name: "login" })
     },
+    // 路由跳转
     showPath(item) {
+      if (this.$route.path === item.path) return
       console.log(item)
       this.$router.push({ path: item.path })
     },
-    //不管什么情况下都把list高度设为首屏高度
-    initHeight: function() {
-      if (this.$route.name === "publish") {
-        return
-      } else {
-        if (document.body.clientWidth > 767) {
-          this.$refs.list.style.minHeight = document.body.clientHeight - 55 + "px"
-        } else {
-          this.$refs.list.style = ""
-        }
-      }
-    },
-    //函数去抖，避免频繁触发拖垮浏览器
-    debounce: function(func, delay) {
-      let context = this,
-        args = arguments
-      if (document.body.clientWidth < 768) {
-        this.$refs.list.style = ""
-      }
-      if (this.timer) {
-        clearTimeout(this.timer)
-      }
-      this.timer = setTimeout(function() {
-        func.apply(context, args)
-      }, delay)
-    },
-    listen: function() {
-      this.debounce(this.initHeight, 500)
-    },
-
-    showPublish: function() {
-      this.showChildMenu = !this.showChildMenu
-    },
-    search: function() {
-      if (this.choseType === "key") {
-        if (!this.searchKey.length) {
-          return
-        }
-        this.$router.push({
-          name: "search",
-          params: { base: this.searchKey }
-        })
-      } else {
-        if (!this.date.from) {
-          this.err.from = true
-        }
-        if (!this.date.to) {
-          this.err.to = true
-          return
-        }
-        let date = this.date.from + "to" + this.date.to
-        this.$router.push({ name: "search", params: { base: date } })
-      }
-    },
-    back: function(pathName, params) {
-      if (pathName === "eachTag") {
-        this.$router.push({
-          name: pathName,
-          params: { tag: params.tag }
-        })
-      } else if (pathName === "review") {
-        this.$router.push({
-          name: pathName,
-          params: { eTag: params.tag, articleTitle: params.title }
-        })
-      } else {
-        this.$router.push({ name: pathName })
-      }
-    },
-    showListDelay: function() {
-      setTimeout(() => {
-        this.showList = !this.showList
-      }, 350)
-    },
-    analysisRoute: function(to, from) {
+    analysisRoute: function (to, from) {
       let first = { pathName: "allArticles", showName: "已发表文章" }
+      console.log(to.name)
       switch (to.name) {
         case "allArticles":
           this.location = [first]
@@ -293,7 +237,6 @@ export default {
               }
             ]
           }
-
           break
         case "review":
           this.location = this.forLocation
@@ -316,6 +259,80 @@ export default {
         case "search":
           this.location = [{ pathName: "search", showName: "搜索" }]
       }
+    },
+
+    //不管什么情况下都把list高度设为首屏高度
+    initHeight: function () {
+      if (this.$route.name === "publish") {
+        return
+      } else {
+        if (document.body.clientWidth > 767) {
+          this.$refs.list.style.minHeight = document.body.clientHeight - 55 + "px"
+        } else {
+          this.$refs.list.style = ""
+        }
+      }
+    },
+    //函数去抖，避免频繁触发拖垮浏览器
+    debounce: function (func, delay) {
+      let context = this,
+        args = arguments
+      if (document.body.clientWidth < 768) {
+        this.$refs.list.style = ""
+      }
+      if (this.timer) {
+        clearTimeout(this.timer)
+      }
+      this.timer = setTimeout(function () {
+        func.apply(context, args)
+      }, delay)
+    },
+    listen: function () {
+      this.debounce(this.initHeight, 500)
+    },
+    showPublish: function () {
+      this.showChildMenu = !this.showChildMenu
+    },
+    search: function () {
+      if (this.choseType === "key") {
+        if (!this.searchKey.length) {
+          return
+        }
+        this.$router.push({
+          name: "search",
+          params: { base: this.searchKey }
+        })
+      } else {
+        if (!this.date.from) {
+          this.err.from = true
+        }
+        if (!this.date.to) {
+          this.err.to = true
+          return
+        }
+        let date = this.date.from + "to" + this.date.to
+        this.$router.push({ name: "search", params: { base: date } })
+      }
+    },
+    back: function (pathName, params) {
+      if (pathName === "eachTag") {
+        this.$router.push({
+          name: pathName,
+          params: { tag: params.tag }
+        })
+      } else if (pathName === "review") {
+        this.$router.push({
+          name: pathName,
+          params: { eTag: params.tag, articleTitle: params.title }
+        })
+      } else {
+        this.$router.push({ name: pathName })
+      }
+    },
+    showListDelay: function () {
+      setTimeout(() => {
+        this.showList = !this.showList
+      }, 350)
     }
   },
   created() {
@@ -491,7 +508,7 @@ export default {
     flex: 1 1 auto;
     // width: 85%;
     // display: inline-block;
-    border: solid red 1px;
+    // border: solid red 1px;
 
     .location-search {
       display: flex;

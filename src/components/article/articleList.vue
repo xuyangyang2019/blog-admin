@@ -22,15 +22,9 @@
       </thead>
       <!-- 表格主题 -->
       <tbody class="tbody-list">
-        <tr
-          v-for="(item, index) in article_list"
-          :class="{ bg: articleItem.indexOf(item.articleId) !== -1 }"
-        >
+        <tr v-for="(item, index) in article_list" :class="{ bg: articleItem.indexOf(item.articleId) !== -1 }">
           <td>
-            <div
-              class="chose"
-              :class="{ checked: articleItem.indexOf(item.articleId) > -1 }"
-            >
+            <div class="chose" :class="{ checked: articleItem.indexOf(item.articleId) > -1 }">
               <input
                 :id="'checkbox-item' + index"
                 type="checkbox"
@@ -44,12 +38,7 @@
           <td>{{ index + 1 }}</td>
           <td :title="item.title">{{ item.title }}</td>
           <td>
-            <span
-              v-for="tag in item.tag"
-              ref="listTag"
-              class="tbody-list-tag"
-              >{{ tag | changeLife }}</span
-            >
+            <span v-for="tag in item.tag" ref="listTag" class="tbody-list-tag">{{ tag | changeLife }}</span>
           </td>
           <td>{{ item.pv }}</td>
           <td>{{ item.likeNum }}</td>
@@ -93,17 +82,18 @@
       <div class="validate-mask" v-show="updateInfo.show">
         <div class="update-warning">
           <h3>数据抓取超时，请稍后再试...</h3>
-          <button @click="updateInfo = { show: false, wait: false }">
-            确定
-          </button>
+          <button @click="updateInfo = { show: false, wait: false }">确定</button>
         </div>
       </div>
     </transition>
   </div>
 </template>
+
 <script>
-import { mapState, mapMutations, mapActions } from "vuex";
-import page from "@/components/base/page";
+import { mapState, mapMutations, mapActions } from "vuex"
+
+import page from "@/components/base/page"
+
 export default {
   components: {
     page
@@ -117,10 +107,10 @@ export default {
   filters: {
     changeLife: function(value) {
       if (value === "life") {
-        value = "生活";
-        return value;
+        value = "生活"
+        return value
       } else {
-        return value;
+        return value
       }
     }
   },
@@ -143,16 +133,15 @@ export default {
         "#CC6699",
         "#CCCC00"
       ]
-    };
+    }
   },
   mounted() {
     if (this.article_list.length) {
       this.$nextTick(() => {
         this.$refs.listTag.forEach((item, index, arr) => {
-          item.style.background =
-            "#" + Math.floor(Math.random() * 0xffffff).toString(16);
-        });
-      });
+          item.style.background = "#" + Math.floor(Math.random() * 0xffffff).toString(16)
+        })
+      })
     }
   },
   computed: {
@@ -160,13 +149,13 @@ export default {
   },
   watch: {
     article_list: function() {
-      this.ifchecked = false;
-      this.articleItem = [];
+      this.ifchecked = false
+      this.articleItem = []
       this.$nextTick(() => {
         if (this.article_list.length) {
-          this.initBackground();
+          this.initBackground()
         }
-      });
+      })
     }
   },
   methods: {
@@ -174,102 +163,101 @@ export default {
     ...mapActions(["removeArticle", "getArticle"]),
     initBackground: function() {
       this.$refs.listTag.forEach((item, index, arr) => {
-        item.style.background = this.color[Math.floor(Math.random() * 10)];
-      });
+        item.style.background = this.color[Math.floor(Math.random() * 10)]
+      })
     },
     singleChecked: function() {
       //加定时器是因为先触发click事件，此时articleItem
       //还没有被推入新的值，因此将此事件推入事件队列，先让articleItem插值完成
       setTimeout(() => {
         if (this.articleItem.length === this.article_list.length) {
-          this.ifchecked = true;
+          this.ifchecked = true
         } else {
-          this.ifchecked = false;
+          this.ifchecked = false
         }
-      }, 0);
+      }, 0)
     },
     allChecked: function() {
       if (this.articleItem.length !== this.article_list.length) {
-        let _arr = [];
+        let _arr = []
         this.article_list.forEach((item, index, arr) => {
-          _arr.push(item.articleId);
-        });
-        this.articleItem = _arr;
+          _arr.push(item.articleId)
+        })
+        this.articleItem = _arr
       } else {
-        this.articleItem = [];
+        this.articleItem = []
       }
     },
     review: function(item) {
       this.$router.push({
         name: "review",
         params: { eTag: item.tag[0], articleId: item.articleId }
-      });
+      })
     },
     update: function(item) {
-      let that = this;
-      this.updateInfo = { show: false, wait: true };
-      this.getArticle({ tag: item.tag[0], articleId: item.articleId }).then(
-        (data) => {
-          if (data.length) {
-            this.updateInfo = { show: false, wait: false };
-            if (that.$route.path === "/admin/draft") {
-              that.$router.push({ name: "draftrevise" });
-            } else {
-              that.$router.push({ name: "update" });
-            }
+      let that = this
+      this.updateInfo = { show: false, wait: true }
+      this.getArticle({ tag: item.tag[0], articleId: item.articleId }).then(data => {
+        if (data.length) {
+          this.updateInfo = { show: false, wait: false }
+          if (that.$route.path === "/admin/draft") {
+            that.$router.push({ name: "draftrevise" })
           } else {
-            this.updateInfo = { show: true, wait: false };
+            that.$router.push({ name: "update" })
           }
+        } else {
+          this.updateInfo = { show: true, wait: false }
         }
-      );
+      })
     },
     sureDelete: function(aid, index) {
       let sInfo = this.sureInfo,
-        dInfo = this.deleteInfo;
+        dInfo = this.deleteInfo
       //选中删除操作
       if (aid === -1) {
-        sInfo.warning = "确定删除选中的" + this.articleItem.length + "项么？";
-        sInfo.type = "all";
+        sInfo.warning = "确定删除选中的" + this.articleItem.length + "项么？"
+        sInfo.type = "all"
       } else {
-        dInfo.index = index;
-        dInfo.aid = aid;
-        sInfo.warning = "确定删除此项么？";
-        sInfo.type = "single";
+        dInfo.index = index
+        dInfo.aid = aid
+        sInfo.warning = "确定删除此项么？"
+        sInfo.type = "single"
       }
     },
     remove: function() {
       if (this.sureInfo.type === "single") {
-        this.removeSingle();
+        this.removeSingle()
       } else {
-        this.removeAll();
+        this.removeAll()
       }
     },
     removeSingle: function() {
       let that = this,
         routeName = this.$route.name,
-        dInfo = this.deleteInfo;
-      this.removeArticle({ articleId: [dInfo.aid] }).then((data) => {
+        dInfo = this.deleteInfo
+      this.removeArticle({ articleId: [dInfo.aid] }).then(data => {
         if (data.deleteCode === 200) {
-          that.reduceArr({ name: routeName, index: dInfo.index });
-          this.sureInfo.type = ""; //退出确认框
+          that.reduceArr({ name: routeName, index: dInfo.index })
+          this.sureInfo.type = "" //退出确认框
         }
-      });
+      })
     },
     removeAll() {
-      let that = this;
-      this.removeArticle({ articleId: this.articleItem }).then((data) => {
+      let that = this
+      this.removeArticle({ articleId: this.articleItem }).then(data => {
         if (data.deleteCode === 200) {
           that.reduceArr_all({
             name: this.$route.name,
             removeArr: that.articleItem
-          });
-          this.sureInfo.type = ""; //退出确认框
+          })
+          this.sureInfo.type = "" //退出确认框
         }
-      });
+      })
     }
   }
-};
+}
 </script>
+
 <style lang="scss">
 .bg {
   background: #fff38f !important;
