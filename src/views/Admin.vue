@@ -54,6 +54,7 @@
             @click="showPath(item)"
           >
             <i :class="item.icon" aria-hidden="true"></i>
+            <sup class="red-sup" v-if="index === 3 && (redSup.c || redSup.m || redSup.l || redSup.p)"></sup>
             <span class="item-name" v-text="item.name"></span>
           </li>
           <!-- 退出 -->
@@ -74,10 +75,7 @@
             <a href="javascript: void(0)" @click="$router.push({ path: '/admin/allArticles' })">后台管理</a>
             <div v-for="(item, index) in location" :key="index">
               ->
-              <a
-                href="javascript: void(0)"
-                @click="back(item.pathName, item.params)"
-              >{{ item.showName }}</a>
+              <a href="javascript: void(0)" @click="back(item.pathName, item.params)">{{ item.showName }}</a>
             </div>
           </div>
           <!-- 搜索框 -->
@@ -86,19 +84,9 @@
               <input type="text" placeholder="请输入关键词" v-model="searchKey" @keyup.enter="search" />
             </div>
             <div class="search-time" v-show="choseType === 'time'">
-              <input
-                type="date"
-                @focus="err.from = false"
-                v-model="date.from"
-                :class="{ 'err-border': err.from }"
-              />
+              <input type="date" @focus="err.from = false" v-model="date.from" :class="{ 'err-border': err.from }" />
               至
-              <input
-                @focus="err.to = false"
-                type="date"
-                v-model="date.to"
-                :class="{ 'err-border': err.to }"
-              />
+              <input @focus="err.to = false" type="date" v-model="date.to" :class="{ 'err-border': err.to }" />
             </div>
             <select name id v-model="choseType">
               <option value="key">关键字</option>
@@ -127,11 +115,11 @@ export default {
       userName: localStorage.getItem("userName") || "", // 用户名
       showChildMenu: false, // 显示所有文章的子菜单
       location: [], // 当前位置
-      choseType: "key",
-      searchKey: "",
+      choseType: "key", // 搜索类型
+      searchKey: "", // 关键词
       date: { from: "", to: "" }, // 搜索时间
-      err: { from: false, to: false },
-      showList: false,
+      err: { from: false, to: false }, // 错误信息
+      showList: false, // 面包屑导航
       menu: [
         {
           name: "草稿箱",
@@ -168,10 +156,9 @@ export default {
   },
   computed: {
     ...mapGetters({
-      tagsObj: "tagsObj",
-      news: "news",
-      redSup: "redSup",
-      forLocation: "forLocation"
+      redSup: "axios/redSup",
+      tagsObj: "axios/tagsObj",
+      forLocation: "axios/forLocation"
     }),
     // 问候语
     greet() {
@@ -215,7 +202,8 @@ export default {
       console.log(item)
       this.$router.push({ path: item.path })
     },
-    analysisRoute: function (to, from) {
+    // 分析路由
+    analysisRoute: function(to, from) {
       let first = { pathName: "allArticles", showName: "已发表文章" }
       console.log(to.name)
       switch (to.name) {
@@ -260,9 +248,8 @@ export default {
           this.location = [{ pathName: "search", showName: "搜索" }]
       }
     },
-
     //不管什么情况下都把list高度设为首屏高度
-    initHeight: function () {
+    initHeight: function() {
       if (this.$route.name === "publish") {
         return
       } else {
@@ -274,7 +261,7 @@ export default {
       }
     },
     //函数去抖，避免频繁触发拖垮浏览器
-    debounce: function (func, delay) {
+    debounce: function(func, delay) {
       let context = this,
         args = arguments
       if (document.body.clientWidth < 768) {
@@ -283,17 +270,17 @@ export default {
       if (this.timer) {
         clearTimeout(this.timer)
       }
-      this.timer = setTimeout(function () {
+      this.timer = setTimeout(function() {
         func.apply(context, args)
       }, delay)
     },
-    listen: function () {
+    listen: function() {
       this.debounce(this.initHeight, 500)
     },
-    showPublish: function () {
+    showPublish: function() {
       this.showChildMenu = !this.showChildMenu
     },
-    search: function () {
+    search: function() {
       if (this.choseType === "key") {
         if (!this.searchKey.length) {
           return
@@ -314,7 +301,7 @@ export default {
         this.$router.push({ name: "search", params: { base: date } })
       }
     },
-    back: function (pathName, params) {
+    back: function(pathName, params) {
       if (pathName === "eachTag") {
         this.$router.push({
           name: pathName,
@@ -329,7 +316,7 @@ export default {
         this.$router.push({ name: pathName })
       }
     },
-    showListDelay: function () {
+    showListDelay: function() {
       setTimeout(() => {
         this.showList = !this.showList
       }, 350)
@@ -444,6 +431,15 @@ export default {
           font-size: 16px;
           text-align: start;
           margin-left: 10px;
+        }
+        .red-sup {
+          position: absolute;
+          top: 15px;
+          left: 35px;
+          width: 6px;
+          height: 6px;
+          border-radius: 3px;
+          background: red;
         }
         &:hover {
           background: #0f1215;
