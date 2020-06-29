@@ -1,8 +1,8 @@
-import Vue from "vue";
-import Router from "vue-router";
+import Vue from "vue"
+import Router from "vue-router"
 
 // 正常加载
-import Admin from "./views/Admin.vue";
+import Admin from "./views/Admin.vue"
 
 // 按需（懒）加载（vue实现）推荐
 // 没有指定webpackChunkName,每个组件打包成一个js文件
@@ -16,23 +16,20 @@ import Admin from "./views/Admin.vue";
 // const Login = resolve => { require.ensure([], () => { resolve(require('./views/Login.vue')) }, 'login') }
 
 //后台管理界面
-const miss = resolve => require(["@/components/base/miss"], resolve);
-const allArticles = resolve =>
-  require(["@/components/article/allArticles"], resolve);
-const eachTag = resolve => require(["@/components/article/eachTag"], resolve);
-const draft = resolve => require(["@/components/article/draft"], resolve);
-const review = resolve => require(["@/components/article/review"], resolve);
+const miss = resolve => require(["@/components/base/miss"], resolve)
+const allArticles = resolve => require(["@/components/article/allArticles"], resolve)
+const eachTag = resolve => require(["@/components/article/eachTag"], resolve)
+const draft = resolve => require(["@/components/article/draft"], resolve)
+const review = resolve => require(["@/components/article/review"], resolve)
 // const initEditor = (resolve) =>
 //   require(["@/components/ue/initEditor"], resolve);
-const adminMsgBoard = resolve =>
-  require(["@/components/msgboard/adminMsgBoard"], resolve);
-const comments = resolve => require(["@/components/comment/comments"], resolve);
-const newMsg = resolve => require(["@/components/news/newMsg"], resolve);
-const adminSet = resolve =>
-  require(["@/components/adminSet/adminSet"], resolve);
-const search = resolve => require(["@/components/search/search"], resolve);
+const adminMsgBoard = resolve => require(["@/components/msgboard/adminMsgBoard"], resolve)
+const comments = resolve => require(["@/components/comment/comments"], resolve)
+const newMsg = resolve => require(["@/components/news/newMsg"], resolve)
+const adminSet = resolve => require(["@/components/adminSet/adminSet"], resolve)
+const search = resolve => require(["@/components/search/search"], resolve)
 
-Vue.use(Router);
+Vue.use(Router)
 
 const router = new Router({
   mode: "history",
@@ -163,8 +160,7 @@ const router = new Router({
     {
       path: "/login",
       name: "login",
-      component: () =>
-        import(/* webpackChunkName: "login" */ "./views/Login.vue")
+      component: () => import(/* webpackChunkName: "login" */ "./views/Login.vue")
     },
     {
       path: "/*",
@@ -172,32 +168,32 @@ const router = new Router({
       component: miss
     }
   ]
-});
+})
 
 // 全局前置守卫
 router.beforeEach((to, from, next) => {
   // 如果要去的路由 需要验证
   if (to.matched.some(res => res.meta.requireAuth)) {
     if (localStorage.getItem("validate-info-tk")) {
-      next();
+      next()
     } else {
       next({
         path: "/login"
         // query: { redirect: to.fullPath }
-      });
+      })
     }
   } else {
-    next();
+    next()
   }
-});
+})
 
 // 全局解析守卫
 router.beforeResolve((to, from, next) => {
   // console.log('全局解析守卫 beforeResolve ')
   // console.log(from.path)
   // console.log(to.path)
-  next();
-});
+  next()
+})
 
 // 全局后置钩子
 // router.afterEach((to, from) => {
@@ -207,7 +203,7 @@ router.beforeResolve((to, from, next) => {
 // })
 
 router.onError(e => {
-  console.log(e);
-});
+  console.log(e)
+})
 
-export default router;
+export default router

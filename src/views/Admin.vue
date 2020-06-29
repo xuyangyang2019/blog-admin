@@ -105,7 +105,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from "vuex";
+import { mapState, mapActions } from "vuex"
 
 export default {
   data() {
@@ -151,130 +151,103 @@ export default {
           path: "/admin/adminSet"
         }
       ]
-    };
-  },
-  beforeRouteUpdate(to, from, next) {
-    this.analysisRoute(to);
-    next();
-  },
-  created() {
-    // this.analysisRoute(this.$route);
-    // this.getTagsclass({ publish: true });
-    // this.getNews();
-  },
-  //离开路由则解绑事件
-  beforeRouteLeave(to, from, next) {
-    window.removeEventListener("resize", this.listen);
-    next();
-  },
-  filters: {
-    ifZero: function(value) {
-      if (value > 0) {
-        return value;
-      } else {
-        return 0;
-      }
     }
-  },
-  mounted() {
-    window.addEventListener("resize", this.listen);
-    this.initHeight();
   },
   computed: {
     ...mapState(["tagsObj", "news", "redSup", "forLocation"]),
     activeBg() {
-      return !this.showChildMenu && this.$route.path.indexOf("allArticles") !== -1;
+      return !this.showChildMenu && this.$route.path.indexOf("allArticles") !== -1
     },
     // 问候语
     greet() {
-      let hour = new Date().getHours();
+      let hour = new Date().getHours()
       if (hour >= 0 && hour < 6) {
-        return "凌晨";
+        return "凌晨"
       } else if (hour >= 6 && hour < 11) {
-        return "上午";
+        return "上午"
       } else if (hour >= 11 && hour < 14) {
-        return "中午";
+        return "中午"
       } else if (hour >= 14 && hour < 18) {
-        return "下午";
+        return "下午"
       } else if (hour >= 18 && hour < 24) {
-        return "晚上";
+        return "晚上"
       } else {
-        return "";
+        return ""
       }
     }
   },
   watch: {
     forLocation() {
       if (this.forLocation.length) {
-        this.location = this.forLocation;
+        this.location = this.forLocation
       }
     }
   },
   methods: {
     ...mapActions(["getNews", "getTagsclass"]),
     showPath(item) {
-      console.log(item);
-      this.$router.push({ path: item.path });
+      console.log(item)
+      this.$router.push({ path: item.path })
     },
     //不管什么情况下都把list高度设为首屏高度
     initHeight: function() {
       if (this.$route.name === "publish") {
-        return;
+        return
       } else {
         if (document.body.clientWidth > 767) {
-          this.$refs.list.style.minHeight = document.body.clientHeight - 55 + "px";
+          this.$refs.list.style.minHeight = document.body.clientHeight - 55 + "px"
         } else {
-          this.$refs.list.style = "";
+          this.$refs.list.style = ""
         }
       }
     },
     //函数去抖，避免频繁触发拖垮浏览器
     debounce: function(func, delay) {
       let context = this,
-        args = arguments;
+        args = arguments
       if (document.body.clientWidth < 768) {
-        this.$refs.list.style = "";
+        this.$refs.list.style = ""
       }
       if (this.timer) {
-        clearTimeout(this.timer);
+        clearTimeout(this.timer)
       }
       this.timer = setTimeout(function() {
-        func.apply(context, args);
-      }, delay);
+        func.apply(context, args)
+      }, delay)
     },
     listen: function() {
-      this.debounce(this.initHeight, 500);
+      this.debounce(this.initHeight, 500)
     },
     // 退出登录
     exit() {
-      console.log("退出登录");
+      console.log("退出登录")
       // localStorage.removeItem("map_blog_token_info_item_name");
       // localStorage.removeItem("userName");
       // localStorage.removeItem("lastLogin");
       // this.$router.push({ name: "login" });
     },
     showPublish: function() {
-      this.showChildMenu = !this.showChildMenu;
+      this.showChildMenu = !this.showChildMenu
     },
     search: function() {
       if (this.choseType === "key") {
         if (!this.searchKey.length) {
-          return;
+          return
         }
         this.$router.push({
           name: "search",
           params: { base: this.searchKey }
-        });
+        })
       } else {
         if (!this.date.from) {
-          this.err.from = true;
+          this.err.from = true
         }
         if (!this.date.to) {
-          this.err.to = true;
-          return;
+          this.err.to = true
+          return
         }
-        let date = this.date.from + "to" + this.date.to;
-        this.$router.push({ name: "search", params: { base: date } });
+        let date = this.date.from + "to" + this.date.to
+        this.$router.push({ name: "search", params: { base: date } })
       }
     },
     back: function(pathName, params) {
@@ -282,33 +255,33 @@ export default {
         this.$router.push({
           name: pathName,
           params: { tag: params.tag }
-        });
+        })
       } else if (pathName === "review") {
         this.$router.push({
           name: pathName,
           params: { eTag: params.tag, articleTitle: params.title }
-        });
+        })
       } else {
-        this.$router.push({ name: pathName });
+        this.$router.push({ name: pathName })
       }
     },
     showListDelay: function() {
       setTimeout(() => {
-        this.showList = !this.showList;
-      }, 350);
+        this.showList = !this.showList
+      }, 350)
     },
     // eslint-disable-next-line no-unused-vars
     analysisRoute: function(to, from) {
-      let first = { pathName: "allArticles", showName: "已发表文章" };
+      let first = { pathName: "allArticles", showName: "已发表文章" }
       switch (to.name) {
         case "allArticles":
-          this.location = [first];
-          break;
+          this.location = [first]
+          break
         case "eachTag":
           {
-            let tag = to.params.tag;
+            let tag = to.params.tag
             if (tag === "life") {
-              tag = "生活";
+              tag = "生活"
             }
             this.location = [
               first,
@@ -317,34 +290,55 @@ export default {
                 showName: tag,
                 params: { tag: tag }
               }
-            ];
+            ]
           }
 
-          break;
+          break
         case "review":
-          this.location = this.forLocation;
-          break;
+          this.location = this.forLocation
+          break
         case "draft":
-          this.location = [{ pathName: "draft", showName: "草稿箱" }];
-          break;
+          this.location = [{ pathName: "draft", showName: "草稿箱" }]
+          break
         case "adminMsgBoard":
-          this.location = [{ pathName: "adminMsgBoard", showName: "留言板" }];
-          break;
+          this.location = [{ pathName: "adminMsgBoard", showName: "留言板" }]
+          break
         case "comments":
-          this.location = [{ pathName: "comments", showName: "文章评论" }];
-          break;
+          this.location = [{ pathName: "comments", showName: "文章评论" }]
+          break
         case "newMsg":
-          this.location = [{ pathName: "newMsg", showName: "新消息" }];
-          break;
+          this.location = [{ pathName: "newMsg", showName: "新消息" }]
+          break
         case "adminSet":
-          this.location = [{ pathName: "adminSet", showName: "账户设置" }];
-          break;
+          this.location = [{ pathName: "adminSet", showName: "账户设置" }]
+          break
         case "search":
-          this.location = [{ pathName: "search", showName: "搜索" }];
+          this.location = [{ pathName: "search", showName: "搜索" }]
       }
     }
+  },
+  created() {
+    // this.analysisRoute(this.$route);
+    // this.getTagsclass({ publish: true });
+    // 获取最新的标签
+    this.$store.dispatch("axios/GetTagsclass", { publish: true })
+    // 获取最新的留言评论
+    this.$store.dispatch("axios/GetNews")
+  },
+  mounted() {
+    window.addEventListener("resize", this.listen)
+    this.initHeight()
+  },
+  beforeRouteUpdate(to, from, next) {
+    this.analysisRoute(to)
+    next()
+  },
+  //离开路由则解绑事件
+  beforeRouteLeave(to, from, next) {
+    window.removeEventListener("resize", this.listen)
+    next()
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>
