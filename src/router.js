@@ -17,7 +17,7 @@ import Admin from "./views/Admin.vue"
 
 //后台管理界面
 const miss = resolve => require(["@/components/base/miss"], resolve)
-const allArticles = resolve => require(["@/components/article/allArticles"], resolve)
+// const allArticles = resolve => require(["@/components/article/allArticles"], resolve)
 const eachTag = resolve => require(["@/components/article/eachTag"], resolve)
 const review = resolve => require(["@/components/article/review"], resolve)
 const search = resolve => require(["@/components/search/search"], resolve)
@@ -44,21 +44,26 @@ const router = new Router({
       path: "/admin",
       name: "admin",
       component: Admin,
-      // redirect: "/admin/allArticles",
       meta: {
         requireAuth: true,
         keepAlive: true
       },
       children: [
         {
+          path: "",
+          redirect: "/admin/allArticles"
+        },
+        // 已发表文章
+        {
           path: "allArticles",
           name: "allArticles",
-          component: allArticles,
+          component: () => import(/* webpackChunkName: "admin" */ "./components//article/AllArticles.vue"),
           meta: {
             requireAuth: true,
             keepAlive: true
           }
         },
+        // 指定标签的 已发表的文章
         {
           path: "allArticles/:tag",
           name: "eachTag",
