@@ -33,7 +33,7 @@ const actions = {
     console.log(payload)
     return fetch.post("/api/login", payload)
   },
-  // 获取通知
+  // 获取新消息
   GetNews({ commit }) {
     return fetch.get("/api/getNews").then(data => {
       if (data.newsArr && data.newsArr.length) {
@@ -53,6 +53,7 @@ const actions = {
         })
         state.tagsObj = data
       }
+      console.log(data)
       return data
     })
   },

@@ -17,18 +17,11 @@ import Admin from "./views/Admin.vue"
 
 //后台管理界面
 const miss = resolve => require(["@/components/base/miss"], resolve)
-// const allArticles = resolve => require(["@/components/article/allArticles"], resolve)
 const eachTag = resolve => require(["@/components/article/eachTag"], resolve)
 const review = resolve => require(["@/components/article/review"], resolve)
 const search = resolve => require(["@/components/search/search"], resolve)
 // const initEditor = (resolve) =>
 //   require(["@/components/ue/initEditor"], resolve);
-
-// const draft = resolve => require(["@/components/article/draft"], resolve)
-// const adminMsgBoard = resolve => require(["@/components/msgboard/adminMsgBoard"], resolve)
-// const comments = resolve => require(["@/components/comment/comments"], resolve)
-// const newMsg = resolve => require(["@/components/news/newMsg"], resolve)
-// const adminSet = resolve => require(["@/components/adminSet/adminSet"], resolve)
 
 Vue.use(Router)
 
@@ -57,37 +50,37 @@ const router = new Router({
         {
           path: "allArticles",
           name: "allArticles",
-          component: () => import(/* webpackChunkName: "admin" */ "./components//article/AllArticles.vue"),
+          component: () => import(/* webpackChunkName: "admin" */ "./components/admin/AdminAllArticles.vue"),
           meta: {
             requireAuth: true,
             keepAlive: true
           }
         },
         // 指定标签的 已发表的文章
-        {
-          path: "allArticles/:tag",
-          name: "eachTag",
-          component: eachTag,
-          meta: {
-            requireAuth: true,
-            keepAlive: true
-          }
-        },
-        {
-          path: "review/:eTag/:articleId",
-          name: "review",
-          component: review,
-          meta: {
-            requireAuth: true,
-            keepAlive: true
-          }
-        },
+        // {
+        //   path: "allArticles/:tag",
+        //   name: "eachTag",
+        //   component: eachTag,
+        //   meta: {
+        //     requireAuth: true,
+        //     keepAlive: true
+        //   }
+        // },
+        // {
+        //   path: "review/:eTag/:articleId",
+        //   name: "review",
+        //   component: review,
+        //   meta: {
+        //     requireAuth: true,
+        //     keepAlive: true
+        //   }
+        // },
         // 草稿箱
         {
           path: "draft",
           name: "draft",
           // component: draft,
-          component: () => import(/* webpackChunkName: "admin" */ "./components/article/Draft.vue"),
+          component: () => import(/* webpackChunkName: "admin" */ "./components/admin/AdminDraft.vue"),
           meta: {
             requireAuth: true,
             keepAlive: true
@@ -97,7 +90,7 @@ const router = new Router({
         {
           path: "msgBoard",
           name: "adminMsgBoard",
-          component: () => import(/* webpackChunkName: "admin" */ "./components/msgboard/AdminMsgBoard.vue"),
+          component: () => import(/* webpackChunkName: "admin" */ "./components/admin/AdminMsgBoard.vue"),
           meta: {
             requireAuth: true,
             keepAlive: true
@@ -107,7 +100,7 @@ const router = new Router({
         {
           path: "comments",
           name: "comments",
-          component: () => import(/* webpackChunkName: "admin" */ "./components/comment/Comments.vue"),
+          component: () => import(/* webpackChunkName: "admin" */ "./components/admin/AdminComments.vue"),
           meta: {
             requireAuth: true,
             keepAlive: true
@@ -118,7 +111,7 @@ const router = new Router({
           path: "newMsg",
           name: "newMsg",
           // component: newMsg,
-          component: () => import(/* webpackChunkName: "admin" */ "./components/news/NewMsg.vue"),
+          component: () => import(/* webpackChunkName: "admin" */ "./components/admin/AdminNewMsg.vue"),
           meta: {
             requireAuth: true,
             keepAlive: true
@@ -128,7 +121,7 @@ const router = new Router({
         {
           path: "adminSet",
           name: "adminSet",
-          component: () => import(/* webpackChunkName: "admin" */ "./components/adminSet/AdminSet.vue"),
+          component: () => import(/* webpackChunkName: "admin" */ "./components/admin/AdminSet.vue"),
           meta: {
             requireAuth: true,
             keepAlive: true
