@@ -18,6 +18,41 @@ const ifZero = value => {
   }
 }
 
+// const timeFilter = value => {
+//   value = value.toString()
+//   if (value) {
+//     // taskId
+//     if (value.length === 17) {
+//       value = value.substr(0, 13)
+//     }
+//     if (value.length === 13) {
+//       return dayjs(Number(value)).format('YYYY-MM-DD HH:mm:ss')
+//     }
+//     return dayjs.unix(Number(value)).format('YYYY-MM-DD HH:mm:ss')
+//   } else {
+//     return '-'
+//   }
+// }
+
+const reviseTime = value => {
+  let localTime = new Date(value),
+    year = localTime.getFullYear(),
+    month = localTime.getMonth() + 1,
+    day = localTime.getDate(),
+    hours = localTime.getHours(),
+    minutes = localTime.getMinutes(),
+    // seconds = localTime.getSeconds(),
+    finTime
+  for (let i = 0; i < 10; i++) {
+    if (i === minutes) {
+      minutes = "0" + minutes
+    }
+  }
+  finTime = year + "-" + month + "-" + day + " " + hours + ":" + minutes
+  // + ":" +seconds
+  return finTime
+}
+
 // // 当前零点
 // let currentDay = () => {
 //   let time = new Date().getTime();
@@ -205,5 +240,6 @@ const ifZero = value => {
 // };
 
 export default {
-  ifZero
+  ifZero,
+  reviseTime
 }
