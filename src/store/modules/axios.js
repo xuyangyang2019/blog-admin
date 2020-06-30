@@ -29,8 +29,6 @@ const getters = {
 const actions = {
   // 登陆
   Login({ commit }, payload) {
-    console.log("登陆")
-    console.log(payload)
     return fetch.post("/api/login", payload)
   },
   // 获取新消息
@@ -42,19 +40,19 @@ const actions = {
       return data
     })
   },
-  // 获取技术文章的tag生成导航
-  GetTagsclass({ state }, payload) {
+  // 获取技术文章的tag 生成导航
+  GetTagsclass({ commit }, payload) {
     return fetch.get("/api/adminTags", { publish: payload.publish }).then(data => {
       if (data.tags && data.tags.length) {
-        data.tags.forEach((item, index, arr) => {
-          if (item.tag === "life") {
-            item.tag = "生活"
-          }
-        })
-        state.tagsObj = data
+        // data.tags.forEach((item, index, arr) => {
+        //   if (item.tag === "life") {
+        //     item.tag = "生活"
+        //   }
+        // })
+        // state.tagsObj = data
+        commit("SET_TAGS", data)
       }
-      console.log(data)
-      return data
+      // return data
     })
   },
   // 获取文章
@@ -69,28 +67,18 @@ const actions = {
       params = payload
     }
     return fetch.get("/api/getAdminArticles", params).then(data => {
-      console.log(data)
-      if (data.length) {
-        if (!payload.tag) {
-          if (payload.publish === true) {
-            state.articles.all = data
-          } else {
-            state.articles.drafts = data
-          }
-        } else {
-          state.articles.tags = data
-        }
-      }
-      return data
+      // console.log(data)
+      commit("SET_ARTICLES", { data: data, payload: payload })
+      // return data
     })
   },
   // 获取对应模块的文章总数，为分页按钮个数提供支持
   GetArticlesCount({ commit, state }, payload) {
     return fetch.get("/api/getCount", payload).then(data => {
       commit("PAGE_ARRAY", data)
-      console.log(data)
     })
   },
+  // ========================================================================
   // 获取留言
   GetMsgBoard({ commit, state }, payload) {
     return fetch.get("/api/getAdminBoard", payload).then(data => {
@@ -157,6 +145,24 @@ const mutations = {
       arr.push(i)
     }
     state.pageArray = arr
+  },
+  SET_TAGS(state, tagsObj) {
+    state.tagsObj = tagsObj
+  },
+  SET_ARTICLES(state, dataObj) {
+    let payload = dataObj.payload
+    let data = dataObj.data
+    if (data.length) {
+      if (!payload.tag) {
+        if (payload.publish === true) {
+          state.articles.all = data
+        } else {
+          state.articles.drafts = data
+        }
+      } else {
+        state.articles.tags = data
+      }
+    }
   }
 }
 
