@@ -28,35 +28,7 @@
       <!-- aside -->
       <div class="admin-aside" ref="list">
         <ul class="aside-menu" @click="showListDelay">
-          <!-- 文章列表 -->
-          <li class="already-item" @click="showChildMenu = !showChildMenu">
-            <div class="aside-menu">
-              <i class="fa fa fa-book" aria-hidden="true"></i>
-              <span class="item-name">已发表</span>
-              <i v-if="showChildMenu" class="fa fa-angle-double-down"></i>
-              <i v-else class="fa fa-angle-double-right"></i>
-            </div>
-            <ul v-if="showChildMenu" class="already-item-menu">
-              <li
-                class="child-menu"
-                :class="{ 'current-child': $route.path === '/admin/allArticles' }"
-                @click.stop="showPath({ path: 'allArticles' })"
-              >
-                <td>全部文章</td>
-                <td>共{{ tagsObj.articlesSum }}篇</td>
-              </li>
-              <li
-                v-for="(tag, index) in tagsObj.tags"
-                :key="index"
-                class="child-menu"
-                @click.stop="showPath({ path: 'allArticles' })"
-              >
-                <td>{{ tag.tag }}</td>
-                <td>共{{ tag.num }}篇</td>
-              </li>
-            </ul>
-          </li>
-          <!-- 其他 -->
+          <!-- menu -->
           <li
             class="aside-item"
             :class="{ 'current-item': $route.path === item.path }"
@@ -79,16 +51,7 @@
       <!-- content -->
       <div class="admin-content" ref="content">
         <!-- 搜索 -->
-        <div class="location-search">
-          <!-- 当前路由 -->
-          <div class="location">
-            <span style="color:black;">当前位置：</span>
-            <a href="javascript: void(0)" @click="$router.push({ path: '/admin/allArticles' })">后台管理</a>
-            <div v-for="(item, index) in location" :key="index">
-              ->
-              <a href="javascript: void(0)" @click="back(item.pathName, item.params)">{{ item.showName }}</a>
-            </div>
-          </div>
+        <div class="location-search" v-if="$route.name === 'allArticles' || $route.name === 'draft'">
           <!-- 搜索框 -->
           <div class="search">
             <div class="search-key" v-show="choseType === 'key'">
@@ -133,6 +96,11 @@ export default {
       showList: false, // 面包屑导航
       menu: [
         {
+          name: "已发表",
+          icon: "fa fa-book",
+          path: "/admin/allArticles"
+        },
+        {
           name: "草稿箱",
           icon: "fa fa-dashboard",
           path: "/admin/draft"
@@ -153,14 +121,14 @@ export default {
           path: "/admin/newMsg"
         },
         {
-          name: "发表文章",
-          icon: "fa fa-pencil-square-o",
-          path: "/admin/publish"
-        },
-        {
           name: "账户设置",
           icon: "fa fa-user",
           path: "/admin/adminSet"
+        },
+        {
+          name: "发表文章",
+          icon: "fa fa-pencil-square-o",
+          path: "/admin/publish"
         }
       ]
     }
@@ -208,9 +176,17 @@ export default {
     },
     // 路由跳转
     showPath(item) {
+      console.log(this.$route.path)
+      // console.log(this.$route.name)
+      // console.log(item)
+      console.log(item.path)
+      // console.log(item.name)
       if (this.$route.path === item.path) return
-      console.log(item)
-      this.$router.push({ path: item.path })
+      if (item.params) {
+        this.$router.push({ name: item.name, params: item.params })
+      } else {
+        this.$router.push({ path: item.path })
+      }
     },
     // 分析路由
     analysisRoute: function(to, from) {
