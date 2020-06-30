@@ -8,26 +8,26 @@
   </div>
 </template>
 <script>
-import { mapActions, mapState } from "vuex";
-import list from "@/components/article/articleList";
+import { mapActions, mapState } from "vuex"
+import list from "@/components/article/ArticleList"
 export default {
   components: {
     list
   },
   beforeRouteEnter(to, from, next) {
-    document.title = "后台管理 -文章搜索";
-    next((vm) => {
+    document.title = "后台管理 -文章搜索"
+    next(vm => {
       if (from.name !== "search") {
-        vm.getSearch(to);
+        vm.getSearch(to)
       }
-    });
+    })
   },
   created() {
-    this.getSearch(this.$route);
+    this.getSearch(this.$route)
   },
   beforeRouteUpdate(to, from, next) {
-    this.getSearch(to);
-    next();
+    this.getSearch(to)
+    next()
   },
   computed: {
     ...mapState(["articles"])
@@ -37,23 +37,22 @@ export default {
     getSearch: function(route) {
       //时间范围搜索
       if (route.params.base.indexOf("-") !== -1) {
-        let timeArr = route.params.base.match(/\d+\-\d+\-\d+/g);
+        let timeArr = route.params.base.match(/\d+\-\d+\-\d+/g)
         //utc时间0点起
-        let startTime = new Date(Date.parse(timeArr[0])).getTime();
+        let startTime = new Date(Date.parse(timeArr[0])).getTime()
         //utc时间24点
-        let endTime =
-          new Date(Date.parse(timeArr[1])).getTime() + 1000 * 60 * 60 * 24;
+        let endTime = new Date(Date.parse(timeArr[1])).getTime() + 1000 * 60 * 60 * 24
         this.search({
           publish: true,
           start: startTime,
           end: endTime,
           page: 1
-        });
+        })
         this.getArticlesCount({
           publish: true,
           start: startTime,
           end: endTime
-        });
+        })
         //关键词搜索
       } else {
         this.search({
@@ -61,15 +60,15 @@ export default {
           key: route.params.base,
           according: "key",
           page: 1
-        });
+        })
         this.getArticlesCount({
           publish: true,
           key: route.params.base
-        });
+        })
       }
     }
   }
-};
+}
 </script>
 <style lang="scss">
 .search-articles {

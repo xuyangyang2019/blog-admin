@@ -35,32 +35,30 @@
       </div>
     </div>
     <!-- 详情 -->
-    <div class="newmessage-body">
+    <!-- <div class="newmessage-body">
       <div class="newmessage-content">
         <div class="newmessage-border">
           <h3>新评论一览</h3>
           <div class="news-item">
             <ul>
               <div v-if="!news.comment.length">暂无</div>
-              <template v-for="(item, index) in news.comment">
-                <li>
-                  <span>{{ index + 1 }}.</span>
-                  <span class="news-info-box" :title="item.content">{{ item.content }}</span>
-                  <span
-                    @click="newsView(item._id)"
-                    :class="{ 'icon-rotate': currentView.indexOf(item._id) > -1 }"
-                    class="icon-keyboard_arrow_right"
-                  ></span>
+              <li v-for="(item, index) in news.comment" :key="index">
+                <span>{{ index + 1 }}.</span>
+                <span class="news-info-box" :title="item.content">{{ item.content }}</span>
+                <span
+                  @click="newsView(item._id)"
+                  :class="{ 'icon-rotate': currentView.indexOf(item._id) > -1 }"
+                  class="icon-keyboard_arrow_right"
+                ></span>
+              </li>
+              <transition name="fade">
+                <li class="news-comment-review" v-if="currentView.indexOf(item._id) > -1">
+                  <div class>
+                    <span>{{ item.name }}：</span>
+                    <span v-html="item.say">{{ item.say }}</span>
+                  </div>
                 </li>
-                <transition name="fade">
-                  <li class="news-comment-review" v-if="currentView.indexOf(item._id) > -1">
-                    <div class>
-                      <span>{{ item.name }}：</span>
-                      <span v-html="item.say">{{ item.say }}</span>
-                    </div>
-                  </li>
-                </transition>
-              </template>
+              </transition>
             </ul>
             <div class="clear-news" v-if="!!news.comment.length">
               <button :disabled="dsabd.comment" @click="clearNews('comment')">{{ clearText.comment }}</button>
@@ -74,25 +72,23 @@
           <div class="news-item">
             <ul>
               <div v-if="!news.msgboard.length">暂无</div>
-              <template v-for="(item, index) in news.msgboard">
-                <li>
-                  <span>{{ index + 1 }}.</span>
-                  <span class="news-info-box" :title="item.content">{{ item.content }}</span>
-                  <span
-                    @click="newsView(item._id)"
-                    :class="{ 'icon-rotate': currentView.indexOf(item._id) > -1 }"
-                    class="icon-keyboard_arrow_right"
-                  ></span>
+              <li v-for="(item, index) in news.msgboard" :key="index">
+                <span>{{ index + 1 }}.</span>
+                <span class="news-info-box" :title="item.content">{{ item.content }}</span>
+                <span
+                  @click="newsView(item._id)"
+                  :class="{ 'icon-rotate': currentView.indexOf(item._id) > -1 }"
+                  class="icon-keyboard_arrow_right"
+                ></span>
+              </li>
+              <transition name="fade">
+                <li class="news-msgboard-review" v-if="currentView.indexOf(item._id) > -1">
+                  <div>
+                    <span>{{ item.name }}:</span>
+                    <span v-html="item.say">{{ item.say }}</span>
+                  </div>
                 </li>
-                <transition name="fade">
-                  <li class="news-msgboard-review" v-if="currentView.indexOf(item._id) > -1">
-                    <div>
-                      <span>{{ item.name }}:</span>
-                      <span v-html="item.say">{{ item.say }}</span>
-                    </div>
-                  </li>
-                </transition>
-              </template>
+              </transition>
             </ul>
             <div class="clear-news" v-if="!!news.msgboard.length">
               <button :disabled="dsabd.msgboard" @click="clearNews('msgboard')">{{ clearText.msgboard }}</button>
@@ -106,7 +102,7 @@
           <div class="news-item">
             <ul>
               <div v-if="!news.like.length">暂无</div>
-              <li v-for="(item, index) in news.like">
+              <li v-for="(item, index) in news.like" :key="index">
                 <span>{{ index + 1 }}.</span>
                 <span class="news-info-box" :title="item.content">{{ item.content }}</span>
               </li>
@@ -123,7 +119,7 @@
           <div class="news-item">
             <ul>
               <div v-if="!news.pv.length">暂无</div>
-              <li v-for="(item, index) in news.pv">
+              <li v-for="(item, index) in news.pv" :key="index">
                 <span>{{ index + 1 }}.</span>
                 <span class="news-info-box" :title="item.content">{{ item.content }}</span>
               </li>
@@ -134,7 +130,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 

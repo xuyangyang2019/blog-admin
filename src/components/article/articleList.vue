@@ -22,48 +22,69 @@
       </thead>
       <!-- 表格主题 -->
       <tbody class="tbody-list">
-        <tr v-for="(item, index) in article_list" :class="{ bg: articleItem.indexOf(item.articleId) !== -1 }">
+        <tr
+          v-for="(item, index) in article_list"
+          :key="index"
+          :class="{ bg: articleItem.indexOf(item.articleId) !== -1 }"
+        >
+          <!-- 选中框 -->
           <td>
             <div class="chose" :class="{ checked: articleItem.indexOf(item.articleId) > -1 }">
               <input
                 :id="'checkbox-item' + index"
                 type="checkbox"
                 v-bind:value="item.articleId"
-                @click="singleChecked"
+                @click="singleChecked(item)"
                 v-model="articleItem"
               />
               <label :for="'checkbox-item' + index"></label>
             </div>
           </td>
+          <!-- 序号 -->
           <td>{{ index + 1 }}</td>
+          <!-- 文章名 -->
           <td :title="item.title">{{ item.title }}</td>
+          <!-- 标签 -->
           <td>
-            <span v-for="tag in item.tag" ref="listTag" class="tbody-list-tag">{{ tag | changeLife }}</span>
+            <span v-for="(tag, index) in item.tag" :key="'tag' + index" ref="listTag" class="tbody-list-tag">
+              {{ tag | changeLife }}
+            </span>
           </td>
-          <td>{{ item.pv }}</td>
-          <td>{{ item.likeNum }}</td>
-          <td>{{ item.commentNum }}</td>
-          <td>{{ item.date | reviseTime }}</td>
+          <!-- 浏览 -->
+          <td v-text="item.pv"></td>
+          <!-- 点赞 -->
+          <td v-text="item.likeNum"></td>
+          <!-- 评论 -->
+          <td v-text="item.commentNum"></td>
+          <!-- 日期 -->
+          <td v-text="$options.filters.reviseTime(item.date)"></td>
+          <!-- 操作 -->
           <td class="some-handle">
+            <!-- 浏览 -->
             <span @click="review(item)">
-              <span class="icon-eye icon-eye-a" title="预览"></span>
+              <i class="fa fa-eye" aria-hidden="true" title="预览"></i>
             </span>
+            <!-- 修改 -->
             <span @click="update(item)" :class="{ waiting: updateInfo.wait }">
-              <span class="icon-crop icon-crop-a" title="修改"></span>
+              <i class="fa fa-pencil-square-o" aria-hidden="true" title="修改"></i>
             </span>
+            <!-- 删除 -->
             <span @click="sureDelete(item.articleId, index)">
-              <span class="icon-bin icon-bin-a" title="删除"></span>
+              <i class="fa fa-trash-o" aria-hidden="true" title="删除"></i>
             </span>
           </td>
         </tr>
       </tbody>
     </table>
+
     <div class="remove-all" v-show="articleItem.length">
       <button @click="sureDelete(-1)">删除选中项</button>
     </div>
+
     <transition name="fade" mode="out-in">
       <page v-show="pageArray.length > 1"></page>
     </transition>
+
     <transition name="fade">
       <div class="validate-mask" v-show="!!sureInfo.type.length">
         <div class="validate-bin">
@@ -78,6 +99,7 @@
         </div>
       </div>
     </transition>
+
     <transition name="fade">
       <div class="validate-mask" v-show="updateInfo.show">
         <div class="update-warning">
@@ -90,30 +112,11 @@
 </template>
 
 <script>
-import { mapState, mapMutations, mapActions } from "vuex"
+import { mapMutations, mapActions, mapGetters } from "vuex"
 
 import page from "@/components/base/page"
 
 export default {
-  components: {
-    page
-  },
-  props: {
-    article_list: {
-      type: Array
-    }
-  },
-  //定义过滤器，将life标签替换为“生活”
-  filters: {
-    changeLife: function(value) {
-      if (value === "life") {
-        value = "生活"
-        return value
-      } else {
-        return value
-      }
-    }
-  },
   data() {
     return {
       ifchecked: false,
@@ -135,17 +138,29 @@ export default {
       ]
     }
   },
-  mounted() {
-    if (this.article_list.length) {
-      this.$nextTick(() => {
-        this.$refs.listTag.forEach((item, index, arr) => {
-          item.style.background = "#" + Math.floor(Math.random() * 0xffffff).toString(16)
-        })
-      })
+  computed: {
+    ...mapGetters({
+      pageArray: "axios/pageArray"
+    })
+  },
+  props: {
+    article_list: {
+      type: Array
     }
   },
-  computed: {
-    ...mapState(["pageArray"])
+  components: {
+    page
+  },
+  //定义过滤器，将life标签替换为“生活”
+  filters: {
+    changeLife: function(value) {
+      if (value === "life") {
+        value = "生活"
+        return value
+      } else {
+        return value
+      }
+    }
   },
   watch: {
     article_list: function() {
@@ -161,32 +176,38 @@ export default {
   methods: {
     ...mapMutations(["productView", "reduceArr", "reduceArr_all"]),
     ...mapActions(["removeArticle", "getArticle"]),
+    // 随机生成标签的背景色
     initBackground: function() {
       this.$refs.listTag.forEach((item, index, arr) => {
         item.style.background = this.color[Math.floor(Math.random() * 10)]
       })
     },
-    singleChecked: function() {
-      //加定时器是因为先触发click事件，此时articleItem
-      //还没有被推入新的值，因此将此事件推入事件队列，先让articleItem插值完成
-      setTimeout(() => {
-        if (this.articleItem.length === this.article_list.length) {
-          this.ifchecked = true
-        } else {
-          this.ifchecked = false
-        }
-      }, 0)
+    // 单选
+    singleChecked(article) {
+      console.log("单选")
+      console.log(article)
+      // 加定时器是因为先触发click事件，此时articleItem
+      // 还没有被推入新的值，因此将此事件推入事件队列，先让articleItem插值完成
+      // setTimeout(() => {
+      //   if (this.articleItem.length === this.article_list.length) {
+      //     this.ifchecked = true
+      //   } else {
+      //     this.ifchecked = false
+      //   }
+      // }, 0)
     },
+    // 全选
     allChecked: function() {
-      if (this.articleItem.length !== this.article_list.length) {
-        let _arr = []
-        this.article_list.forEach((item, index, arr) => {
-          _arr.push(item.articleId)
-        })
-        this.articleItem = _arr
-      } else {
-        this.articleItem = []
-      }
+      console.log("全选")
+      // if (this.articleItem.length !== this.article_list.length) {
+      //   let _arr = []
+      //   this.article_list.forEach((item, index, arr) => {
+      //     _arr.push(item.articleId)
+      //   })
+      //   this.articleItem = _arr
+      // } else {
+      //   this.articleItem = []
+      // }
     },
     review: function(item) {
       this.$router.push({
@@ -254,6 +275,15 @@ export default {
         }
       })
     }
+  },
+  mounted() {
+    if (this.article_list.length) {
+      this.$nextTick(() => {
+        this.$refs.listTag.forEach((item, index, arr) => {
+          item.style.background = "#" + Math.floor(Math.random() * 0xffffff).toString(16)
+        })
+      })
+    }
   }
 }
 </script>
@@ -265,6 +295,7 @@ export default {
 .some-handle span {
   cursor: pointer;
 }
+
 .admin-article-list {
   border-collapse: collapse;
   table-layout: fixed;
@@ -296,6 +327,7 @@ export default {
     vertical-align: middle;
   }
 }
+
 .tbody-list tr:nth-child(odd) {
   background: #f5f7fa;
 }
@@ -323,6 +355,7 @@ export default {
 .checked {
   background-position: -16px 50%;
 }
+
 .validate-mask {
   position: fixed;
   width: 100%;
@@ -394,6 +427,7 @@ export default {
 .waiting span {
   cursor: wait !important;
 }
+
 .icon-crop-a,
 .icon-eye-a,
 .icon-bin-a {
@@ -415,6 +449,7 @@ export default {
   color: red;
   background: #409eff;
 }
+
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.3s;
@@ -423,6 +458,7 @@ export default {
 .fade-leave-to {
   opacity: 0;
 }
+
 @media screen and(min-width: 768px) {
   .icon-crop-a,
   .icon-eye-a,

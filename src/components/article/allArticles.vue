@@ -3,37 +3,45 @@
     <list :article_list="articles.all"></list>
   </div>
 </template>
+
 <script>
-import { mapActions, mapState } from "vuex";
-import list from "@/components/article/articleList";
+import { mapActions, mapState, mapGetters } from "vuex"
+import list from "@/components/article/ArticleList"
+
 export default {
   components: {
     list
   },
-  //组件缓存后，为了让每个模块显示正确的页码，故重新计算页码数
-  beforeRouteEnter(to, from, next) {
-    next(vm => {
-      vm.getArticlesCount({ publish: true });
-      document.title = "后台管理 -已发表文章";
-    });
-  },
-  created() {
-    this.allArticles_admin();
-  },
   computed: {
-    ...mapState(["articles"])
+    ...mapGetters({
+      articles: "axios/articles"
+    })
   },
   methods: {
-    ...mapActions(["getArticles", "getArticlesCount"]),
+    // ...mapActions(["getArticles", "getArticlesCount"]),
+    ...mapActions({
+      getArticles: "axios/GetArticles",
+      getArticlesCount: "axios/GetArticlesCount"
+    }),
     allArticles_admin: function() {
       let payload = {
         publish: true,
         page: 1
-      };
-      this.getArticles(payload);
+      }
+      this.getArticles(payload)
     }
+  },
+  created() {
+    this.allArticles_admin()
+  },
+  //组件缓存后，为了让每个模块显示正确的页码，故重新计算页码数
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      vm.getArticlesCount({ publish: true })
+      document.title = "后台管理 -已发表文章"
+    })
   }
-};
+}
 </script>
 <style lang="scss">
 .admin-articles {

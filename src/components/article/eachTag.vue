@@ -4,23 +4,23 @@
   </div>
 </template>
 <script>
-import { mapActions, mapState } from "vuex";
-import list from "@/components/article/articleList";
+import { mapActions, mapState } from "vuex"
+import list from "@/components/article/ArticleList"
 export default {
   components: {
     list
   },
   created() {
-    this.getAdminArticles();
-    document.title = "后台管理--" + this.$route.params.tag + "文章";
+    this.getAdminArticles()
+    document.title = "后台管理--" + this.$route.params.tag + "文章"
   },
   computed: {
     ...mapState(["articles"])
   },
   watch: {
     $route: function() {
-      this.getAdminArticles();
-      document.title = "后台管理--" + this.$route.params.tag;
+      this.getAdminArticles()
+      document.title = "后台管理--" + this.$route.params.tag
     }
   },
   methods: {
@@ -30,12 +30,12 @@ export default {
         publish: true,
         tag: this.$route.params.tag,
         page: 1
-      };
-      this.getArticles(payload);
-      this.getArticlesCount(payload);
+      }
+      this.getArticles(payload)
+      this.getArticlesCount(payload)
     }
   }
-};
+}
 </script>
 <style lang="scss">
 .admin-articles-tag {

@@ -37,8 +37,13 @@
               <i v-else class="fa fa-angle-double-right"></i>
             </div>
             <ul v-if="showChildMenu" class="already-item-menu">
-              <li class="child-menu" @click.stop="showPath({ path: 'allArticles' })">
-                <td>全部文章 {{ tagsObj.articlesSum }}</td>
+              <li
+                class="child-menu"
+                :class="{ 'current-child': $route.path === '/admin/allArticles' }"
+                @click.stop="showPath({ path: 'allArticles' })"
+              >
+                <td>全部文章</td>
+                <td>共{{ tagsObj.articlesSum }}篇</td>
               </li>
               <li
                 v-for="(tag, index) in tagsObj.tags"
@@ -46,7 +51,8 @@
                 class="child-menu"
                 @click.stop="showPath({ path: 'allArticles' })"
               >
-                <td>{{ tag.tag }} {{ tag.num }}</td>
+                <td>{{ tag.tag }}</td>
+                <td>共{{ tag.num }}篇</td>
               </li>
             </ul>
           </li>
@@ -118,7 +124,7 @@ export default {
     return {
       lastLogin: localStorage.getItem("lastLogin") || "My Lord", // 最近一次的登陆时间
       userName: localStorage.getItem("userName") || "", // 用户名
-      showChildMenu: false, // 显示所有文章的子菜单
+      showChildMenu: true, // 显示所有文章的子菜单
       location: [], // 当前位置
       choseType: "key", // 搜索类型
       searchKey: "", // 关键词
@@ -191,7 +197,6 @@ export default {
     }
   },
   methods: {
-    // ...mapActions(["getNews", "getTagsclass"]),
     // 退出登录
     exit() {
       // 删除本地保存的数据
@@ -415,6 +420,7 @@ export default {
 
   .admin-aside {
     width: 250px;
+    min-width: 250px;
     background: #1c2b36;
     transition: all ease 0.5s;
 
@@ -456,46 +462,51 @@ export default {
           background: #4895fc;
         }
       }
-
-      .already-item {
+    }
+    .already-item {
+      display: flex;
+      flex-direction: column;
+      .aside-menu {
+        color: #ffffff;
+        font-family: Arial;
+        text-decoration: none;
+        padding: 15px;
         display: flex;
-        flex-direction: column;
-        .aside-menu {
-          color: #ffffff;
-          font-family: Arial;
-          text-decoration: none;
-          padding: 15px;
-          display: flex;
-          align-items: center;
-          position: relative;
-          .fa {
-            width: 20px;
-            font-size: 18px;
-          }
-          .item-name {
-            width: 80px;
-            font-size: 16px;
-            text-align: start;
-            margin-left: 10px;
-          }
+        align-items: center;
+        position: relative;
+        .fa {
+          width: 20px;
+          font-size: 18px;
+        }
+        .item-name {
+          width: 80px;
+          font-size: 16px;
+          text-align: start;
+          margin-left: 10px;
+        }
 
-          .fa-angle-double-right,
-          .fa-angle-double-down {
-            position: absolute;
-            top: 15px;
-            right: 15px;
+        .fa-angle-double-right,
+        .fa-angle-double-down {
+          position: absolute;
+          top: 15px;
+          right: 15px;
+        }
+      }
+      .already-item-menu {
+        .child-menu {
+          padding: 15px 15px 15px 45px;
+          td {
+            width: 100px;
+            text-align: start;
+          }
+          &:hover {
+            background: #0f1215;
           }
         }
-        .already-item-menu {
-          // margin-left: 35px;
-          border: solid red 1px;
-          .child-menu {
-            // border: solid red 1px;
-            // margin-left: 35px;
-            padding: 15px 15px 15px 35px;
-            &:hover {
-              background: #0f1215;
-            }
+        .current-child {
+          background: #4895fc;
+          &:hover {
+            background: #4895fc;
           }
         }
       }

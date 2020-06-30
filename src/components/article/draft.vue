@@ -1,6 +1,5 @@
 <template>
   <div class="draft">
-    {{ articles }}
     <list :article_list="articles.drafts"></list>
   </div>
 </template>
@@ -8,7 +7,7 @@
 <script>
 import { mapActions, mapGetters } from "vuex"
 
-import list from "@/components/article/articleList"
+import list from "@/components/article/ArticleList"
 
 export default {
   data() {
@@ -21,8 +20,8 @@ export default {
   },
   methods: {
     ...mapActions({
-      getArticles: "axios/GetArticles",
-      getArticlesCount: "axios/GetArticlesCount"
+      getArticles: "axios/GetArticles"
+      // getArticlesCount: "axios/GetArticlesCount"
     }),
     // 分页查询未发表的文章
     allArticles_admin: function() {
@@ -37,13 +36,14 @@ export default {
     list
   },
   created() {
-    console.log("created")
+    // console.log("created")
+    // 查询未发表的文章
     this.allArticles_admin()
   },
   beforeRouteEnter(to, from, next) {
     console.log("beforeRouteEnter")
     next(vm => {
-      vm.getArticlesCount({ publish: false })
+      // vm.getArticlesCount({ publish: false })
       document.title = "后台管理 -草稿箱"
     })
   }
