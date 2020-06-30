@@ -17,7 +17,6 @@ export default {
     msbdAndCmsList
   },
   computed: {
-    // ...mapState(["comments"]),
     ...mapGetters({
       comments: "axios/comments"
     }),

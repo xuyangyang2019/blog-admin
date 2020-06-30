@@ -87,8 +87,8 @@ export default {
     return {
       lastLogin: localStorage.getItem("lastLogin") || "My Lord", // 最近一次的登陆时间
       userName: localStorage.getItem("userName") || "", // 用户名
-      showChildMenu: true, // 显示所有文章的子菜单
-      location: [], // 当前位置
+      // showChildMenu: true, // 显示所有文章的子菜单
+      // location: [], // 当前位置
       choseType: "key", // 搜索类型
       searchKey: "", // 关键词
       date: { from: "", to: "" }, // 搜索时间
@@ -135,8 +135,8 @@ export default {
   },
   computed: {
     ...mapGetters({
-      redSup: "axios/redSup",
-      tagsObj: "axios/tagsObj",
+      redSup: "axios/redSup", // 红点
+      tagsObj: "axios/tagsObj", // 标签信息
       forLocation: "axios/forLocation"
     }),
     // 问候语
@@ -176,63 +176,10 @@ export default {
     },
     // 路由跳转
     showPath(item) {
-      console.log(this.$route.path)
-      // console.log(this.$route.name)
-      // console.log(item)
-      console.log(item.path)
-      // console.log(item.name)
+      // console.log(this.$route.path)
+      // console.log(item.path)
       if (this.$route.path === item.path) return
-      if (item.params) {
-        this.$router.push({ name: item.name, params: item.params })
-      } else {
-        this.$router.push({ path: item.path })
-      }
-    },
-    // 分析路由
-    analysisRoute: function(to, from) {
-      let first = { pathName: "allArticles", showName: "已发表文章" }
-      console.log(to.name)
-      switch (to.name) {
-        case "allArticles":
-          this.location = [first]
-          break
-        case "eachTag":
-          {
-            let tag = to.params.tag
-            if (tag === "life") {
-              tag = "生活"
-            }
-            this.location = [
-              first,
-              {
-                pathName: "eachTag",
-                showName: tag,
-                params: { tag: tag }
-              }
-            ]
-          }
-          break
-        case "review":
-          this.location = this.forLocation
-          break
-        case "draft":
-          this.location = [{ pathName: "draft", showName: "草稿箱" }]
-          break
-        case "adminMsgBoard":
-          this.location = [{ pathName: "adminMsgBoard", showName: "留言板" }]
-          break
-        case "comments":
-          this.location = [{ pathName: "comments", showName: "文章评论" }]
-          break
-        case "newMsg":
-          this.location = [{ pathName: "newMsg", showName: "新消息" }]
-          break
-        case "adminSet":
-          this.location = [{ pathName: "adminSet", showName: "账户设置" }]
-          break
-        case "search":
-          this.location = [{ pathName: "search", showName: "搜索" }]
-      }
+      this.$router.push({ path: item.path })
     },
     //不管什么情况下都把list高度设为首屏高度
     initHeight: function() {
@@ -263,9 +210,6 @@ export default {
     listen: function() {
       this.debounce(this.initHeight, 500)
     },
-    showPublish: function() {
-      this.showChildMenu = !this.showChildMenu
-    },
     search: function() {
       if (this.choseType === "key") {
         if (!this.searchKey.length) {
@@ -287,21 +231,6 @@ export default {
         this.$router.push({ name: "search", params: { base: date } })
       }
     },
-    back: function(pathName, params) {
-      if (pathName === "eachTag") {
-        this.$router.push({
-          name: pathName,
-          params: { tag: params.tag }
-        })
-      } else if (pathName === "review") {
-        this.$router.push({
-          name: pathName,
-          params: { eTag: params.tag, articleTitle: params.title }
-        })
-      } else {
-        this.$router.push({ name: pathName })
-      }
-    },
     showListDelay: function() {
       setTimeout(() => {
         this.showList = !this.showList
@@ -309,8 +238,6 @@ export default {
     }
   },
   created() {
-    // 分析路由
-    this.analysisRoute(this.$route)
     // 获取最新的标签
     this.$store.dispatch("axios/GetTagsclass", { publish: true })
     // 获取最新的留言评论
@@ -323,10 +250,10 @@ export default {
     this.initHeight()
   },
   // 导航守卫 更新之前
-  beforeRouteUpdate(to, from, next) {
-    this.analysisRoute(to)
-    next()
-  },
+  // beforeRouteUpdate(to, from, next) {
+  //   this.analysisRoute(to)
+  //   next()
+  // },
   // 导航守卫 离开路由则解绑事件
   beforeRouteLeave(to, from, next) {
     window.removeEventListener("resize", this.listen)

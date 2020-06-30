@@ -17,7 +17,6 @@ export default {
     msbdAndCmsList
   },
   computed: {
-    // ...mapState(["msgBoard"]),
     ...mapGetters({
       msgBoard: "axios/msgBoard"
     }),
@@ -26,7 +25,6 @@ export default {
     }
   },
   methods: {
-    // ...mapActions(["getMsgBoard", "getMsgCount"])
     ...mapActions({
       getMsgBoard: "axios/GetMsgBoard",
       getMsgCount: "axios/GetMsgCount"

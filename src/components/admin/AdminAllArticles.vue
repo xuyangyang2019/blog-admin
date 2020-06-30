@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import { mapActions, mapState, mapGetters } from "vuex"
+import { mapActions, mapGetters } from "vuex"
 import list from "@/components/article/ArticleList"
 
 export default {
