@@ -336,6 +336,7 @@ export default {
         display: flex;
         align-items: center;
         position: relative;
+        cursor: pointer;
         .fa {
           width: 20px;
           font-size: 18px;
@@ -366,54 +367,6 @@ export default {
         }
       }
     }
-    .already-item {
-      display: flex;
-      flex-direction: column;
-      .aside-menu {
-        color: #ffffff;
-        font-family: Arial;
-        text-decoration: none;
-        padding: 15px;
-        display: flex;
-        align-items: center;
-        position: relative;
-        .fa {
-          width: 20px;
-          font-size: 18px;
-        }
-        .item-name {
-          width: 80px;
-          font-size: 16px;
-          text-align: start;
-          margin-left: 10px;
-        }
-
-        .fa-angle-double-right,
-        .fa-angle-double-down {
-          position: absolute;
-          top: 15px;
-          right: 15px;
-        }
-      }
-      .already-item-menu {
-        .child-menu {
-          padding: 15px 15px 15px 45px;
-          td {
-            width: 100px;
-            text-align: start;
-          }
-          &:hover {
-            background: #0f1215;
-          }
-        }
-        .current-child {
-          background: #4895fc;
-          &:hover {
-            background: #4895fc;
-          }
-        }
-      }
-    }
   }
 
   .admin-content {
@@ -429,13 +382,14 @@ export default {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      border: solid red 1px;
+      padding: 5px 0;
+      // border: solid red 1px;
       .location {
-        border: solid red 1px;
+        // border: solid red 1px;
         display: flex;
       }
       .search {
-        border: solid red 1px;
+        // border: solid red 1px;
         display: flex;
       }
     }

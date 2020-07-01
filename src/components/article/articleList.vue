@@ -1,14 +1,12 @@
 <template>
   <div class="admin-article-list-box">
-    <table class="admin-article-list">
+    <table class="admin-table-articles">
       <!-- 表格头部 -->
       <thead>
         <tr>
           <th>
-            <div class="chose" :class="{ checked: ifchecked }">
-              <input type="checkbox" id="checkAll" v-model="ifchecked" />
-              <label for="checkAll" @click="allChecked">全选</label>
-            </div>
+            <input type="checkbox" id="checkAll" v-model="allChecked" @click="allChoose" />
+            <label for="checkAll">全选</label>
           </th>
           <th>ID</th>
           <th>标题</th>
@@ -25,20 +23,12 @@
         <tr
           v-for="(item, index) in article_list"
           :key="index"
-          :class="{ bg: articleItem.indexOf(item.articleId) !== -1 }"
+          :class="{ bg: articlesChose.indexOf(item.articleId) !== -1 }"
         >
           <!-- 选中框 -->
           <td>
-            <div class="chose" :class="{ checked: articleItem.indexOf(item.articleId) > -1 }">
-              <input
-                :id="'checkbox-item' + index"
-                type="checkbox"
-                v-bind:value="item.articleId"
-                @click="singleChecked(item)"
-                v-model="articleItem"
-              />
-              <label :for="'checkbox-item' + index"></label>
-            </div>
+            <input type="checkbox" v-bind:value="item.articleId" @click="singleChecked()" v-model="articlesChose" />
+            <span style="visibility:hidden;">单选</span>
           </td>
           <!-- 序号 -->
           <td>{{ index + 1 }}</td>
@@ -61,23 +51,23 @@
           <!-- 操作 -->
           <td class="some-handle">
             <!-- 浏览 -->
-            <span @click="review(item)">
-              <i class="fa fa-eye" aria-hidden="true" title="预览"></i>
-            </span>
+            <button class="operation-btn" @click="review(item)">
+              <i class="fa fa-eye fa-lg" aria-hidden="true" title="预览"></i>
+            </button>
             <!-- 修改 -->
-            <span @click="update(item)" :class="{ waiting: updateInfo.wait }">
-              <i class="fa fa-pencil-square-o" aria-hidden="true" title="修改"></i>
-            </span>
+            <button class="operation-btn" @click="update(item)" :class="{ waiting: updateInfo.wait }">
+              <i class="fa fa-pencil-square-o fa-lg" aria-hidden="true" title="修改"></i>
+            </button>
             <!-- 删除 -->
-            <span @click="sureDelete(item.articleId, index)">
-              <i class="fa fa-trash-o" aria-hidden="true" title="删除"></i>
-            </span>
+            <button class="operation-btn" @click="sureDelete(item.articleId, index)">
+              <i class="fa fa-trash-o fa-lg" aria-hidden="true" title="删除"></i>
+            </button>
           </td>
         </tr>
       </tbody>
     </table>
 
-    <div class="remove-all" v-show="articleItem.length">
+    <div class="remove-all" v-show="articlesChose.length">
       <button @click="sureDelete(-1)">删除选中项</button>
     </div>
 
@@ -119,8 +109,8 @@ import page from "@/components/base/page"
 export default {
   data() {
     return {
-      ifchecked: false,
-      articleItem: [],
+      allChecked: false,
+      articlesChose: [], // 选中的文章
       deleteInfo: { aid: -1, index: -1 },
       sureInfo: { warning: "", type: "" },
       updateInfo: { show: false, wait: false },
@@ -164,8 +154,8 @@ export default {
   },
   watch: {
     article_list: function() {
-      this.ifchecked = false
-      this.articleItem = []
+      this.allChecked = false
+      this.articlesChose = []
       this.$nextTick(() => {
         if (this.article_list.length) {
           this.initBackground()
@@ -183,38 +173,37 @@ export default {
       })
     },
     // 单选
-    singleChecked(article) {
-      console.log("单选")
-      console.log(article)
+    singleChecked() {
       // 加定时器是因为先触发click事件，此时articleItem
       // 还没有被推入新的值，因此将此事件推入事件队列，先让articleItem插值完成
-      // setTimeout(() => {
-      //   if (this.articleItem.length === this.article_list.length) {
-      //     this.ifchecked = true
-      //   } else {
-      //     this.ifchecked = false
-      //   }
-      // }, 0)
+      setTimeout(() => {
+        if (this.articlesChose.length === this.article_list.length) {
+          this.allChecked = true
+        } else {
+          this.allChecked = false
+        }
+      }, 0)
     },
     // 全选
-    allChecked: function() {
-      console.log("全选")
-      // if (this.articleItem.length !== this.article_list.length) {
-      //   let _arr = []
-      //   this.article_list.forEach((item, index, arr) => {
-      //     _arr.push(item.articleId)
-      //   })
-      //   this.articleItem = _arr
-      // } else {
-      //   this.articleItem = []
-      // }
+    allChoose: function() {
+      if (this.articlesChose.length !== this.article_list.length) {
+        let _arr = []
+        this.article_list.forEach((item, index, arr) => {
+          _arr.push(item.articleId)
+        })
+        this.articlesChose = _arr
+      } else {
+        this.articlesChose = []
+      }
     },
+    // 预览
     review: function(item) {
       this.$router.push({
         name: "review",
         params: { eTag: item.tag[0], articleId: item.articleId }
       })
     },
+    // 更新
     update: function(item) {
       let that = this
       this.updateInfo = { show: false, wait: true }
@@ -231,12 +220,13 @@ export default {
         }
       })
     },
+    // 确认删除
     sureDelete: function(aid, index) {
       let sInfo = this.sureInfo,
         dInfo = this.deleteInfo
       //选中删除操作
       if (aid === -1) {
-        sInfo.warning = "确定删除选中的" + this.articleItem.length + "项么？"
+        sInfo.warning = "确定删除选中的" + this.articlesChose.length + "项么？"
         sInfo.type = "all"
       } else {
         dInfo.index = index
@@ -245,6 +235,7 @@ export default {
         sInfo.type = "single"
       }
     },
+    // 移除
     remove: function() {
       if (this.sureInfo.type === "single") {
         this.removeSingle()
@@ -252,6 +243,7 @@ export default {
         this.removeAll()
       }
     },
+    // 单个删除
     removeSingle: function() {
       let that = this,
         routeName = this.$route.name,
@@ -263,13 +255,14 @@ export default {
         }
       })
     },
+    // 全部删除
     removeAll() {
       let that = this
-      this.removeArticle({ articleId: this.articleItem }).then(data => {
+      this.removeArticle({ articleId: this.articlesChose }).then(data => {
         if (data.deleteCode === 200) {
           that.reduceArr_all({
             name: this.$route.name,
-            removeArr: that.articleItem
+            removeArr: that.articlesChose
           })
           this.sureInfo.type = "" //退出确认框
         }
@@ -279,6 +272,7 @@ export default {
   mounted() {
     if (this.article_list.length) {
       this.$nextTick(() => {
+        // 随机生成标签的背景色
         this.$refs.listTag.forEach((item, index, arr) => {
           item.style.background = "#" + Math.floor(Math.random() * 0xffffff).toString(16)
         })
@@ -292,15 +286,11 @@ export default {
 .bg {
   background: #fff38f !important;
 }
-.some-handle span {
-  cursor: pointer;
-}
-
-.admin-article-list {
-  border-collapse: collapse;
-  table-layout: fixed;
+.admin-table-articles {
   width: 100%;
   color: #606266;
+  table-layout: fixed;
+  border-collapse: collapse;
   tr {
     border-bottom: 1px solid #ccc;
     text-align: center;
@@ -322,38 +312,54 @@ export default {
     text-overflow: ellipsis;
     overflow: hidden;
   }
+  .some-handle {
+    .operation-btn {
+      cursor: pointer;
+      border: solid #ccc 1px;
+      color: #606266;
+      padding: 2px;
+      margin: 0 5px;
+      border-radius: 2px;
+      &:hover {
+        background: #409eff;
+        .fa-trash-o {
+          color: red;
+        }
+      }
+    }
+  }
+
   input[type="checkbox"],
   label {
     vertical-align: middle;
   }
-}
-
-.tbody-list tr:nth-child(odd) {
-  background: #f5f7fa;
-}
-.tbody-list-tag {
-  display: inline-block;
-  margin: 0 2px;
-  padding: 2px 5px;
-  border-radius: 3px;
-  color: #ffffff;
-}
-.chose {
-  text-align: left;
-  width: 12px;
-  position: relative;
-  background: url("/img/checkbox.png") no-repeat;
-  background-position: 0 50%;
-  input {
-    position: absolute;
-    visibility: hidden;
+  .tbody-list tr:nth-child(odd) {
+    background: #f5f7fa;
   }
-  label {
-    padding-left: 13px;
+  .tbody-list-tag {
+    display: inline-block;
+    margin: 0 2px;
+    padding: 2px 5px;
+    border-radius: 3px;
+    color: #ffffff;
   }
-}
-.checked {
-  background-position: -16px 50%;
+  // .chose {
+  //   text-align: left;
+  //   width: 12px;
+  //   position: relative;
+  //   background: url("/img/checkbox.png") no-repeat;
+  //   background-position: 0 50%;
+  //   input {
+  //     position: absolute;
+  //     visibility: hidden;
+  //   }
+  //   label {
+  //     padding-left: 13px;
+  //   }
+  // }
+  // .checked {
+  //   background-position: -16px 50%;
+  // }
 }
 
 .validate-mask {
