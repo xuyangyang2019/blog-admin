@@ -36,9 +36,9 @@
           <td :title="item.title">{{ item.title }}</td>
           <!-- 标签 -->
           <td>
-            <span v-for="(tag, index) in item.tag" :key="'tag' + index" ref="listTag" class="tbody-list-tag">
-              {{ tag | changeLife }}
-            </span>
+            <span v-for="(tag, index) in item.tag" :key="'tag' + index" ref="listTag" class="tbody-list-tag">{{
+              tag | changeLife
+            }}</span>
           </td>
           <!-- 浏览 -->
           <td v-text="item.pv"></td>
@@ -51,11 +51,11 @@
           <!-- 操作 -->
           <td class="some-handle">
             <!-- 浏览 -->
-            <button class="operation-btn" @click="review(item)">
+            <button class="operation-btn" @click="reviewArticle(item)">
               <i class="fa fa-eye fa-lg" aria-hidden="true" title="预览"></i>
             </button>
             <!-- 修改 -->
-            <button class="operation-btn" @click="update(item)" :class="{ waiting: updateInfo.wait }">
+            <button class="operation-btn" @click="modifyArticle(item)" :class="{ waiting: updateInfo.wait }">
               <i class="fa fa-pencil-square-o fa-lg" aria-hidden="true" title="修改"></i>
             </button>
             <!-- 删除 -->
@@ -67,14 +67,17 @@
       </tbody>
     </table>
 
+    <!-- 批量删除按钮 -->
     <div class="remove-all" v-show="articlesChose.length">
       <button @click="sureDelete(-1)">删除选中项</button>
     </div>
 
+    <!-- 分页 -->
     <transition name="fade" mode="out-in">
       <page v-show="pageArray.length > 1"></page>
     </transition>
 
+    <!-- 二次确认弹框 -->
     <transition name="fade">
       <div class="validate-mask" v-show="!!sureInfo.type.length">
         <div class="validate-bin">
@@ -90,6 +93,7 @@
       </div>
     </transition>
 
+    <!-- 过度窗口 -->
     <transition name="fade">
       <div class="validate-mask" v-show="updateInfo.show">
         <div class="update-warning">
@@ -109,11 +113,12 @@ import page from "@/components/base/page"
 export default {
   data() {
     return {
-      allChecked: false,
-      articlesChose: [], // 选中的文章
+      allChecked: false, // 全选
+      articlesChose: [], // 选中的文章的id的集合
       deleteInfo: { aid: -1, index: -1 },
       sureInfo: { warning: "", type: "" },
       updateInfo: { show: false, wait: false },
+      // 标签背景颜色
       color: [
         "#FF9933",
         "#663300",
@@ -185,7 +190,7 @@ export default {
       }, 0)
     },
     // 全选
-    allChoose: function() {
+    allChoose() {
       if (this.articlesChose.length !== this.article_list.length) {
         let _arr = []
         this.article_list.forEach((item, index, arr) => {
@@ -196,32 +201,35 @@ export default {
         this.articlesChose = []
       }
     },
-    // 预览
-    review: function(item) {
-      this.$router.push({
-        name: "review",
-        params: { eTag: item.tag[0], articleId: item.articleId }
-      })
+    // 预览文章
+    reviewArticle(item) {
+      console.log("预览")
+      console.log(item)
+      // this.$router.push({
+      //   name: "review",
+      //   params: { eTag: item.tag[0], articleId: item.articleId }
+      // })
     },
-    // 更新
-    update: function(item) {
-      let that = this
-      this.updateInfo = { show: false, wait: true }
-      this.getArticle({ tag: item.tag[0], articleId: item.articleId }).then(data => {
-        if (data.length) {
-          this.updateInfo = { show: false, wait: false }
-          if (that.$route.path === "/admin/draft") {
-            that.$router.push({ name: "draftrevise" })
-          } else {
-            that.$router.push({ name: "update" })
-          }
-        } else {
-          this.updateInfo = { show: true, wait: false }
-        }
-      })
+    // 修改文章
+    modifyArticle(item) {
+      console.log("modifyArticle")
+      // let that = this
+      // this.updateInfo = { show: false, wait: true }
+      // this.getArticle({ tag: item.tag[0], articleId: item.articleId }).then(data => {
+      //   if (data.length) {
+      //     this.updateInfo = { show: false, wait: false }
+      //     if (that.$route.path === "/admin/draft") {
+      //       that.$router.push({ name: "draftrevise" })
+      //     } else {
+      //       that.$router.push({ name: "update" })
+      //     }
+      //   } else {
+      //     this.updateInfo = { show: true, wait: false }
+      //   }
+      // })
     },
-    // 确认删除
-    sureDelete: function(aid, index) {
+    // 删除文章
+    sureDelete(aid, index) {
       let sInfo = this.sureInfo,
         dInfo = this.deleteInfo
       //选中删除操作
@@ -235,8 +243,8 @@ export default {
         sInfo.type = "single"
       }
     },
-    // 移除
-    remove: function() {
+    // 确认删除文章
+    remove() {
       if (this.sureInfo.type === "single") {
         this.removeSingle()
       } else {
@@ -244,7 +252,7 @@ export default {
       }
     },
     // 单个删除
-    removeSingle: function() {
+    removeSingle() {
       let that = this,
         routeName = this.$route.name,
         dInfo = this.deleteInfo
