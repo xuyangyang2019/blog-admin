@@ -36,9 +36,9 @@
           <td :title="item.title">{{ item.title }}</td>
           <!-- 标签 -->
           <td>
-            <span v-for="(tag, index) in item.tag" :key="'tag' + index" ref="listTag" class="tbody-list-tag">{{
-              tag | changeLife
-            }}</span>
+            <span v-for="(tag, index) in item.tag" :key="'tag' + index" ref="listTag" class="tbody-list-tag">
+              {{ tag | changeLife }}
+            </span>
           </td>
           <!-- 浏览 -->
           <td v-text="item.pv"></td>
@@ -59,7 +59,7 @@
               <i class="fa fa-pencil-square-o fa-lg" aria-hidden="true" title="修改"></i>
             </button>
             <!-- 删除 -->
-            <button class="operation-btn" @click="sureDelete(item.articleId, index)">
+            <button class="operation-btn" @click="deleteArticle(item.articleId, index)">
               <i class="fa fa-trash-o fa-lg" aria-hidden="true" title="删除"></i>
             </button>
           </td>
@@ -69,7 +69,7 @@
 
     <!-- 批量删除按钮 -->
     <div class="remove-all" v-show="articlesChose.length">
-      <button @click="sureDelete(-1)">删除选中项</button>
+      <button @click="deleteArticles()">删除选中项</button>
     </div>
 
     <!-- 分页 -->
@@ -79,15 +79,15 @@
 
     <!-- 二次确认弹框 -->
     <transition name="fade">
-      <div class="validate-mask" v-show="!!sureInfo.type.length">
+      <div class="validate-mask" v-show="showDeleteDialog">
         <div class="validate-bin">
           <div class="exit-validate">
-            <span @click="sureInfo.type = ''">X</span>
+            <span @click="showDeleteDialog = false">X</span>
           </div>
           <div class="sure-delete">
-            <h3>{{ sureInfo.warning }}</h3>
-            <button @click="remove">确定</button>
-            <button @click="sureInfo.type = ''">取消</button>
+            <h3>{{ deleteDialogMsg }}</h3>
+            <button @click="sureRemove">确定</button>
+            <button @click="showDeleteDialog = false">取消</button>
           </div>
         </div>
       </div>
@@ -115,8 +115,10 @@ export default {
     return {
       allChecked: false, // 全选
       articlesChose: [], // 选中的文章的id的集合
-      deleteInfo: { aid: -1, index: -1 },
-      sureInfo: { warning: "", type: "" },
+      showDeleteDialog: false, // 显示确认删除的对话框
+      deleteDialogMsg: "", // 确人删除的提示语
+      articleIdToDel: {}, // 要删除的文章id
+      deleteType: "single", // 删除的类型 单独删:single 批量删:multi
       updateInfo: { show: false, wait: false },
       // 标签背景颜色
       color: [
@@ -169,15 +171,21 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(["productView", "reduceArr", "reduceArr_all"]),
-    ...mapActions(["removeArticle", "getArticle"]),
-    // 随机生成标签的背景色
-    initBackground: function() {
+    ...mapActions({
+      getArticle: "axios/GetArticle"
+    }),
+    // 随机生成标签的背景色 ok
+    initBackground() {
+      // 随机生成标签的背景色
+      // this.$refs.listTag.forEach((item, index, arr) => {
+      //   item.style.background = "#" + Math.floor(Math.random() * 0xffffff).toString(16)
+      // })
+      // 随机选中颜色
       this.$refs.listTag.forEach((item, index, arr) => {
         item.style.background = this.color[Math.floor(Math.random() * 10)]
       })
     },
-    // 单选
+    // 单选 ok
     singleChecked() {
       // 加定时器是因为先触发click事件，此时articleItem
       // 还没有被推入新的值，因此将此事件推入事件队列，先让articleItem插值完成
@@ -189,7 +197,7 @@ export default {
         }
       }, 0)
     },
-    // 全选
+    // 全选 ok
     allChoose() {
       if (this.articlesChose.length !== this.article_list.length) {
         let _arr = []
@@ -201,7 +209,7 @@ export default {
         this.articlesChose = []
       }
     },
-    // 预览文章
+    // 预览文章 ing
     reviewArticle(item) {
       console.log("预览")
       console.log(item)
@@ -210,7 +218,7 @@ export default {
       //   params: { eTag: item.tag[0], articleId: item.articleId }
       // })
     },
-    // 修改文章
+    // 修改文章 ing
     modifyArticle(item) {
       console.log("modifyArticle")
       // let that = this
@@ -228,62 +236,47 @@ export default {
       //   }
       // })
     },
-    // 删除文章
-    sureDelete(aid, index) {
-      let sInfo = this.sureInfo,
-        dInfo = this.deleteInfo
-      //选中删除操作
-      if (aid === -1) {
-        sInfo.warning = "确定删除选中的" + this.articlesChose.length + "项么？"
-        sInfo.type = "all"
-      } else {
-        dInfo.index = index
-        dInfo.aid = aid
-        sInfo.warning = "确定删除此项么？"
-        sInfo.type = "single"
-      }
+    // 删除单篇文章
+    deleteArticle(aid, index) {
+      this.showDeleteDialog = true
+      this.articleIdToDel.aid = aid
+      this.articleIdToDel.aindex = index
+      this.deleteDialogMsg = "确定删除此项么？"
+      this.deleteType = "single"
+    },
+    // 删除多篇文章
+    deleteArticles() {
+      this.showDeleteDialog = true
+      this.deleteType = "multi"
+      this.deleteDialogMsg = "确定删除选中的" + this.articlesChose.length + "项么？"
     },
     // 确认删除文章
-    remove() {
-      if (this.sureInfo.type === "single") {
-        this.removeSingle()
+    sureRemove() {
+      if (this.deleteType === "single") {
+        // console.log(this.articleIdToDel)
+        this.$store.dispatch("axios/RemoveArticle", { articleId: [this.articleIdToDel.aid] }).then(data => {
+          // 如果删除成功 删除缓存中的数据
+          if (data.deleteCode === 200) {
+            this.$store.commit("axios/REDUCE_ARR", { name: this.$route.name, index: this.articleIdToDel.aindex })
+          }
+        })
       } else {
-        this.removeAll()
+        this.$store.dispatch("axios/RemoveArticle", { articleId: this.articlesChose }).then(data => {
+          if (data.deleteCode === 200) {
+            this.$store.commit("axios/REDUCE_ARR_ALL", {
+              name: this.$route.name,
+              removeArr: this.articlesChose
+            })
+          }
+        })
       }
-    },
-    // 单个删除
-    removeSingle() {
-      let that = this,
-        routeName = this.$route.name,
-        dInfo = this.deleteInfo
-      this.removeArticle({ articleId: [dInfo.aid] }).then(data => {
-        if (data.deleteCode === 200) {
-          that.reduceArr({ name: routeName, index: dInfo.index })
-          this.sureInfo.type = "" //退出确认框
-        }
-      })
-    },
-    // 全部删除
-    removeAll() {
-      let that = this
-      this.removeArticle({ articleId: this.articlesChose }).then(data => {
-        if (data.deleteCode === 200) {
-          that.reduceArr_all({
-            name: this.$route.name,
-            removeArr: that.articlesChose
-          })
-          this.sureInfo.type = "" //退出确认框
-        }
-      })
+      this.showDeleteDialog = false // 退出确认框
     }
   },
   mounted() {
     if (this.article_list.length) {
       this.$nextTick(() => {
-        // 随机生成标签的背景色
-        this.$refs.listTag.forEach((item, index, arr) => {
-          item.style.background = "#" + Math.floor(Math.random() * 0xffffff).toString(16)
-        })
+        this.initBackground()
       })
     }
   }
@@ -325,6 +318,7 @@ export default {
       cursor: pointer;
       border: solid #ccc 1px;
       color: #606266;
+      background: inherit;
       padding: 2px;
       margin: 0 5px;
       border-radius: 2px;

@@ -78,6 +78,32 @@ const actions = {
       commit("PAGE_ARRAY", data)
     })
   },
+  // 删除文章
+  RemoveArticle({ commit }, payload) {
+    return fetch.delete("/api/deleteArticle", payload)
+  },
+  // 精准获取文章
+  GetArticle({ commit, state }, payload) {
+    return fetch.get("/api/getAdminArticle", payload).then(data => {
+      if (data.length) {
+        state.articles.only = data
+        let _tag = data[0].tag[0]
+        if (data[0].publish) {
+          state.forLocation = [
+            { pathName: "allArticles", showName: "已发表文章" },
+            { pathName: "eachTag", showName: _tag, params: { tag: _tag } },
+            { pathName: "review", showName: data[0].title, params: { eTag: _tag, articleId: data[0].articleId } }
+          ]
+        } else {
+          state.forLocation = [
+            { pathName: "draft", showName: "草稿" },
+            { pathName: "review", showName: data[0].title, params: { eTag: _tag, articleId: data[0].articleId } }
+          ]
+        }
+      }
+      return data
+    })
+  },
   // ========================================================================
   // 获取留言
   GetMsgBoard({ commit, state }, payload) {
@@ -113,6 +139,7 @@ const actions = {
 
 // mutations
 const mutations = {
+  // 处理新消息
   HANDLE_NEWS(state, data) {
     //从编辑器回退到管理主页，清除先前获取到的数据
     state.news = { pvNum: 0, comment: [], msgboard: [], like: [], pv: [] }
@@ -138,6 +165,7 @@ const mutations = {
       }
     })
   },
+  // 分页
   PAGE_ARRAY(state, payload) {
     let count = Math.ceil(payload / 10)
     let arr = []
@@ -146,9 +174,11 @@ const mutations = {
     }
     state.pageArray = arr
   },
+  // 设置标签
   SET_TAGS(state, tagsObj) {
     state.tagsObj = tagsObj
   },
+  // 设置文章
   SET_ARTICLES(state, dataObj) {
     let payload = dataObj.payload
     let data = dataObj.data
@@ -162,6 +192,67 @@ const mutations = {
       } else {
         state.articles.tags = data
       }
+    }
+  },
+  // 减少数据
+  REDUCE_ARR(state, payload) {
+    // 删除指定index的文章
+    if (payload.name === "allArticles") {
+      state.articles.all.splice(payload.index, 1)
+    }
+    if (payload.name === "eachTag") {
+      state.articles.tags.splice(payload.index, 1)
+    }
+    if (payload.name === "draft") {
+      state.articles.drafts.splice(payload.index, 1)
+    }
+    //删除留言
+    if (payload.name === "adminMsgBoard") {
+      //删除一级留言
+      if (payload.oneIndex !== -1 && payload.twoIndex === -1) {
+        state.msgBoard.splice(payload.oneIndex, 1)
+        //删除二级留言
+      } else {
+        state.msgBoard[payload.oneIndex].reply.splice(payload.twoIndex, 1)
+      }
+    }
+    if (payload.name === "comments") {
+      //删除一级留言
+      if (payload.oneIndex !== -1 && payload.twoIndex === -1) {
+        state.comments.splice(payload.oneIndex, 1)
+        //删除二级留言
+      } else {
+        state.comments[payload.oneIndex].reply.splice(payload.twoIndex, 1)
+      }
+    }
+  },
+  // 减少数据 all
+  REDUCE_ARR_ALL(state, payload) {
+    // 删除多篇文章
+    if (payload.name === "allArticles") {
+      state.articles.all = state.articles.all.filter((item, index, arr) => {
+        return payload.removeArr.indexOf(item.articleId) < 0
+      })
+    }
+    if (payload.name === "eachTag") {
+      state.articles.tags = state.articles.tags.filter((item, index, arr) => {
+        return payload.removeArr.indexOf(item.articleId) < 0
+      })
+    }
+    if (payload.name === "draft") {
+      state.articles.drafts = state.articles.drafts.filter((item, index, arr) => {
+        return payload.removeArr.indexOf(item.articleId) < 0
+      })
+    }
+    if (payload.name === "adminMsgBoard") {
+      state.msgBoard = state.msgBoard.filter((item, index, arr) => {
+        return payload.removeArr.indexOf(item._id) < 0
+      })
+    }
+    if (payload.name === "comments") {
+      state.comments = state.comments.filter((item, index, arr) => {
+        return payload.removeArr.indexOf(item._id) < 0
+      })
     }
   }
 }
