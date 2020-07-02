@@ -37,15 +37,12 @@ const router = new Router({
       path: "/admin",
       name: "admin",
       component: Admin,
+      redirect: "/admin/allArticles",
       meta: {
         requireAuth: true,
         keepAlive: true
       },
       children: [
-        {
-          path: "",
-          redirect: "/admin/allArticles"
-        },
         // 已发表文章
         {
           path: "allArticles",
