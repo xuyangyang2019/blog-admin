@@ -31,4 +31,4 @@ module.exports = {
   // parser: "babel",
   printWidth: 120
   // endOfLine: "lf"
-};
+}

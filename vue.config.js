@@ -1,16 +1,15 @@
 // vue.config.js
-const path = require("path");
+const path = require("path")
 // 包体积分析
-const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
-  .BundleAnalyzerPlugin;
+const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin
 
 function resolve(dir) {
-  return path.join(__dirname, dir);
+  return path.join(__dirname, dir)
 }
 
-console.log("当前的env环境");
-console.log(process.env.NODE_ENV);
-console.log(process.env.VUE_APP_CURRENTMODE);
+console.log("当前的env环境")
+console.log(process.env.NODE_ENV)
+console.log(process.env.VUE_APP_CURRENTMODE)
 
 module.exports = {
   // 部署生产环境和开发环境下的URL。
@@ -85,7 +84,7 @@ module.exports = {
     config.resolve.alias
       .set("@", resolve("src"))
       .set("assets", resolve("src/assets"))
-      .set("components", resolve("src/components"));
+      .set("components", resolve("src/components"))
   },
 
   configureWebpack: config => {
@@ -93,9 +92,9 @@ module.exports = {
     if (process.env.NODE_ENV === "production") {
       return {
         plugins: [new BundleAnalyzerPlugin()]
-      };
+      }
     } else {
-      config.devtool = "eval-source-map";
+      config.devtool = "eval-source-map"
     }
   },
 
@@ -204,4 +203,4 @@ module.exports = {
     //   }
     // }
   }
-};
+}
