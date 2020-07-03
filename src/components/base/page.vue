@@ -14,7 +14,7 @@
   </div>
 </template>
 <script>
-import { mapState, mapMutations, mapActions } from "vuex"
+import { mapActions, mapGetters } from "vuex"
 export default {
   data() {
     return {
@@ -41,10 +41,17 @@ export default {
     }
   },
   computed: {
-    ...mapState(["pageArray"])
+    ...mapGetters({
+      pageArray: "axios/pageArray"
+    })
   },
   methods: {
-    ...mapActions(["getArticles", "search", "getMsgBoard", "getAdminComments"]),
+    ...mapActions({
+      getArticles: "axios/GetArticles",
+      search: "axios/Search",
+      getMsgBoard: "axios/GetArticles",
+      getAdminComments: "axios/GetAdminComments"
+    }),
     prePage() {
       if (this.currentPage > 1) {
         this.currentPage--

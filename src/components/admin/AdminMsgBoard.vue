@@ -1,16 +1,16 @@
 <template>
-  <msbdAndCmsList :mcList="msgBoard" :initTable="_initTable"></msbdAndCmsList>
+  <msbdAndCmsList :mcList="msgBoard" :initTable="tableTitle"></msbdAndCmsList>
 </template>
 
 <script>
-import { mapState, mapActions, mapGetters } from "vuex"
+import { mapActions, mapGetters } from "vuex"
 
 import msbdAndCmsList from "@/components/common/MsbdAndCmsList.vue"
 
 export default {
   data() {
     return {
-      init: { th: ["序号", "用户名", "留言", "时间"] }
+      tableTitle: { th: ["序号", "用户名", "留言", "时间"] }
     }
   },
   components: {
@@ -19,10 +19,7 @@ export default {
   computed: {
     ...mapGetters({
       msgBoard: "axios/msgBoard"
-    }),
-    _initTable() {
-      return this.init
-    }
+    })
   },
   methods: {
     ...mapActions({

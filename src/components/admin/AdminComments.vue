@@ -1,5 +1,5 @@
 <template>
-  <msbdAndCmsList :mcList="comments" :initTable="_initTable"></msbdAndCmsList>
+  <msbdAndCmsList :mcList="comments" :initTable="tableTitle"></msbdAndCmsList>
 </template>
 
 <script>
@@ -10,7 +10,7 @@ import msbdAndCmsList from "@/components/common/MsbdAndCmsList"
 export default {
   data() {
     return {
-      init: { th: ["序号", "文章标题", "昵称", "评论", "时间"] }
+      tableTitle: { th: ["序号", "文章标题", "昵称", "评论", "时间"] }
     }
   },
   components: {
@@ -19,10 +19,7 @@ export default {
   computed: {
     ...mapGetters({
       comments: "axios/comments"
-    }),
-    _initTable() {
-      return this.init
-    }
+    })
   },
   methods: {
     ...mapActions({
