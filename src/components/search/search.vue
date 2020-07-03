@@ -9,7 +9,7 @@
 </template>
 <script>
 import { mapActions, mapState } from "vuex"
-import list from "@/components/article/ArticleList"
+import list from "@/components/common/ArticleList"
 export default {
   components: {
     list
