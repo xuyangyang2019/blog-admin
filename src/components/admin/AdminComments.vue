@@ -5,7 +5,7 @@
 <script>
 import { mapState, mapActions, mapGetters } from "vuex"
 
-import msbdAndCmsList from "@/components/c-m-list/msbdAndCmsList"
+import msbdAndCmsList from "@/components/common/MsbdAndCmsList"
 
 export default {
   data() {
