@@ -37,7 +37,7 @@ const actions = {
       if (data.newsArr && data.newsArr.length) {
         commit("HANDLE_NEWS", data)
       }
-      return data
+      // return data
     })
   },
   // 获取技术文章的tag 生成导航
@@ -56,7 +56,7 @@ const actions = {
     })
   },
   // 获取文章
-  GetArticles({ commit, state }, payload) {
+  GetArticles({ commit }, payload) {
     let params = {}
     if (!payload.tag) {
       params = {
@@ -104,36 +104,60 @@ const actions = {
       return data
     })
   },
-  // ========================================================================
   // 获取留言
-  GetMsgBoard({ commit, state }, payload) {
+  GetMsgBoard({ commit }, payload) {
     return fetch.get("/api/getAdminBoard", payload).then(data => {
       if (data.length) {
-        state.msgBoard = data
+        commit("SET_MSG_BOARD", data)
       }
-      return data
+      // return data
     })
   },
   // 获取留言数量
-  GetMsgCount({ commit }, payload) {
+  GetMsgCount({ commit }) {
     return fetch.get("/api/getMsgCount").then(data => {
       commit("PAGE_ARRAY", data)
     })
+    // return data
   },
   // 获取评论
-  GetAdminComments({ commit, state }, payload) {
+  GetAdminComments({ commit }, payload) {
     return fetch.get("/api/getAdminComments", payload).then(data => {
       if (data.length) {
-        state.comments = data
+        commit("SET_COMMENTS", data)
       }
-      return data
+      // return data
     })
   },
   // 获取评论数
-  GetCommentsCount({ commit, state }) {
+  GetCommentsCount({ commit }) {
     return fetch.get("/api/getCommentsCount").then(data => {
       commit("PAGE_ARRAY", data)
     })
+  },
+  // 添加回复
+  AddBoardReply({ commit }, payload) {
+    return fetch.patch("/api/addReply", payload)
+  },
+  // 添加评论
+  AddCommentsReply({ commit }, payload) {
+    return fetch.patch("/api/addComment", payload)
+  },
+  // 移除留言
+  RemoveLeavewords({ commit }, payload) {
+    return fetch.delete("/api/removeLeavewords", payload)
+  },
+  // 移除评论
+  RemoveComments({ commit }, payload) {
+    return fetch.delete("/api/removeComments", payload)
+  },
+  // 减少留言
+  ReduceLeavewords({ commit }, payload) {
+    return fetch.patch("/api/reduceLeavewords", payload)
+  },
+  // 减少评论
+  ReduceComments({ commit }, payload) {
+    return fetch.patch("/api/reduceComments", payload)
   }
 }
 
@@ -167,6 +191,7 @@ const mutations = {
   },
   // 分页
   PAGE_ARRAY(state, payload) {
+    // 默认size为10
     let count = Math.ceil(payload / 10)
     let arr = []
     for (let i = 1; i < count + 1; i++) {
@@ -254,6 +279,30 @@ const mutations = {
         return payload.removeArr.indexOf(item._id) < 0
       })
     }
+  },
+  // 设置留言版信息
+  SET_MSG_BOARD(state, msgBoardData) {
+    state.msgBoard = msgBoardData
+  },
+  // 设置评论
+  SET_COMMENTS(state, commentsData) {
+    state.comments = commentsData
+  },
+  ADD_LOCAL_WORD(state, add) {
+    state.msgBoard.forEach((item, index, arr) => {
+      if (item._id === add._id) {
+        state.msgBoard.splice(index, 1, add)
+        return
+      }
+    })
+  },
+  ADD_LOCAL_COMMENT(state, add) {
+    state.comments.forEach((item, index, arr) => {
+      if (item._id === add._id) {
+        state.comments.splice(index, 1, add)
+        return
+      }
+    })
   }
 }
 
