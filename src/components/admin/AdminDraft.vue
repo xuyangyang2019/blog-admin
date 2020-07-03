@@ -7,7 +7,7 @@
 <script>
 import { mapActions, mapGetters } from "vuex"
 
-import list from "@/components/article/ArticleList"
+import list from "@/components/common/ArticleList"
 
 export default {
   data() {
@@ -21,7 +21,6 @@ export default {
   methods: {
     ...mapActions({
       getArticles: "axios/GetArticles"
-      // getArticlesCount: "axios/GetArticlesCount"
     }),
     // 分页查询未发表的文章
     allArticles_admin: function() {
@@ -36,12 +35,10 @@ export default {
     list
   },
   created() {
-    // console.log("created")
     // 查询未发表的文章
     this.allArticles_admin()
   },
   beforeRouteEnter(to, from, next) {
-    console.log("beforeRouteEnter")
     next(vm => {
       // vm.getArticlesCount({ publish: false })
       document.title = "后台管理 -草稿箱"
@@ -53,7 +50,6 @@ export default {
 <style lang="scss">
 .draft {
   margin-top: 15px;
-  border: solid red 1px;
   color: black;
 }
 </style>

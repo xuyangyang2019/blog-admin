@@ -6,7 +6,7 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex"
-import list from "@/components/article/ArticleList"
+import list from "@/components/common/ArticleList"
 
 export default {
   components: {
