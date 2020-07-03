@@ -1,11 +1,11 @@
 <template>
   <div class="msgboard-comments">
-    <table class="msgboard-comments-list">
+    <table class="msgboard-comments-table">
       <!-- 表格头部 -->
-      <thead>
+      <thead class="table-thead">
         <tr>
-          <th :class="{ checked: ifchecked }">
-            <input type="checkbox" id="checkAll" @click="allChecked" v-model="ifchecked" />
+          <th>
+            <input type="checkbox" id="checkAll" @click="allChecked" v-model="allChoose" />
             <label for="checkAll">全选</label>
           </th>
           <th v-for="(th, index) in initTable.th" :key="index" v-text="th"></th>
@@ -13,32 +13,36 @@
         </tr>
       </thead>
       <!-- 表格主体 -->
-      <tbody>
-        <template v-for="(item, index) in mcList">
-          <tr :class="{ 'tr-bg': msgItem.indexOf(item._id) !== -1 }" class="parent-tr" :key="'item' + index">
-            <td :class="{ checked: msgItem.indexOf(item._id) > -1 }">
-              <input type="checkbox" v-bind:value="item._id" @click="singleChecked" v-model="msgItem" />
-              <!-- <label :for="'checkbox-item' + index"></label> -->
-            </td>
-            <td>{{ index + 1 }}</td>
-            <td v-if="item.title" :title="item.title">{{ item.title }}</td>
-            <td>{{ item.name }}</td>
-            <td v-html="item.content">{{ item.content }}</td>
-            <td>{{ item.date | reviseTime }}</td>
-            <td class="some-handle">
-              <span @click="reviewBoard(index)">
-                <span class="icon-eye icon-eye-mc" title="预览"></span>
-              </span>
-              <span @click="replyBoard(index, item.name)">
-                <span class="icon-commenting-o icon-commenting-o-mc" title="回复"></span>
-              </span>
-              <span @click="sureDelete(item._id, -1, index, -1)">
-                <span class="icon-bin icon-bin-mc" title="删除"></span>
-              </span>
-            </td>
-          </tr>
-          <!-- 查看回复内容 -->
-          <transition name="review">
+      <tbody class="table-tbody">
+        <tr
+          v-for="(item, index) in mcList"
+          :key="'item' + index"
+          :class="{ 'tr-bg': itemToDel.indexOf(item._id) !== -1 }"
+          class="parent-tr"
+        >
+          <td>
+            <input type="checkbox" :value="item._id" @click="singleChecked()" v-model="itemToDel" />
+            <span style="visibility:hidden;">单选</span>
+          </td>
+          <td v-text="index + 1"></td>
+          <td v-if="item.title" :title="item.title" v-text="item.title"></td>
+          <td v-text="item.name"></td>
+          <td v-html="item.content"></td>
+          <td v-text="$options.filters.reviseTime(item.date)"></td>
+          <td class="some-handle">
+            <button @click="reviewBoard(index)">
+              <i class="fa fa-eye fa-lg" aria-hidden="true" title="预览"></i>
+            </button>
+            <button @click="replyBoard(index, item.name)">
+              <i class="fa fa-commenting-o" aria-hidden="true" title="回复"></i>
+            </button>
+            <button @click="sureDelete(item._id, -1, index, -1)">
+              <i class="fa fa-trash-o fa-lg" aria-hidden="true" title="删除"></i>
+            </button>
+          </td>
+        </tr>
+        <!-- 查看回复内容 -->
+        <!-- <transition name="review">
             <tr class="msg-review" v-if="current.review.indexOf(index) > -1">
               <td :colspan="$route.name === 'comments' ? 7 : 6">
                 <div class="msg-review-details">
@@ -62,7 +66,6 @@
                         <span>时间：</span>
                         {{ item.date | reviseTime }}
                       </li>
-                      <!-- 管理员的回复与其他回复 -->
                       <li>
                         <div>
                           <span>本条回复：</span>
@@ -70,7 +73,7 @@
                         </div>
                         <table class="admin-reply">
                           <tbody>
-                            <tr v-for="(rep, _index) in item.reply">
+                            <tr v-for="(rep, _index) in item.reply" :key="'rep' + _index">
                               <td :class="{ 'admin-color': rep.name === 'admin（管理员）' }">
                                 {{ rep.name }} @ {{ rep.aite }}：
                               </td>
@@ -79,7 +82,6 @@
                               </td>
                               <td class="reply-time">{{ rep.date | reviseTime }}</td>
                               <td>
-                                <!-- 管理员回复项可设置隐藏回复按钮 v-show = "rep.name !== 'King'"-->
                                 <span
                                   class="icon-commenting-o icon-commenting-o-mc"
                                   @click="replyBoard(index, rep.name)"
@@ -98,11 +100,11 @@
                 </div>
               </td>
             </tr>
-          </transition>
+        </transition>-->
 
-          <!-- 管理员回复 -->
-          <transition name="review">
-            <tr v-if="current.reply === index" class="msg-reply">
+        <!-- 管理员回复 -->
+        <!-- <transition name="review">
+            <tr v-if="current.reply === index" class="msg-reply" :key="'msg' + index">
               <td :colspan="$route.name === 'comments' ? 7 : 6">
                 <textarea
                   placeholder="输入回复内容"
@@ -112,7 +114,6 @@
                 ></textarea>
                 <div class="reply-aite-btn">
                   <span>@ {{ aite }}</span>
-                  <!-- 回复一级留言找到_id直接push即可，二级回复也是直接push，故只需一个参数 -->
                   <div>
                     <button @click="postReply(item._id)">回复</button>
                     <button @click="current.reply = -1">取消</button>
@@ -120,18 +121,20 @@
                 </div>
               </td>
             </tr>
-          </transition>
-        </template>
+        </transition>-->
       </tbody>
     </table>
+
     <!-- 删除（multi）按钮 -->
-    <div class="remove-all" v-show="msgItem.length">
+    <div class="remove-all" v-show="itemToDel.length">
       <button @click="sureDelete(-1)">删除选中项</button>
     </div>
+
     <!-- 分页 -->
     <transition name="fade" mode="out-in">
       <page v-show="pageArray.length > 1"></page>
     </transition>
+
     <!-- 确认删除 -->
     <transition name="fade">
       <div class="validate-mask" v-show="!!sureInfo.type.length">
@@ -151,26 +154,15 @@
 </template>
 
 <script>
-import { mapState, mapMutations, mapActions, mapGetters } from "vuex"
+import { mapMutations, mapActions, mapGetters } from "vuex"
 import page from "@/components/base/page"
 
 export default {
-  components: {
-    page
-  },
-  props: {
-    mcList: {
-      type: Array
-    },
-    initTable: {
-      type: Object
-    }
-  },
   data() {
     return {
+      allChoose: false, // 全选
+      itemToDel: [],
       aite: "",
-      ifchecked: false,
-      msgItem: [],
       deleteInfo: { oneLevelId: -1, twoLevelId: -1, oneIndex: -1, twoIndex: -1 },
       sureInfo: { warning: "", type: "" },
       current: { review: [], reply: -1 },
@@ -184,58 +176,78 @@ export default {
       page: "axios/page"
     })
   },
+  components: {
+    page
+  },
+  props: {
+    mcList: {
+      type: Array
+    },
+    initTable: {
+      type: Object
+    }
+  },
   watch: {
     //换页后清除所有状态
     mcList() {
-      this.ifchecked = false
-      this.msgItem = []
+      this.allChoose = false
+      this.itemToDel = []
       this.currentIndex = -1
     }
   },
   methods: {
-    ...mapMutations(["reduceArr", "reduceArr_all", "addLocalWord", "addLocalComment"]),
-    ...mapActions([
-      "getMsgBoard",
-      "getAdminComments",
-      "addBoardReply",
-      "addCommentsReply",
-      "removeLeavewords",
-      "removeComments",
-      "reduceLeavewords",
-      "reduceComments"
-    ]),
+    ...mapMutations({
+      reduceArr: "axios/REDUCE_ARR",
+      reduceArr_all: "axios/REDUCE_ARR_ALL",
+      addLocalWord: "axios/ADD_LOCAL_WORD",
+      addLocalComment: "axios/ADD_LOCAL_COMMENT"
+    }),
+    ...mapActions({
+      addBoardReply: "axios/AddBoardReply",
+      addCommentsReply: "axios/AddCommentsReply",
+      removeLeavewords: "axios/RemoveLeavewords",
+      removeComments: "axios/RemoveComments",
+      reduceLeavewords: "axios/ReduceLeavewords",
+      reduceComments: "axios/ReduceComments"
+    }),
+    // 单选
     singleChecked: function() {
       //加定时器是因为先触发click事件，此时articleItem
       //还没有被推入新的值，因此将此事件推入事件队列，先让articleItem插值完成
       setTimeout(() => {
-        if (this.msgItem.length === this.mcList.length) {
-          this.ifchecked = true
+        if (this.itemToDel.length === this.mcList.length) {
+          this.allChoose = true
         } else {
-          this.ifchecked = false
+          this.allChoose = false
         }
       }, 0)
     },
+    // 全选
     allChecked: function() {
-      if (this.msgItem.length !== this.mcList.length) {
+      if (this.itemToDel.length !== this.mcList.length) {
         let _arr = []
         this.mcList.forEach((item, index, arr) => {
           _arr.push(item._id)
         })
-        this.msgItem = _arr
+        this.itemToDel = _arr
       } else {
-        this.msgItem = []
+        this.itemToDel = []
       }
     },
+    // 预览
     reviewBoard: function(index, aite) {
       this.current.review.push(index)
     },
+    // 退出预览
     exitReview: function(index) {
       this.current.review.splice(this.current.review.indexOf(index), 1)
     },
+    // 回复
     replyBoard: function(index, aite) {
       this.current.reply = index
       this.aite = aite
     },
+    // 提交回复
     postReply: function(id) {
       let that = this
       if (!this.replyContent.length) {
@@ -277,12 +289,13 @@ export default {
         })
       }
     },
+    // 是否删除
     sureDelete: function(mainId, secondId, oneIndex, twoIndex) {
       //选中删除操作
       if (mainId === -1) {
         let w = this.$route.name === "comments" ? "条评论么？" : "条留言么？"
         this.sureInfo.type = "all"
-        this.sureInfo.warning = "确定删除选中的" + this.msgItem.length + w
+        this.sureInfo.warning = "确定删除选中的" + this.itemToDel.length + w
       } else {
         let w = this.$route.name === "comments" ? "评论么？" : "留言么？"
         let info = this.deleteInfo
@@ -298,6 +311,7 @@ export default {
         }
       }
     },
+    // 删除
     remove: function() {
       if (this.sureInfo.type === "single") {
         this.removeSingle()
@@ -358,17 +372,17 @@ export default {
     removeAll: function() {
       let that = this
       if (this.$route.name === "adminMsgBoard") {
-        this.removeLeavewords({ id: this.msgItem }).then(data => {
+        this.removeLeavewords({ id: this.itemToDel }).then(data => {
           if (data.deleteCode === 200) {
-            that.reduceArr_all({ name: "adminMsgBoard", removeArr: that.msgItem })
+            that.reduceArr_all({ name: "adminMsgBoard", removeArr: that.itemToDel })
             that.sureInfo.type = ""
           }
         })
       }
       if (this.$route.name === "comments") {
-        this.removeComments({ id: this.msgItem }).then(data => {
+        this.removeComments({ id: this.itemToDel }).then(data => {
           if (data.deleteCode === 200) {
-            that.reduceArr_all({ name: "comments", removeArr: that.msgItem })
+            that.reduceArr_all({ name: "comments", removeArr: that.itemToDel })
             that.sureInfo.type = ""
           }
         })
@@ -381,11 +395,27 @@ export default {
 <style lang="scss" scoped>
 .msgboard-comments {
   margin-top: 25px;
+  color: #606266;
 }
-.msgboard-comments-list {
-  border-collapse: collapse;
+
+.msgboard-comments-table {
   table-layout: fixed;
+  border-collapse: collapse;
   width: 100%;
+
+  .table-thead tr {
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+  }
+
+  .table-tbody {
+    border: solid red 1px;
+  }
+
+  .tr-bg {
+    background: #fff38f !important;
+  }
+
   .parent-tr {
     color: #606266;
     border-bottom: 1px solid #ccc;
@@ -393,10 +423,7 @@ export default {
   .msg-review {
     border-bottom: 1px solid #ccc;
   }
-  thead tr {
-    border-top: 1px solid #ccc;
-    border-bottom: 1px solid #ccc;
-  }
+
   tbody tr:nth-child(odd) {
     background: #f5f7fa;
   }
@@ -405,7 +432,7 @@ export default {
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
-    text-align: left;
+    text-align: center;
     padding: 5px;
   }
   .parent-tr td {
@@ -425,23 +452,26 @@ export default {
   label {
     vertical-align: middle;
   }
+
+  .some-handle {
+    .operation-btn {
+      cursor: pointer;
+      border: solid #ccc 1px;
+      color: #606266;
+      background: inherit;
+      padding: 2px;
+      margin: 0 5px;
+      border-radius: 2px;
+      &:hover {
+        background: #409eff;
+        .fa-trash-o {
+          color: red;
+        }
+      }
+    }
+  }
 }
-// .chose {
-//   position: relative;
-//   width: 12px;
-//   background: url("/img/checkbox.png") no-repeat;
-//   background-position: 0 50%;
-//   input {
-//     position: absolute;
-//     visibility: hidden;
-//   }
-//   label {
-//     padding-left: 13px;
-//   }
-// }
-.checked {
-  background-position: -16px 50%;
-}
+
 .msg-reply textarea {
   outline: none;
   border: 1px solid #6aa7fc;
@@ -507,69 +537,7 @@ export default {
   margin-top: -13px;
   cursor: pointer;
 }
-.tr-bg {
-  background: #fff38f !important;
-}
-.validate-mask {
-  position: fixed;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  background: rgba(0, 0, 0, 0.5);
-}
-.validate-bin {
-  margin: 50px auto 0;
-  border-radius: 5px;
-  width: 30%;
-  height: 200px;
-  background: #ffffff;
-}
-.exit-validate {
-  border-radius: 5px 5px 0 0;
-  background: #f7f7f7;
-  text-align: right;
-  padding: 5px 10px 5px 0;
-  span {
-    cursor: pointer;
-  }
-}
-.sure-deleteInfo {
-  text-align: center;
-  color: #e6a23c;
-  h3 {
-    margin-top: 60px;
-  }
-  button {
-    outline: none;
-    color: #fff;
-    cursor: pointer;
-    border: none;
-    border-radius: 5px;
-    padding: 5px 8px;
-    background: #409eff;
-    margin: 50px 10px;
-  }
-  button:hover {
-    opacity: 0.8;
-  }
-}
-.remove-all {
-  display: flex;
-  button {
-    outline: none;
-    color: #fff;
-    cursor: pointer;
-    border: none;
-    border-radius: 5px;
-    padding: 5px 10px;
-    background: #e6a23c;
-    margin: 5px 5px 0 0;
-  }
-  button:hover {
-    opacity: 0.9;
-  }
-}
+
 .admin-reply {
   width: 100%;
   box-sizing: border-box;
@@ -610,42 +578,66 @@ export default {
 .admin-color {
   color: orange;
 }
-.fade-enter-active,
-.fade-leave-active {
-  transition: all ease 0.3s;
+
+.remove-all {
+  display: flex;
+  button {
+    outline: none;
+    color: #fff;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    background: #e6a23c;
+    margin: 5px 5px 0 0;
+  }
+  button:hover {
+    opacity: 0.9;
+  }
 }
-.fade-enter,
-.fade-leave-to {
-  opacity: 0;
-}
-.review-enter-active,
-.review-leave-active {
-  transition: all ease 0.5s;
-}
-.review-enter,
-.review-leave-to {
-  opacity: 0;
-}
-.some-handle span {
-  display: inline-block;
-}
-.icon-commenting-o-mc,
-.icon-eye-mc,
-.icon-bin-mc {
-  font-size: 16px;
-  cursor: pointer;
-  padding: 5px;
-  border: 1px solid #ccc;
-  border-radius: 2px;
-}
-.icon-commenting-o-mc:hover,
-.icon-eye-mc:hover {
-  color: #ffffff;
-  background: #409eff;
-}
-.icon-bin-mc:hover {
-  color: red;
-  background: #409eff;
+.validate-mask {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background: rgba(0, 0, 0, 0.5);
+  .validate-bin {
+    margin: 50px auto 0;
+    border-radius: 5px;
+    width: 30%;
+    height: 200px;
+    background: #ffffff;
+    .exit-validate {
+      border-radius: 5px 5px 0 0;
+      background: #f7f7f7;
+      text-align: right;
+      padding: 5px 10px 5px 0;
+      span {
+        cursor: pointer;
+      }
+    }
+    .sure-deleteInfo {
+      text-align: center;
+      color: #e6a23c;
+      h3 {
+        margin-top: 60px;
+      }
+      button {
+        outline: none;
+        color: #fff;
+        cursor: pointer;
+        border: none;
+        border-radius: 5px;
+        padding: 5px 8px;
+        background: #409eff;
+        margin: 50px 10px;
+      }
+      button:hover {
+        opacity: 0.8;
+      }
+    }
+  }
 }
 @media screen and(min-width: 768px) {
   .icon-commenting-o-mc,
