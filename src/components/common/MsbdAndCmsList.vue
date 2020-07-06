@@ -1,133 +1,56 @@
 <template>
   <div class="msgboard-comments">
-    <table class="msgboard-comments-table">
-      <!-- 表格头部 -->
-      <thead class="table-thead">
-        <tr>
-          <th>
-            <input type="checkbox" id="checkAll" @click="allChecked" v-model="allChoose" />
-            <label for="checkAll">全选</label>
-          </th>
-          <th v-for="(th, index) in initTable.th" :key="index" v-text="th"></th>
-          <th>操作</th>
-        </tr>
-      </thead>
-      <!-- 表格主体 -->
-      <tbody class="table-tbody">
-        <tr
-          v-for="(item, index) in mcList"
-          :key="'item' + index"
-          :class="{ 'tr-bg': itemToDel.indexOf(item._id) !== -1 }"
-          class="parent-tr"
-        >
-          <td>
-            <input type="checkbox" :value="item._id" @click="singleChecked()" v-model="itemToDel" />
+    <!-- 表头 -->
+    <ul class="ul-title">
+      <li>
+        <input type="checkbox" id="checkAll" @click="allChecked" v-model="allChoose" />
+        <label for="checkAll">全选</label>
+      </li>
+      <li v-for="(th, index) in initTable.th" :key="index" v-text="th"></li>
+      <li>操作</li>
+    </ul>
+    <!-- 内容 -->
+    <ul class="ul-content">
+      <li
+        class="li-item"
+        v-for="(item, index) in mcList"
+        :key="'item' + index"
+        :class="{ 'tr-bg': itemsToDel.indexOf(item._id) !== -1 }"
+      >
+        <ul class="ul-item">
+          <li>
+            <input type="checkbox" :value="item._id" @click="singleChecked()" v-model="itemsToDel" />
             <span style="visibility:hidden;">单选</span>
-          </td>
-          <td v-text="index + 1"></td>
-          <td v-if="item.title" :title="item.title" v-text="item.title"></td>
-          <td v-text="item.name"></td>
-          <td v-html="item.content"></td>
-          <td v-text="$options.filters.reviseTime(item.date)"></td>
-          <td class="some-handle">
-            <button @click="reviewBoard(index)">
+          </li>
+          <li v-text="index + 1"></li>
+          <li v-if="item.title" :title="item.title" v-text="item.title"></li>
+          <li v-text="item.name"></li>
+          <li v-html="item.content"></li>
+          <li v-text="$options.filters.reviseTime(item.date)"></li>
+          <li class="some-handle">
+            <button class="operation-btn" @click="reviewBoard(item)">
               <i class="fa fa-eye fa-lg" aria-hidden="true" title="预览"></i>
             </button>
-            <button @click="replyBoard(index, item.name)">
+            <button class="operation-btn" @click="replyBoard(item)">
               <i class="fa fa-commenting-o" aria-hidden="true" title="回复"></i>
             </button>
-            <button @click="sureDelete(item._id, -1, index, -1)">
+            <!-- <button class="operation-btn" @click="sureDelete(item._id, -1, index, -1)"> -->
+            <button class="operation-btn" @click="deleteItem(item._id, -1, index, -1)">
               <i class="fa fa-trash-o fa-lg" aria-hidden="true" title="删除"></i>
             </button>
-          </td>
-        </tr>
+          </li>
+        </ul>
         <!-- 查看回复内容 -->
-        <!-- <transition name="review">
-            <tr class="msg-review" v-if="current.review.indexOf(index) > -1">
-              <td :colspan="$route.name === 'comments' ? 7 : 6">
-                <div class="msg-review-details">
-                  <span class="arrow icon-keyboard_arrow_right" title="收起" @click="exitReview(index)"></span>
-                  <div class="msg-content">
-                    <ul>
-                      <li v-if="$route.name === 'comments'">
-                        <span>文章标题：</span>
-                        {{ item.title }}
-                      </li>
-                      <li>
-                        <span>昵称：</span>
-                        {{ item.name }}
-                      </li>
-                      <li>
-                        <span v-if="$route.name === 'adminMsgBoard'">留言：</span>
-                        <span v-if="$route.name === 'comments'">评论：</span>
-                        <span v-html="item.content">{{ item.content }}</span>
-                      </li>
-                      <li>
-                        <span>时间：</span>
-                        {{ item.date | reviseTime }}
-                      </li>
-                      <li>
-                        <div>
-                          <span>本条回复：</span>
-                          <span v-if="!item.reply.length">暂无</span>
-                        </div>
-                        <table class="admin-reply">
-                          <tbody>
-                            <tr v-for="(rep, _index) in item.reply" :key="'rep' + _index">
-                              <td :class="{ 'admin-color': rep.name === 'admin（管理员）' }">
-                                {{ rep.name }} @ {{ rep.aite }}：
-                              </td>
-                              <td class>
-                                <pre v-html="rep.content">{{ rep.content }}</pre>
-                              </td>
-                              <td class="reply-time">{{ rep.date | reviseTime }}</td>
-                              <td>
-                                <span
-                                  class="icon-commenting-o icon-commenting-o-mc"
-                                  @click="replyBoard(index, rep.name)"
-                                ></span>
-                                <span
-                                  class="icon-bin icon-bin-mc"
-                                  @click="sureDelete(item._id, rep._id, index, _index)"
-                                ></span>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </td>
-            </tr>
-        </transition>-->
-
+        <div></div>
         <!-- 管理员回复 -->
-        <!-- <transition name="review">
-            <tr v-if="current.reply === index" class="msg-reply" :key="'msg' + index">
-              <td :colspan="$route.name === 'comments' ? 7 : 6">
-                <textarea
-                  placeholder="输入回复内容"
-                  @focus="emptyWarning = false"
-                  v-model="replyContent"
-                  :class="{ 'empty-warning': emptyWarning }"
-                ></textarea>
-                <div class="reply-aite-btn">
-                  <span>@ {{ aite }}</span>
-                  <div>
-                    <button @click="postReply(item._id)">回复</button>
-                    <button @click="current.reply = -1">取消</button>
-                  </div>
-                </div>
-              </td>
-            </tr>
-        </transition>-->
-      </tbody>
-    </table>
+        <div></div>
+      </li>
+    </ul>
 
     <!-- 删除（multi）按钮 -->
-    <div class="remove-all" v-show="itemToDel.length">
-      <button @click="sureDelete(-1)">删除选中项</button>
+    <div class="remove-all" v-show="itemsToDel.length">
+      <!-- <button @click="sureDelete(-1)">删除选中项</button> -->
+      <button @click="deleteItems()">删除选中项</button>
     </div>
 
     <!-- 分页 -->
@@ -137,15 +60,15 @@
 
     <!-- 确认删除 -->
     <transition name="fade">
-      <div class="validate-mask" v-show="!!sureInfo.type.length">
+      <div class="validate-mask" v-show="showDeleteDialog">
         <div class="validate-bin">
           <div class="exit-validate">
-            <span @click="sureInfo.type = ''">X</span>
+            <span @click="showDeleteDialog = false">X</span>
           </div>
           <div class="sure-deleteInfo">
-            <h3>{{ sureInfo.warning }}</h3>
-            <button @click="remove">确定</button>
-            <button @click="sureInfo.type = ''">取消</button>
+            <h3 v-text="warningMsg"></h3>
+            <button @click="sureRemove">确定</button>
+            <button @click="showDeleteDialog = false">取消</button>
           </div>
         </div>
       </div>
@@ -161,13 +84,17 @@ export default {
   data() {
     return {
       allChoose: false, // 全选
-      itemToDel: [],
+      itemsToDel: [], // 要删除的项目
+      showDeleteDialog: false, // 二次确认框
+      warningMsg: "", // 警告消息
+      deleteType: "single", // 单独删除还是批量删除
+      deleteInfo: { oneLevelId: -1, twoLevelId: -1, oneIndex: -1, twoIndex: -1 }, // 要删除的信息
+      current: { review: [], reply: -1 }, // 需要展示的留言
+
       aite: "",
-      deleteInfo: { oneLevelId: -1, twoLevelId: -1, oneIndex: -1, twoIndex: -1 },
-      sureInfo: { warning: "", type: "" },
-      current: { review: [], reply: -1 },
-      replyContent: "",
-      emptyWarning: false
+      sureInfo: { warning: "", type: "" }, // 确认删除
+      replyContent: "", // 回复的内容
+      emptyWarning: false // 清空警告
     }
   },
   computed: {
@@ -191,7 +118,7 @@ export default {
     //换页后清除所有状态
     mcList() {
       this.allChoose = false
-      this.itemToDel = []
+      this.itemsToDel = []
       this.currentIndex = -1
     }
   },
@@ -211,11 +138,11 @@ export default {
       reduceComments: "axios/ReduceComments"
     }),
     // 单选
-    singleChecked: function() {
+    singleChecked() {
       //加定时器是因为先触发click事件，此时articleItem
       //还没有被推入新的值，因此将此事件推入事件队列，先让articleItem插值完成
       setTimeout(() => {
-        if (this.itemToDel.length === this.mcList.length) {
+        if (this.itemsToDel.length === this.mcList.length) {
           this.allChoose = true
         } else {
           this.allChoose = false
@@ -223,79 +150,88 @@ export default {
       }, 0)
     },
     // 全选
-    allChecked: function() {
-      if (this.itemToDel.length !== this.mcList.length) {
+    allChecked() {
+      if (this.itemsToDel.length !== this.mcList.length) {
         let _arr = []
         this.mcList.forEach((item, index, arr) => {
           _arr.push(item._id)
         })
-        this.itemToDel = _arr
+        this.itemsToDel = _arr
       } else {
-        this.itemToDel = []
+        this.itemsToDel = []
       }
     },
     // 预览
-    reviewBoard: function(index, aite) {
-      this.current.review.push(index)
+    reviewBoard(item) {
+      console.log("预览")
+      console.log(item._id)
+      // console.log(this.current)
+      // console.log(aite)
+      this.current.review.push(item._id)
     },
     // 退出预览
     exitReview: function(index) {
-      this.current.review.splice(this.current.review.indexOf(index), 1)
+      // this.current.review.splice(this.current.review.indexOf(index), 1)
+      console.log("退出预览")
     },
     // 回复
-    replyBoard: function(index, aite) {
-      this.current.reply = index
-      this.aite = aite
+    replyBoard(item) {
+      console.log("回复")
+      console.log(item)
+      console.log(this.mcList)
+      // this.current.reply = index
+      // this.aite = aite
     },
     // 提交回复
     postReply: function(id) {
-      let that = this
-      if (!this.replyContent.length) {
-        this.emptyWarning = true
-        return
-      }
-      //留言回复
-      if (this.$route.name === "adminMsgBoard") {
-        this.addBoardReply({
-          id: id,
-          name: "admin（管理员）",
-          aite: this.aite,
-          imgUrl: "/img/logo.png",
-          content: this.replyContent,
-          date: new Date()
-        }).then(data => {
-          if (data._id) {
-            that.addLocalWord(data)
-            that.replyContent = ""
-          }
-        })
-      }
+      console.log("提交回复")
+      // let that = this
+      // if (!this.replyContent.length) {
+      //   this.emptyWarning = true
+      //   return
+      // }
+      // //留言回复
+      // if (this.$route.name === "adminMsgBoard") {
+      //   this.addBoardReply({
+      //     id: id,
+      //     name: "admin（管理员）",
+      //     aite: this.aite,
+      //     imgUrl: "/img/logo.png",
+      //     content: this.replyContent,
+      //     date: new Date()
+      //   }).then(data => {
+      //     if (data._id) {
+      //       that.addLocalWord(data)
+      //       that.replyContent = ""
+      //     }
+      //   })
+      // }
       //评论回复
-      if (this.$route.name === "comments") {
-        this.addCommentsReply({
-          _id: id,
-          name: "admin（管理员）",
-          aite: this.aite,
-          imgUrl: "/img/logo.png",
-          content: this.replyContent,
-          like: 0,
-          email: "",
-          date: new Date()
-        }).then(data => {
-          if (data._id) {
-            that.addLocalComment(data)
-            that.replyContent = ""
-          }
-        })
-      }
+      // if (this.$route.name === "comments") {
+      //   this.addCommentsReply({
+      //     _id: id,
+      //     name: "admin（管理员）",
+      //     aite: this.aite,
+      //     imgUrl: "/img/logo.png",
+      //     content: this.replyContent,
+      //     like: 0,
+      //     email: "",
+      //     date: new Date()
+      //   }).then(data => {
+      //     if (data._id) {
+      //       that.addLocalComment(data)
+      //       that.replyContent = ""
+      //     }
+      //   })
+      // }
     },
     // 是否删除
-    sureDelete: function(mainId, secondId, oneIndex, twoIndex) {
+    sureDelete(mainId, secondId, oneIndex, twoIndex) {
       //选中删除操作
       if (mainId === -1) {
         let w = this.$route.name === "comments" ? "条评论么？" : "条留言么？"
         this.sureInfo.type = "all"
-        this.sureInfo.warning = "确定删除选中的" + this.itemToDel.length + w
+        this.sureInfo.warning = "确定删除选中的" + this.itemsToDel.length + w
       } else {
         let w = this.$route.name === "comments" ? "评论么？" : "留言么？"
         let info = this.deleteInfo
@@ -311,81 +247,96 @@ export default {
         }
       }
     },
-    // 删除
-    remove: function() {
-      if (this.sureInfo.type === "single") {
-        this.removeSingle()
+    deleteItem() {
+      console.log("deleteItem")
+      this.showDeleteDialog = true
+      this.deleteType = "single"
+      if (this.$route.name === "comments") {
+        this.warningMsg = "确定删除此条评论么？"
       } else {
-        this.removeAll()
+        this.warningMsg = "确定删除此条条留言么？"
       }
     },
-    //删除单项留言
-    removeSingle: function() {
-      let ol = this.deleteInfo.oneLevelId,
-        tl = this.deleteInfo.twoLevelId,
-        oi = this.deleteInfo.oneIndex,
-        ti = this.deleteInfo.twoIndex,
-        that = this
-      if (this.$route.name === "adminMsgBoard") {
-        //删除一级留言
-        if (ol !== -1 && tl == -1) {
-          this.removeLeavewords({ id: [ol] }).then(data => {
-            if (data.deleteCode === 200) {
-              that.reduceArr({ name: "adminMsgBoard", oneIndex: oi, twoIndex: ti })
-              that.sureInfo.type = ""
-            }
-          })
-        }
-        //删除二级留言
-        if (ol !== -1 && tl !== -1) {
-          this.reduceLeavewords({ mainId: ol, secondId: tl }).then(data => {
-            if (data.deleteCode === 200) {
-              that.reduceArr({ name: "adminMsgBoard", oneIndex: oi, twoIndex: ti })
-              that.sureInfo.type = ""
-            }
-          })
-        }
-      }
-      //删除文章评论
+    deleteItems() {
+      console.log("deleteItems")
+      this.showDeleteDialog = true
+      this.deleteType = "multi"
+      let itemNum = this.itemsToDel.length
       if (this.$route.name === "comments") {
-        //删除一级评论
-        if (ol !== -1 && tl === -1) {
-          this.removeComments({ id: [ol] }).then(data => {
-            if (data.deleteCode === 200) {
-              that.reduceArr({ name: "comments", oneIndex: oi, twoIndex: ti })
-              that.sureInfo.type = ""
-            }
-          })
-        }
-        //删除二级评论
-        if (ol !== -1 && tl !== -1) {
-          this.reduceComments({ mainId: ol, secondId: tl }).then(data => {
-            if (data.deleteCode === 200) {
-              that.reduceArr({ name: "comments", oneIndex: oi, twoIndex: ti })
-              that.sureInfo.type = ""
-            }
-          })
-        }
+        this.warningMsg = `确定删除${itemNum}条评论么？`
+      } else {
+        this.warningMsg = `确定删除${itemNum}条留言么？`
       }
     },
-    //删除选中一级留言
-    removeAll: function() {
-      let that = this
-      if (this.$route.name === "adminMsgBoard") {
-        this.removeLeavewords({ id: this.itemToDel }).then(data => {
-          if (data.deleteCode === 200) {
-            that.reduceArr_all({ name: "adminMsgBoard", removeArr: that.itemToDel })
-            that.sureInfo.type = ""
+    // 删除
+    sureRemove() {
+      if (this.deleteType === "single") {
+        let ol = this.deleteInfo.oneLevelId,
+          tl = this.deleteInfo.twoLevelId,
+          oi = this.deleteInfo.oneIndex,
+          ti = this.deleteInfo.twoIndex,
+          that = this
+        // 删除留言
+        if (this.$route.name === "adminMsgBoard") {
+          //删除一级留言
+          if (ol !== -1 && tl == -1) {
+            this.removeLeavewords({ id: [ol] }).then(data => {
+              if (data.deleteCode === 200) {
+                that.reduceArr({ name: "adminMsgBoard", oneIndex: oi, twoIndex: ti })
+                that.sureInfo.type = ""
+              }
+            })
           }
-        })
-      }
-      if (this.$route.name === "comments") {
-        this.removeComments({ id: this.itemToDel }).then(data => {
-          if (data.deleteCode === 200) {
-            that.reduceArr_all({ name: "comments", removeArr: that.itemToDel })
-            that.sureInfo.type = ""
+          //删除二级留言
+          if (ol !== -1 && tl !== -1) {
+            this.reduceLeavewords({ mainId: ol, secondId: tl }).then(data => {
+              if (data.deleteCode === 200) {
+                that.reduceArr({ name: "adminMsgBoard", oneIndex: oi, twoIndex: ti })
+                that.sureInfo.type = ""
+              }
+            })
           }
-        })
+        }
+        // 删除文章评论
+        if (this.$route.name === "comments") {
+          // 删除一级评论
+          if (ol !== -1 && tl === -1) {
+            this.removeComments({ id: [ol] }).then(data => {
+              if (data.deleteCode === 200) {
+                that.reduceArr({ name: "comments", oneIndex: oi, twoIndex: ti })
+                that.sureInfo.type = ""
+              }
+            })
+          }
+          //删除二级评论
+          if (ol !== -1 && tl !== -1) {
+            this.reduceComments({ mainId: ol, secondId: tl }).then(data => {
+              if (data.deleteCode === 200) {
+                that.reduceArr({ name: "comments", oneIndex: oi, twoIndex: ti })
+                that.sureInfo.type = ""
+              }
+            })
+          }
+        }
+      } else {
+        // this.removeAll()
+        let that = this
+        if (this.$route.name === "adminMsgBoard") {
+          this.removeLeavewords({ id: this.itemsToDel }).then(data => {
+            if (data.deleteCode === 200) {
+              that.reduceArr_all({ name: "adminMsgBoard", removeArr: that.itemsToDel })
+              that.sureInfo.type = ""
+            }
+          })
+        }
+        if (this.$route.name === "comments") {
+          this.removeComments({ id: this.itemsToDel }).then(data => {
+            if (data.deleteCode === 200) {
+              that.reduceArr_all({ name: "comments", removeArr: that.itemsToDel })
+              that.sureInfo.type = ""
+            }
+          })
+        }
       }
     }
   }
@@ -396,6 +347,66 @@ export default {
 .msgboard-comments {
   margin-top: 25px;
   color: #606266;
+  .ul-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 5px 0;
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    li {
+      width: 80px;
+      display: inline-block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    li:last-child {
+      width: 150px;
+    }
+    li:nth-last-child(2) {
+      width: 150px;
+    }
+    li:nth-last-child(3) {
+      width: 150px;
+    }
+  }
+
+  .ul-content {
+    margin-top: 5px;
+    .li-item:nth-child(odd) {
+      background: #f5f7fa;
+    }
+    .tr-bg {
+      background: #fff38f !important;
+    }
+    .li-item {
+      display: flex;
+      flex-direction: column;
+      .ul-item {
+        @extend .ul-title;
+        padding: 5px 0;
+        border: none;
+        .some-handle {
+          .operation-btn {
+            cursor: pointer;
+            border: solid #ccc 1px;
+            color: #606266;
+            background: inherit;
+            padding: 2px;
+            margin: 0 5px;
+            border-radius: 2px;
+            &:hover {
+              background: #409eff;
+              .fa-trash-o {
+                color: red;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 }
 
 .msgboard-comments-table {
@@ -409,24 +420,61 @@ export default {
   }
 
   .table-tbody {
-    border: solid red 1px;
+    // border: solid red 1px;
+    .tr-bg {
+      background: #fff38f !important;
+    }
+    .parent-tr {
+      color: #606266;
+      border-bottom: 1px solid #ccc;
+      td {
+        padding: 5px;
+      }
+      td:not(:first-child),
+      th:not(:first-child) {
+        text-align: center;
+      }
+      td:not(:last-child) {
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+      }
+    }
+
+    .msg-review {
+      border-bottom: 1px solid #ccc;
+      .msg-review-details {
+        position: relative;
+        .arrow {
+          font-size: 26px;
+          color: #444;
+          display: inline-block;
+          margin-bottom: -5px;
+          transform: rotate(-90deg);
+          position: absolute;
+          top: 50%;
+          left: -4px;
+          margin-top: -13px;
+          cursor: pointer;
+        }
+        .msg-content {
+          margin-left: 30px;
+          li {
+            list-style: none;
+            padding: 5px;
+            span:first-child {
+              color: orange;
+            }
+          }
+        }
+      }
+    }
   }
 
-  .tr-bg {
-    background: #fff38f !important;
-  }
-
-  .parent-tr {
-    color: #606266;
-    border-bottom: 1px solid #ccc;
-  }
-  .msg-review {
-    border-bottom: 1px solid #ccc;
-  }
-
-  tbody tr:nth-child(odd) {
+  .table-tbody tr:nth-child(odd) {
     background: #f5f7fa;
   }
+
   th {
     color: #333;
     text-overflow: ellipsis;
@@ -435,40 +483,10 @@ export default {
     text-align: center;
     padding: 5px;
   }
-  .parent-tr td {
-    padding: 5px;
-  }
-  .parent-tr td:not(:first-child),
-  th:not(:first-child) {
-    text-align: center;
-  }
-  .parent-tr td:not(:last-child) {
-    /*border: 1px solid #aaa;*/
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
-  }
+
   input[type="checkbox"],
   label {
     vertical-align: middle;
-  }
-
-  .some-handle {
-    .operation-btn {
-      cursor: pointer;
-      border: solid #ccc 1px;
-      color: #606266;
-      background: inherit;
-      padding: 2px;
-      margin: 0 5px;
-      border-radius: 2px;
-      &:hover {
-        background: #409eff;
-        .fa-trash-o {
-          color: red;
-        }
-      }
-    }
   }
 }
 
@@ -511,31 +529,6 @@ export default {
 .msg-review {
   color: #444 !important;
   background: #ffffff !important;
-}
-.msg-content {
-  margin-left: 30px;
-  li {
-    list-style: none;
-    padding: 5px;
-    span:first-child {
-      color: orange;
-    }
-  }
-}
-.msg-review-details {
-  position: relative;
-}
-.arrow {
-  font-size: 26px;
-  color: #444;
-  display: inline-block;
-  margin-bottom: -5px;
-  transform: rotate(-90deg);
-  position: absolute;
-  top: 50%;
-  left: -4px;
-  margin-top: -13px;
-  cursor: pointer;
 }
 
 .admin-reply {
