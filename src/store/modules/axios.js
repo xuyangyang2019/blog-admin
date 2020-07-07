@@ -158,6 +158,18 @@ const actions = {
   // 减少评论
   ReduceComments({ commit }, payload) {
     return fetch.patch("/api/reduceComments", payload)
+  },
+  // 重置密码
+  ReviseKey({ commit }, payload) {
+    return fetch.patch("/api/reviseKey", payload)
+  },
+  // 拷贝数据
+  CopyData() {
+    return fetch.get("/api/copyData")
+  },
+  // 下载数据库
+  DownloadDb() {
+    return fetch.get("/api/downloadSingle")
   }
 }
 
