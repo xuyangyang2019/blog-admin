@@ -71,13 +71,19 @@
               <span v-if="!item.reply.length">暂无</span>
               <ul v-else>
                 <li class="admin-reply-li" v-for="(rep, _index) in item.reply" :key="'rep' + _index">
-                  <div class="reply-from-to" v-text="rep.name + '@' + rep.aite"></div>
+                  <div class="reply-from-to ellipsis" v-text="rep.name + '@' + rep.aite"></div>
                   <div class="reply-content" v-text="rep.content"></div>
                   <div class="reply-time" v-text="$options.filters.reviseTime(rep.date)"></div>
                   <div class="reply-opration-btns">
-                    <button class="reply-opration-btn" @click="replyBoard(index, rep.name)">
+                    <!-- 回复 不能回复自己 -->
+                    <button
+                      v-if="rep.name !== 'admin（管理员）'"
+                      class="reply-opration-btn"
+                      @click="replyBoard(item, rep)"
+                    >
                       <i class="fa fa-commenting-o fa-lg"></i>
                     </button>
+                    <!-- 删除 -->
                     <button class="reply-opration-btn" @click="sureDelete(item._id, rep._id, index, _index)">
                       <i class="fa fa-trash-o fa-lg"></i>
                     </button>
@@ -89,24 +95,22 @@
         </transition>
         <!-- 管理员回复 -->
         <transition name="review">
-          <tr v-if="current.reply === index" class="msg-reply">
-            <td :colspan="$route.name === 'comments' ? 7 : 6">
-              <textarea
-                placeholder="输入回复内容"
-                @focus="emptyWarning = false"
-                v-model="replyContent"
-                :class="{ 'empty-warning': emptyWarning }"
-              ></textarea>
-              <div class="reply-aite-btn">
-                <span>@ {{ aite }}</span>
-                <!-- 回复一级留言找到_id直接push即可，二级回复也是直接push，故只需一个参数 -->
-                <div>
-                  <button @click="postReply(item._id)">回复</button>
-                  <button @click="current.reply = -1">取消</button>
-                </div>
+          <li v-if="current.reply === item._id" class="msg-reply">
+            <textarea
+              placeholder="输入回复内容"
+              @focus="emptyWarning = false"
+              v-model="replyContent"
+              :class="{ 'empty-warning': emptyWarning }"
+            ></textarea>
+            <div class="reply-aite-btn">
+              <span>@ {{ aite }}</span>
+              <!-- 回复一级留言找到_id直接push即可，二级回复也是直接push，故只需一个参数 -->
+              <div>
+                <button @click="postReply(item._id)">回复</button>
+                <button @click="current.reply = -1">取消</button>
               </div>
-            </td>
-          </tr>
+            </div>
+          </li>
         </transition>
       </li>
     </ul>
@@ -154,11 +158,10 @@ export default {
       deleteType: "single", // 单独删除还是批量删除
       deleteInfo: { oneLevelId: -1, twoLevelId: -1, oneIndex: -1, twoIndex: -1 }, // 要删除的信息
       current: { review: [], reply: -1 }, // 需要展示的留言
-
-      aite: "",
+      aite: "", // 要@的人
       sureInfo: { warning: "", type: "" }, // 确认删除
       replyContent: "", // 回复的内容
-      emptyWarning: false // 清空警告
+      emptyWarning: false // 回复内容为空发出警告
     }
   },
   computed: {
@@ -227,10 +230,6 @@ export default {
     },
     // 预览
     reviewBoard(item) {
-      console.log("预览")
-      console.log(item._id)
-      // console.log(this.current)
-      // console.log(aite)
       let rid = this.current.review.indexOf(item._id)
       if (rid >= 0) {
         this.current.review.splice(rid, 1)
@@ -238,27 +237,29 @@ export default {
         this.current.review.push(item._id)
       }
     },
-    // 退出预览
-    exitReview: function(index) {
-      // this.current.review.splice(this.current.review.indexOf(index), 1)
-      console.log("退出预览")
-    },
     // 回复
-    replyBoard(item) {
-      console.log("回复")
-      console.log(item)
-      console.log(this.mcList)
-      // this.current.reply = index
-      // this.aite = aite
+    replyBoard(item, rep) {
+      if (this.current.reply === item._id && !rep) {
+        this.current.reply = null
+      } else {
+        this.current.reply = item._id
+        if (rep) {
+          this.aite = rep.name
+        } else {
+          this.aite = item.name
+        }
+      }
     },
     // 提交回复
-    postReply: function(id) {
+    postReply(id) {
       console.log("提交回复")
+      console.log(id)
+      console.log(this.replyContent)
       // let that = this
-      // if (!this.replyContent.length) {
-      //   this.emptyWarning = true
-      //   return
-      // }
+      if (!this.replyContent.length) {
+        this.emptyWarning = true
+        return
+      }
       // //留言回复
       // if (this.$route.name === "adminMsgBoard") {
       //   this.addBoardReply({
@@ -502,7 +503,7 @@ export default {
             justify-content: space-between;
             padding: 5px 5px 5px 20px;
             .reply-from-to {
-              width: 150px;
+              width: 250px;
               color: #e6a23c;
             }
             .reply-time {
@@ -511,12 +512,47 @@ export default {
             }
             .reply-opration-btns {
               width: 80px;
-              display: flex;
-              justify-content: space-evenly;
+              text-align: end;
               .reply-opration-btn {
                 @extend .base-btn;
+                margin-left: 10px;
               }
             }
+          }
+        }
+      }
+      .msg-reply {
+        padding: 5px;
+        width: 90%;
+        margin-left: 5%;
+        textarea {
+          outline: none;
+          border: 1px solid #6aa7fc;
+          border-radius: 4px;
+          width: 100%;
+          height: 50px;
+          padding: 5px;
+          box-sizing: border-box;
+          resize: none;
+        }
+        .reply-aite-btn {
+          display: flex;
+          justify-content: space-between;
+          span {
+            margin-left: 5px;
+          }
+          button {
+            background: #5bc0de;
+            color: #fff;
+            padding: 3px 10px;
+            margin-left: 5px;
+            border: 1px solid #46b8da;
+            border-radius: 4px;
+            outline: none;
+            cursor: pointer;
+          }
+          button:hover {
+            background: #46afcb;
           }
         }
       }
@@ -524,45 +560,8 @@ export default {
   }
 }
 
-.msg-reply textarea {
-  outline: none;
-  border: 1px solid #6aa7fc;
-  border-radius: 4px;
-  width: 100%;
-  height: 50px;
-  padding: 5px;
-  box-sizing: border-box;
-  resize: none;
-}
 .empty-warning {
   border: 1px solid red !important;
-}
-.msg-reply td {
-  padding: 8px 1px;
-}
-.reply-aite-btn {
-  display: flex;
-  justify-content: space-between;
-  span {
-    margin-left: 5px;
-  }
-  button {
-    background: #5bc0de;
-    color: #fff;
-    padding: 3px 10px;
-    margin-left: 5px;
-    border: 1px solid #46b8da;
-    border-radius: 4px;
-    outline: none;
-    cursor: pointer;
-  }
-  button:hover {
-    background: #46afcb;
-  }
-}
-
-.admin-color {
-  color: orange;
 }
 
 .remove-all {
