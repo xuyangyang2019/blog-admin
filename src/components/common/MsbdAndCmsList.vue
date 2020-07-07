@@ -38,9 +38,8 @@
               <i v-else class="fa fa-eye-slash fa-lg" aria-hidden="true" title="预览"></i>
             </button>
             <button class="operation-btn" @click="replyBoard(item)">
-              <i class="fa fa-commenting-o" aria-hidden="true" title="回复"></i>
+              <i class="fa fa-commenting-o fa-lg" aria-hidden="true" title="回复"></i>
             </button>
-            <!-- <button class="operation-btn" @click="sureDelete(item._id, -1, index, -1)"> -->
             <button class="operation-btn" @click="deleteItem(item._id, -1, index, -1)">
               <i class="fa fa-trash-o fa-lg" aria-hidden="true" title="删除"></i>
             </button>
@@ -49,47 +48,42 @@
         <!-- 查看回复内容 -->
         <transition name="review">
           <ul class="msg-review" v-if="current.review.indexOf(item._id) > -1">
-            <li v-if="$route.name === 'comments'">
+            <li class="msg-review-li" v-if="$route.name === 'comments'">
               <span>文章标题：</span>
               {{ item.title }}
             </li>
-            <li>
+            <li class="msg-review-li">
               <span>昵称：</span>
               {{ item.name }}
             </li>
-            <li>
+            <li class="msg-review-li">
               <span v-if="$route.name === 'adminMsgBoard'">留言：</span>
-              <span v-if="$route.name === 'comments'">评论：</span>
-              <span v-html="item.content">{{ item.content }}</span>
+              <span v-else-if="$route.name === 'comments'">评论：</span>
+              <span v-text="item.content">{{ item.content }}</span>
             </li>
-            <li>
+            <li class="msg-review-li">
               <span>时间：</span>
               {{ item.date | reviseTime }}
             </li>
             <!-- 管理员的回复与其他回复 -->
-            <li>
-              <div>
-                <span>本条回复：</span>
-                <span v-if="!item.reply.length">暂无</span>
-              </div>
-              <table class="admin-reply">
-                <tbody>
-                  <tr v-for="(rep, _index) in item.reply" :key="'rep' + _index">
-                    <td :class="{ 'admin-color': rep.name === 'admin（管理员）' }">
-                      {{ rep.name }} @ {{ rep.aite }}：
-                    </td>
-                    <td class>
-                      <pre v-html="rep.content">{{ rep.content }}</pre>
-                    </td>
-                    <td class="reply-time">{{ rep.date | reviseTime }}</td>
-                    <td>
-                      <!-- 管理员回复项可设置隐藏回复按钮 v-show = "rep.name !== 'King'"-->
-                      <span class="icon-commenting-o icon-commenting-o-mc" @click="replyBoard(index, rep.name)"></span>
-                      <span class="icon-bin icon-bin-mc" @click="sureDelete(item._id, rep._id, index, _index)"></span>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+            <li class="admin-reply">
+              <span>本条回复：</span>
+              <span v-if="!item.reply.length">暂无</span>
+              <ul v-else>
+                <li class="admin-reply-li" v-for="(rep, _index) in item.reply" :key="'rep' + _index">
+                  <div class="reply-from-to" v-text="rep.name + '@' + rep.aite"></div>
+                  <div class="reply-content" v-text="rep.content"></div>
+                  <div class="reply-time" v-text="$options.filters.reviseTime(rep.date)"></div>
+                  <div class="reply-opration-btns">
+                    <button class="reply-opration-btn" @click="replyBoard(index, rep.name)">
+                      <i class="fa fa-commenting-o fa-lg"></i>
+                    </button>
+                    <button class="reply-opration-btn" @click="sureDelete(item._id, rep._id, index, _index)">
+                      <i class="fa fa-trash-o fa-lg"></i>
+                    </button>
+                  </div>
+                </li>
+              </ul>
             </li>
           </ul>
         </transition>
@@ -419,6 +413,22 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.base-btn {
+  cursor: pointer;
+  width: 30px;
+  color: #606266;
+  background: inherit;
+  padding: 2px;
+  border-radius: 2px;
+  border: solid #ccc 1px;
+  &:hover {
+    color: #fff;
+    background: #409eff;
+    .fa-trash-o {
+      color: red;
+    }
+  }
+}
 .msgboard-comments {
   color: #606266;
   height: 100%;
@@ -432,6 +442,7 @@ export default {
     padding: 5px 0;
     border-top: 1px solid #ccc;
     border-bottom: 1px solid #ccc;
+    min-height: 30px;
     li {
       width: 80px;
       display: inline-block;
@@ -467,37 +478,45 @@ export default {
         border: none;
         .some-handle {
           .operation-btn {
-            cursor: pointer;
-            border: solid #ccc 1px;
-            color: #606266;
-            background: inherit;
-            padding: 2px;
+            @extend .base-btn;
             margin: 0 5px;
-            border-radius: 2px;
-            &:hover {
-              background: #409eff;
-              .fa-trash-o {
-                color: red;
-              }
-            }
           }
         }
       }
-      // .msg-review {
-      //   color: #444 !important;
-      //   background: #ffffff !important;
-      // }
       .msg-review {
         border-bottom: 1px solid #ccc;
-        li {
-          list-style: none;
+        .msg-review-li {
           padding: 5px;
           width: 90%;
           margin-left: 5%;
-          // border: solid red 1px;
           text-align: start;
           span:first-child {
             color: orange;
+          }
+        }
+        .admin-reply {
+          @extend .msg-review-li;
+          .admin-reply-li {
+            // border: solid red 1px;
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 5px 5px 20px;
+            .reply-from-to {
+              width: 150px;
+              color: #e6a23c;
+            }
+            .reply-time {
+              width: 150px;
+              text-align: center;
+            }
+            .reply-opration-btns {
+              width: 80px;
+              display: flex;
+              justify-content: space-evenly;
+              .reply-opration-btn {
+                @extend .base-btn;
+              }
+            }
           }
         }
       }
@@ -542,43 +561,6 @@ export default {
   }
 }
 
-.admin-reply {
-  width: 100%;
-  box-sizing: border-box;
-  border-collapse: collapse;
-  /*table-layout: fixed;*/
-  .reply-time {
-    text-align: center;
-  }
-  td {
-    padding: 5px 0;
-    background: #ffffff;
-  }
-  td:nth-child(1) {
-    width: 20%;
-  }
-  td:nth-child(2) {
-    width: 55%;
-  }
-  td:nth-child(3) {
-    width: 10%;
-  }
-  td:nth-child(4) {
-    width: 15%;
-    text-align: center;
-    span {
-      color: #606266;
-      margin: 0;
-      border: none;
-    }
-    span.icon-commenting-o:hover {
-      color: #ffffff;
-    }
-    span.icon-bin:hover {
-      color: red;
-    }
-  }
-}
 .admin-color {
   color: orange;
 }
