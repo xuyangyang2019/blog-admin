@@ -1,7 +1,37 @@
 <template>
   <div class="admin-set">
+    <!-- form -->
+    <ul class="admin-set-form">
+      <li>
+        <h3>修改密码</h3>
+      </li>
+      <!-- 密码 -->
+      <li>
+        <label for="oldPwd">原密码</label>
+        <input id="oldPwd" type="password" placeholder="请输入原密码" v-model.trim.lazy="passwordForm.oldPwd" />
+      </li>
+      <!-- 新密码 -->
+      <li>
+        <label for="newPwd">新密码</label>
+        <input id="newPwd" type="password" placeholder="请输入新密码" v-model="passwordForm.newPwd" />
+      </li>
+      <!-- 确认密码 -->
+      <li>
+        <label for="surePwd">新密码</label>
+        <input id="surePwd" type="password" placeholder="请再次输入新密码" v-model="passwordForm.surePwd" />
+      </li>
+      <!-- 提交 -->
+      <li>
+        <button type="submit">提交</button>
+        <button type="reset">重置</button>
+      </li>
+    </ul>
+    <!-- 其他 -->
+    <!-- <div>数据库备份</div> -->
+
     <div class="revise-key">
       <h3>修改密码</h3>
+      <!-- 原密码 -->
       <div class="old-key">
         <label for="old_key">原密码：</label>
         <div class="input-warning-box">
@@ -16,6 +46,7 @@
           <div class="key-warning">{{ warning.oldKey }}</div>
         </div>
       </div>
+      <!-- 新密码 -->
       <div class="new-key-first">
         <label for="new_key_f">新密码：</label>
         <div class="input-warning-box">
@@ -30,16 +61,17 @@
           <div class="key-warning">{{ warning.newKeyFirst }}</div>
         </div>
       </div>
+      <!-- 确认密码 -->
       <div class="new-key-second">
         <label for="new_key_s">新密码：</label>
         <div class="input-warning-box">
           <input
-            type="password"
-            @focus="warning.newKeySecond = ''"
-            :class="{ 'warning-border': !!warning.newKeySecond.length }"
             id="new_key_s"
+            type="password"
             placeholder="请再次输入新密码"
+            :class="{ 'warning-border': !!warning.newKeySecond.length }"
             v-model="key.newSecond"
+            @focus="warning.newKeySecond = ''"
           />
           <div class="key-warning">{{ warning.newKeySecond }}</div>
           <div class="submit-adminset">
@@ -48,11 +80,15 @@
         </div>
       </div>
     </div>
+
+    <!-- 数据库备份 -->
     <div class="db-copy">
       <h3>数据库备份</h3>
       <button @click="startCopy" :disabled="waitInfo.copy === '备份中...'">{{ waitInfo.copy }}</button>
       <a href="javascript: void(0)" @click="download" v-show="showDownload">下载到本地</a>
     </div>
+
+    <!-- 确认修改密码 -->
     <transition name="set-mask">
       <div class="adminset-mask" v-show="adminSetMask.show">
         <div class="adminset-mask-box">
@@ -70,6 +106,11 @@ import { mapActions } from "vuex"
 export default {
   data() {
     return {
+      passwordForm: {
+        pldPwd: "",
+        newPwd: "",
+        surePwd: ""
+      },
       key: { old: "", newFirst: "", newSecond: "" },
       warning: { oldKey: "", newKeyFirst: "", newKeySecond: "" },
       waitInfo: { revise: "确认修改", copy: "备份" },
@@ -82,40 +123,48 @@ export default {
     next()
   },
   methods: {
-    ...mapActions(["reviseKey", "copyData", "downloadDb"]),
-    submit: function() {
-      this.warning = { oldKey: "", newKeyFirst: "", newKeySecond: "" }
-      if (this.key.old.length === 0) {
-        this.warning.oldKey = "请填写旧密码"
-        return
-      } else if (this.key.newFirst.length === 0) {
-        this.warning.newKeyFirst = "请填写新密码"
-        return
-      } else if (this.key.newSecond.length === 0) {
-        this.warning.newKeySecond = "请再次输入新密码"
-        return
-      } else if (this.key.newSecond !== this.key.newFirst) {
-        this.warning.newKeySecond = "两次输入的密码不一致"
-        return
-      } else {
-        let that = this
-        this.waitInfo.revise = "修改中..."
-        this.reviseKey({
-          oldKey: this.key.old,
-          newKey: this.key.newFirst
-        }).then(data => {
-          if (data.code === 200) {
-            that.key = { old: "", newFirst: "", newSecond: "" }
-            that.waitInfo.revise = "确认修改"
-            that.adminSetMask = { show: true, info: "修改成功！" }
-          } else if (data.code === "oldkey-401") {
-            that.warning.oldKey = "原密码不正确"
-            that.waitInfo.revise = "确认修改"
-          }
-        })
-      }
+    ...mapActions({
+      reviseKey: "axios/ReviseKey",
+      copyData: "axios/CopyData",
+      downloadDb: "axios/DownloadDb"
+    }),
+    // 提交表单
+    submit() {
+      console.log("提交表单")
+      console.log(this.passwordForm)
+      // this.warning = { oldKey: "", newKeyFirst: "", newKeySecond: "" }
+      // if (this.key.old.length === 0) {
+      //   this.warning.oldKey = "请填写旧密码"
+      //   return
+      // } else if (this.key.newFirst.length === 0) {
+      //   this.warning.newKeyFirst = "请填写新密码"
+      //   return
+      // } else if (this.key.newSecond.length === 0) {
+      //   this.warning.newKeySecond = "请再次输入新密码"
+      //   return
+      // } else if (this.key.newSecond !== this.key.newFirst) {
+      //   this.warning.newKeySecond = "两次输入的密码不一致"
+      //   return
+      // } else {
+      //   let that = this
+      //   this.waitInfo.revise = "修改中..."
+      //   this.reviseKey({
+      //     oldKey: this.key.old,
+      //     newKey: this.key.newFirst
+      //   }).then(data => {
+      //     if (data.code === 200) {
+      //       that.key = { old: "", newFirst: "", newSecond: "" }
+      //       that.waitInfo.revise = "确认修改"
+      //       that.adminSetMask = { show: true, info: "修改成功！" }
+      //     } else if (data.code === "oldkey-401") {
+      //       that.warning.oldKey = "原密码不正确"
+      //       that.waitInfo.revise = "确认修改"
+      //     }
+      //   })
+      // }
     },
-    startCopy: function() {
+    // 开始拷贝
+    startCopy() {
       let that = this
       this.waitInfo.copy = "备份中..."
       this.copyData().then(data => {
@@ -128,7 +177,8 @@ export default {
         }
       })
     },
-    download: function() {
+    // 下载
+    download() {
       // this.downloadDb()
       let a = document.createElement("a")
       let token = localStorage.getItem("map_blog_token_info_item_name")
@@ -142,7 +192,11 @@ export default {
 
 <style lang="scss" scoped>
 .admin-set {
+  color: black;
   border: solid red 1px;
+  .admin-set-form {
+    border: solid red 1px;
+  }
 }
 
 .revise-key {
