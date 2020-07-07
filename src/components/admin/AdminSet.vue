@@ -1,33 +1,30 @@
 <template>
   <div class="admin-set">
     <!-- form -->
-    <ul class="admin-set-form">
-      <li>
-        <h3>修改密码</h3>
-      </li>
+    <!-- @submit.prevent="handleSubmit" -->
+    <h3>修改密码</h3>
+    <form action="/" method="post" @submit.prevent="handleSubmit">
       <!-- 密码 -->
-      <li>
+      <div>
         <label for="oldPwd">原密码</label>
         <input id="oldPwd" type="password" placeholder="请输入原密码" v-model.trim.lazy="passwordForm.oldPwd" />
-      </li>
+      </div>
       <!-- 新密码 -->
-      <li>
+      <div>
         <label for="newPwd">新密码</label>
         <input id="newPwd" type="password" placeholder="请输入新密码" v-model="passwordForm.newPwd" />
-      </li>
+      </div>
       <!-- 确认密码 -->
-      <li>
+      <div>
         <label for="surePwd">新密码</label>
         <input id="surePwd" type="password" placeholder="请再次输入新密码" v-model="passwordForm.surePwd" />
-      </li>
+      </div>
       <!-- 提交 -->
-      <li>
+      <div>
         <button type="submit">提交</button>
         <button type="reset">重置</button>
-      </li>
-    </ul>
-    <!-- 其他 -->
-    <!-- <div>数据库备份</div> -->
+      </div>
+    </form>
 
     <div class="revise-key">
       <h3>修改密码</h3>
@@ -75,7 +72,7 @@
           />
           <div class="key-warning">{{ warning.newKeySecond }}</div>
           <div class="submit-adminset">
-            <button @click="submit" :disabled="waitInfo.revise === '修改中...'">{{ waitInfo.revise }}</button>
+            <button @click="handleSubmit" :disabled="waitInfo.revise === '修改中...'">{{ waitInfo.revise }}</button>
           </div>
         </div>
       </div>
@@ -129,7 +126,7 @@ export default {
       downloadDb: "axios/DownloadDb"
     }),
     // 提交表单
-    submit() {
+    handleSubmit() {
       console.log("提交表单")
       console.log(this.passwordForm)
       // this.warning = { oldKey: "", newKeyFirst: "", newKeySecond: "" }
