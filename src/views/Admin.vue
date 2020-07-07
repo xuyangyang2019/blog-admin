@@ -266,16 +266,17 @@ export default {
 .admin-page {
   font-size: 14px;
   font-family: Arial;
-
+  height: 100%;
+  display: flex;
+  flex-direction: column;
   .admin-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     background: #195f88;
     height: 55px;
+    min-height: 55px;
     overflow: hidden;
-    // color: #eeeeee;
-
     .admin-header-left {
       margin-left: 10px;
       display: flex;
@@ -288,14 +289,12 @@ export default {
         font-size: 22px;
       }
     }
-
     .admin-info {
       margin-right: 20px;
       span {
         vertical-align: middle;
       }
     }
-
     .toggle-btn {
       display: none;
       cursor: pointer;
@@ -315,82 +314,78 @@ export default {
       }
     }
   }
-}
-
-.admin-body {
-  width: 100%;
-  display: flex;
-
-  .admin-aside {
-    width: 250px;
-    min-width: 250px;
-    background: #1c2b36;
-    transition: all ease 0.5s;
-
-    .aside-menu {
-      .aside-item {
-        color: #ffffff;
-        font-family: Arial;
-        text-decoration: none;
-        padding: 15px;
-        display: flex;
-        align-items: center;
-        position: relative;
-        cursor: pointer;
-        .fa {
-          width: 20px;
-          font-size: 18px;
+  .admin-body {
+    flex: 1 1 auto;
+    display: flex;
+    height: auto;
+    overflow: hidden;
+    .admin-aside {
+      width: 250px;
+      min-width: 250px;
+      background: #1c2b36;
+      transition: all ease 0.5s;
+      .aside-menu {
+        .aside-item {
+          color: #ffffff;
+          font-family: Arial;
+          text-decoration: none;
+          padding: 15px;
+          display: flex;
+          align-items: center;
+          position: relative;
+          cursor: pointer;
+          .fa {
+            width: 20px;
+            font-size: 18px;
+          }
+          .item-name {
+            width: 80px;
+            font-size: 16px;
+            text-align: start;
+            margin-left: 10px;
+          }
+          .red-sup {
+            position: absolute;
+            top: 15px;
+            left: 35px;
+            width: 6px;
+            height: 6px;
+            border-radius: 3px;
+            background: red;
+          }
+          &:hover {
+            background: #0f1215;
+          }
         }
-        .item-name {
-          width: 80px;
-          font-size: 16px;
-          text-align: start;
-          margin-left: 10px;
-        }
-        .red-sup {
-          position: absolute;
-          top: 15px;
-          left: 35px;
-          width: 6px;
-          height: 6px;
-          border-radius: 3px;
-          background: red;
-        }
-        &:hover {
-          background: #0f1215;
-        }
-      }
-      .current-item {
-        background: #4895fc;
-        &:hover {
+        .current-item {
           background: #4895fc;
+          &:hover {
+            background: #4895fc;
+          }
         }
       }
     }
-  }
+    .admin-content {
+      background: #fff;
+      box-sizing: border-box;
+      padding: 10px 10px;
+      flex: 1 1 auto;
+      overflow: hidden;
 
-  .admin-content {
-    background: #fff;
-    box-sizing: border-box;
-    padding: 0 10px;
-    flex: 1 1 auto;
-    // width: 85%;
-    // display: inline-block;
-    // border: solid red 1px;
-
-    .location-search {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 5px 0;
-      // border: solid red 1px;
-      .location {
-        // border: solid red 1px;
+      .location-search {
         display: flex;
-      }
-      .search {
+        align-items: center;
+        justify-content: space-between;
+        padding: 5px 0;
         // border: solid red 1px;
-        display: flex;
+        .location {
+          // border: solid red 1px;
+          display: flex;
+        }
+        .search {
+          // border: solid red 1px;
+          display: flex;
+        }
       }
     }
   }
@@ -426,7 +421,7 @@ export default {
 
   .admin-body {
     display: block;
-    margin-top: 55px;
+    // margin-top: 55px;
   }
   .admin-content {
     width: 100%;

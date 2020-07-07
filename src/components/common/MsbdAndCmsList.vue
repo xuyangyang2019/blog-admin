@@ -10,7 +10,7 @@
       <li>操作</li>
     </ul>
     <!-- 内容 -->
-    <ul class="ul-content">
+    <ul class="ul-content scroll">
       <li
         class="li-item"
         v-for="(item, index) in mcList"
@@ -29,7 +29,13 @@
           <li v-text="$options.filters.reviseTime(item.date)"></li>
           <li class="some-handle">
             <button class="operation-btn" @click="reviewBoard(item)">
-              <i class="fa fa-eye fa-lg" aria-hidden="true" title="预览"></i>
+              <i
+                v-if="current.review.indexOf(item._id) === -1"
+                class="fa fa-eye fa-lg"
+                aria-hidden="true"
+                title="预览"
+              ></i>
+              <i v-else class="fa fa-eye-slash fa-lg" aria-hidden="true" title="预览"></i>
             </button>
             <button class="operation-btn" @click="replyBoard(item)">
               <i class="fa fa-commenting-o" aria-hidden="true" title="回复"></i>
@@ -41,9 +47,73 @@
           </li>
         </ul>
         <!-- 查看回复内容 -->
-        <div></div>
+        <transition name="review">
+          <ul class="msg-review" v-if="current.review.indexOf(item._id) > -1">
+            <li v-if="$route.name === 'comments'">
+              <span>文章标题：</span>
+              {{ item.title }}
+            </li>
+            <li>
+              <span>昵称：</span>
+              {{ item.name }}
+            </li>
+            <li>
+              <span v-if="$route.name === 'adminMsgBoard'">留言：</span>
+              <span v-if="$route.name === 'comments'">评论：</span>
+              <span v-html="item.content">{{ item.content }}</span>
+            </li>
+            <li>
+              <span>时间：</span>
+              {{ item.date | reviseTime }}
+            </li>
+            <!-- 管理员的回复与其他回复 -->
+            <li>
+              <div>
+                <span>本条回复：</span>
+                <span v-if="!item.reply.length">暂无</span>
+              </div>
+              <table class="admin-reply">
+                <tbody>
+                  <tr v-for="(rep, _index) in item.reply" :key="'rep' + _index">
+                    <td :class="{ 'admin-color': rep.name === 'admin（管理员）' }">
+                      {{ rep.name }} @ {{ rep.aite }}：
+                    </td>
+                    <td class>
+                      <pre v-html="rep.content">{{ rep.content }}</pre>
+                    </td>
+                    <td class="reply-time">{{ rep.date | reviseTime }}</td>
+                    <td>
+                      <!-- 管理员回复项可设置隐藏回复按钮 v-show = "rep.name !== 'King'"-->
+                      <span class="icon-commenting-o icon-commenting-o-mc" @click="replyBoard(index, rep.name)"></span>
+                      <span class="icon-bin icon-bin-mc" @click="sureDelete(item._id, rep._id, index, _index)"></span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </li>
+          </ul>
+        </transition>
         <!-- 管理员回复 -->
-        <div></div>
+        <transition name="review">
+          <tr v-if="current.reply === index" class="msg-reply">
+            <td :colspan="$route.name === 'comments' ? 7 : 6">
+              <textarea
+                placeholder="输入回复内容"
+                @focus="emptyWarning = false"
+                v-model="replyContent"
+                :class="{ 'empty-warning': emptyWarning }"
+              ></textarea>
+              <div class="reply-aite-btn">
+                <span>@ {{ aite }}</span>
+                <!-- 回复一级留言找到_id直接push即可，二级回复也是直接push，故只需一个参数 -->
+                <div>
+                  <button @click="postReply(item._id)">回复</button>
+                  <button @click="current.reply = -1">取消</button>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </transition>
       </li>
     </ul>
 
@@ -167,7 +237,12 @@ export default {
       console.log(item._id)
       // console.log(this.current)
       // console.log(aite)
-      this.current.review.push(item._id)
+      let rid = this.current.review.indexOf(item._id)
+      if (rid >= 0) {
+        this.current.review.splice(rid, 1)
+      } else {
+        this.current.review.push(item._id)
+      }
     },
     // 退出预览
     exitReview: function(index) {
@@ -345,8 +420,11 @@ export default {
 
 <style lang="scss" scoped>
 .msgboard-comments {
-  margin-top: 25px;
   color: #606266;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
   .ul-title {
     display: flex;
     align-items: center;
@@ -371,9 +449,9 @@ export default {
       width: 150px;
     }
   }
-
   .ul-content {
-    margin-top: 5px;
+    flex: 1 1 atuo;
+    overflow: auto;
     .li-item:nth-child(odd) {
       background: #f5f7fa;
     }
@@ -405,88 +483,25 @@ export default {
           }
         }
       }
-    }
-  }
-}
-
-.msgboard-comments-table {
-  table-layout: fixed;
-  border-collapse: collapse;
-  width: 100%;
-
-  .table-thead tr {
-    border-top: 1px solid #ccc;
-    border-bottom: 1px solid #ccc;
-  }
-
-  .table-tbody {
-    // border: solid red 1px;
-    .tr-bg {
-      background: #fff38f !important;
-    }
-    .parent-tr {
-      color: #606266;
-      border-bottom: 1px solid #ccc;
-      td {
-        padding: 5px;
-      }
-      td:not(:first-child),
-      th:not(:first-child) {
-        text-align: center;
-      }
-      td:not(:last-child) {
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        overflow: hidden;
-      }
-    }
-
-    .msg-review {
-      border-bottom: 1px solid #ccc;
-      .msg-review-details {
-        position: relative;
-        .arrow {
-          font-size: 26px;
-          color: #444;
-          display: inline-block;
-          margin-bottom: -5px;
-          transform: rotate(-90deg);
-          position: absolute;
-          top: 50%;
-          left: -4px;
-          margin-top: -13px;
-          cursor: pointer;
-        }
-        .msg-content {
-          margin-left: 30px;
-          li {
-            list-style: none;
-            padding: 5px;
-            span:first-child {
-              color: orange;
-            }
+      // .msg-review {
+      //   color: #444 !important;
+      //   background: #ffffff !important;
+      // }
+      .msg-review {
+        border-bottom: 1px solid #ccc;
+        li {
+          list-style: none;
+          padding: 5px;
+          width: 90%;
+          margin-left: 5%;
+          // border: solid red 1px;
+          text-align: start;
+          span:first-child {
+            color: orange;
           }
         }
       }
     }
-  }
-
-  .table-tbody tr:nth-child(odd) {
-    background: #f5f7fa;
-  }
-
-  th {
-    color: #333;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
-    text-align: center;
-    padding: 5px;
-  }
-
-  input[type="checkbox"],
-  label {
-    vertical-align: middle;
   }
 }
 
@@ -525,10 +540,6 @@ export default {
   button:hover {
     background: #46afcb;
   }
-}
-.msg-review {
-  color: #444 !important;
-  background: #ffffff !important;
 }
 
 .admin-reply {

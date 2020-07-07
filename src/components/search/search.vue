@@ -1,9 +1,7 @@
 <template>
   <div class="search-articles">
     <div class="search-info">以下是为您搜索到的内容：</div>
-    <div class="search-empty" v-if="!articles.search.length">
-      啊哦~~空空如也
-    </div>
+    <div class="search-empty" v-if="!articles.search.length">啊哦~~空空如也</div>
     <list :article_list="articles.search" v-if="articles.search.length"></list>
   </div>
 </template>
@@ -37,6 +35,7 @@ export default {
     getSearch: function(route) {
       //时间范围搜索
       if (route.params.base.indexOf("-") !== -1) {
+        // eslint-disable-next-line no-useless-escape
         let timeArr = route.params.base.match(/\d+\-\d+\-\d+/g)
         //utc时间0点起
         let startTime = new Date(Date.parse(timeArr[0])).getTime()
