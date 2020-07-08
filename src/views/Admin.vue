@@ -177,9 +177,12 @@ export default {
     // 路由跳转
     showPath(item) {
       // console.log(this.$route.path)
-      // console.log(item.path)
       if (this.$route.path === item.path) return
-      this.$router.push({ path: item.path })
+      if (item.path === "/admin/publish") {
+        window.open(item.path, "_blank")
+      } else {
+        this.$router.push({ path: item.path })
+      }
     },
     //不管什么情况下都把list高度设为首屏高度
     initHeight: function() {
