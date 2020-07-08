@@ -35,14 +35,14 @@
       </div>
     </div>
     <!-- 详情 -->
-    <!-- <div class="newmessage-body">
+    <div class="newmessage-body">
       <div class="newmessage-content">
         <div class="newmessage-border">
           <h3>新评论一览</h3>
           <div class="news-item">
             <ul>
               <div v-if="!news.comment.length">暂无</div>
-              <li v-for="(item, index) in news.comment" :key="index">
+              <!-- <li v-for="(item, index) in news.comment" :key="index">
                 <span>{{ index + 1 }}.</span>
                 <span class="news-info-box" :title="item.content">{{ item.content }}</span>
                 <span
@@ -50,15 +50,15 @@
                   :class="{ 'icon-rotate': currentView.indexOf(item._id) > -1 }"
                   class="icon-keyboard_arrow_right"
                 ></span>
-              </li>
-              <transition name="fade">
+              </li> -->
+              <!-- <transition name="fade">
                 <li class="news-comment-review" v-if="currentView.indexOf(item._id) > -1">
                   <div class>
                     <span>{{ item.name }}：</span>
                     <span v-html="item.say">{{ item.say }}</span>
                   </div>
                 </li>
-              </transition>
+              </transition> -->
             </ul>
             <div class="clear-news" v-if="!!news.comment.length">
               <button :disabled="dsabd.comment" @click="clearNews('comment')">{{ clearText.comment }}</button>
@@ -66,7 +66,7 @@
           </div>
         </div>
       </div>
-      <div class="newmessage-content">
+      <!-- <div class="newmessage-content">
         <div class="newmessage-border">
           <h3>新留言一览</h3>
           <div class="news-item">
@@ -95,8 +95,8 @@
             </div>
           </div>
         </div>
-      </div>
-      <div class="newmessage-content">
+      </div> -->
+      <!-- <div class="newmessage-content">
         <div class="newmessage-border">
           <h3>新收到的赞一览</h3>
           <div class="news-item">
@@ -112,8 +112,8 @@
             </div>
           </div>
         </div>
-      </div>
-      <div class="newmessage-content">
+      </div> -->
+      <!-- <div class="newmessage-content">
         <div class="newmessage-border">
           <h3>新增浏览（仅显示最近15条）</h3>
           <div class="news-item">
@@ -129,13 +129,13 @@
             </div>
           </div>
         </div>
-      </div>
-    </div> -->
+      </div> -->
+    </div>
   </div>
 </template>
 
 <script>
-import { mapState, mapMutations, mapActions, mapGetters } from "vuex"
+import { mapMutations, mapActions, mapGetters } from "vuex"
 
 export default {
   data() {
@@ -146,7 +146,6 @@ export default {
     }
   },
   computed: {
-    // ...mapState(["news"])
     ...mapGetters({
       news: "axios/news"
     })
@@ -267,6 +266,7 @@ export default {
 }
 .news-item {
   padding: 5px;
+  color: black;
   li {
     padding: 5px;
     margin: 2px 0;
