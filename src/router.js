@@ -20,8 +20,7 @@ const miss = resolve => require(["@/components/base/miss"], resolve)
 const eachTag = resolve => require(["@/components/article/eachTag"], resolve)
 const review = resolve => require(["@/components/article/review"], resolve)
 const search = resolve => require(["@/components/search/search"], resolve)
-// const initEditor = (resolve) =>
-//   require(["@/components/ue/initEditor"], resolve);
+// const initEditor = resolve => require(["@/components/ue/initEditor"], resolve)
 
 Vue.use(Router)
 
@@ -136,14 +135,14 @@ const router = new Router({
       ]
     },
     //操作文章的路由
-    // {
-    //   path: "/admin/publish",
-    //   name: "publish",
-    //   component: initEditor,
-    //   meta: {
-    //     requireAuth: true
-    //   }
-    // },
+    {
+      path: "/admin/publish",
+      name: "publish",
+      component: () => import(/* webpackChunkName: "admin" */ "./components/admin/EditArticle.vue"),
+      meta: {
+        requireAuth: true
+      }
+    },
     // {
     //   path: "/admin/draftrevise",
     //   name: "draftrevise",
