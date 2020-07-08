@@ -1,99 +1,83 @@
 <template>
   <div class="admin-set">
-    <!-- form -->
-    <!-- @submit.prevent="handleSubmit" -->
     <h3>修改密码</h3>
-    <form action="/" method="post" @submit.prevent="handleSubmit">
+    <!-- 表单 -->
+    <form
+      id="adminSetForm"
+      class="admin-set-form"
+      action="/"
+      method="post"
+      @submit.prevent="handleSubmit"
+      @reset.prevent="handleReset"
+    >
       <!-- 密码 -->
-      <div>
-        <label for="oldPwd">原密码</label>
-        <input id="oldPwd" type="password" placeholder="请输入原密码" v-model.trim.lazy="passwordForm.oldPwd" />
+      <div class="form-item">
+        <label class="form-item-label" for="oldPwd">原密码</label>
+        <input
+          id="oldPwd"
+          type="password"
+          autocomplete="false"
+          maxlength="20"
+          class="form-item-input"
+          placeholder="请输入原密码"
+          v-model.trim="passwordForm.oldPwd"
+          @focus="errMsg.oldPwd = ''"
+        />
       </div>
+      <div class="error-msg" :class="{ 'error-msg-no': errMsg.oldPwd === '' }" v-text="errMsg.oldPwd"></div>
       <!-- 新密码 -->
-      <div>
-        <label for="newPwd">新密码</label>
-        <input id="newPwd" type="password" placeholder="请输入新密码" v-model="passwordForm.newPwd" />
+      <div class="form-item">
+        <label class="form-item-label" for="newPwd">新密码</label>
+        <input
+          id="newPwd"
+          type="password"
+          autocomplete="false"
+          maxlength="20"
+          class="form-item-input"
+          placeholder="请输入新密码"
+          v-model="passwordForm.newPwd"
+          @focus="errMsg.newPwd = ''"
+        />
       </div>
+      <div class="error-msg" :class="{ 'error-msg-no': errMsg.newPwd === '' }" v-text="errMsg.newPwd"></div>
       <!-- 确认密码 -->
-      <div>
-        <label for="surePwd">新密码</label>
-        <input id="surePwd" type="password" placeholder="请再次输入新密码" v-model="passwordForm.surePwd" />
+      <div class="form-item">
+        <label class="form-item-label" for="surePwd">新密码</label>
+        <input
+          id="surePwd"
+          type="password"
+          autocomplete="false"
+          maxlength="20"
+          class="form-item-input"
+          placeholder="请再次输入新密码"
+          v-model="passwordForm.surePwd"
+          @focus="errMsg.surePwd = ''"
+        />
       </div>
+      <div class="error-msg" :class="{ 'error-msg-no': errMsg.surePwd === '' }" v-text="errMsg.surePwd"></div>
+
       <!-- 提交 -->
-      <div>
-        <button type="submit">提交</button>
-        <button type="reset">重置</button>
+      <div class="operation-btns">
+        <button class="operation-btn btn-submit" type="submit" form="adminSetForm">确认修改</button>
+        <button class="operation-btn btn-reset" type="reset" form="adminSetForm">重置</button>
       </div>
     </form>
-
-    <div class="revise-key">
-      <h3>修改密码</h3>
-      <!-- 原密码 -->
-      <div class="old-key">
-        <label for="old_key">原密码：</label>
-        <div class="input-warning-box">
-          <input
-            type="password"
-            @focus="warning.oldKey = ''"
-            :class="{ 'warning-border': !!warning.oldKey.length }"
-            id="old_key"
-            placeholder="请输入旧密码"
-            v-model="key.old"
-          />
-          <div class="key-warning">{{ warning.oldKey }}</div>
-        </div>
-      </div>
-      <!-- 新密码 -->
-      <div class="new-key-first">
-        <label for="new_key_f">新密码：</label>
-        <div class="input-warning-box">
-          <input
-            :class="{ 'warning-border': !!warning.newKeyFirst.length }"
-            @focus="warning.newKeyFirst = ''"
-            type="password"
-            id="new_key_f"
-            placeholder="请输入新密码"
-            v-model="key.newFirst"
-          />
-          <div class="key-warning">{{ warning.newKeyFirst }}</div>
-        </div>
-      </div>
-      <!-- 确认密码 -->
-      <div class="new-key-second">
-        <label for="new_key_s">新密码：</label>
-        <div class="input-warning-box">
-          <input
-            id="new_key_s"
-            type="password"
-            placeholder="请再次输入新密码"
-            :class="{ 'warning-border': !!warning.newKeySecond.length }"
-            v-model="key.newSecond"
-            @focus="warning.newKeySecond = ''"
-          />
-          <div class="key-warning">{{ warning.newKeySecond }}</div>
-          <div class="submit-adminset">
-            <button @click="handleSubmit" :disabled="waitInfo.revise === '修改中...'">{{ waitInfo.revise }}</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <!-- 数据库备份 -->
-    <div class="db-copy">
+    <!-- <div class="db-copy">
       <h3>数据库备份</h3>
       <button @click="startCopy" :disabled="waitInfo.copy === '备份中...'">{{ waitInfo.copy }}</button>
       <a href="javascript: void(0)" @click="download" v-show="showDownload">下载到本地</a>
-    </div>
+    </div>-->
 
     <!-- 确认修改密码 -->
-    <transition name="set-mask">
+    <!-- <transition name="set-mask">
       <div class="adminset-mask" v-show="adminSetMask.show">
         <div class="adminset-mask-box">
           <h3>{{ adminSetMask.info }}</h3>
           <button @click="adminSetMask.show = false">确认</button>
         </div>
       </div>
-    </transition>
+    </transition>-->
   </div>
 </template>
 
@@ -104,12 +88,11 @@ export default {
   data() {
     return {
       passwordForm: {
-        pldPwd: "",
+        oldPwd: "",
         newPwd: "",
         surePwd: ""
-      },
-      key: { old: "", newFirst: "", newSecond: "" },
-      warning: { oldKey: "", newKeyFirst: "", newKeySecond: "" },
+      }, // 表单用到的数据
+      errMsg: { oldPwd: "", newPwd: "", surePwd: "" }, // 错误信息
       waitInfo: { revise: "确认修改", copy: "备份" },
       adminSetMask: { show: false, info: "" },
       showDownload: false
@@ -129,36 +112,42 @@ export default {
     handleSubmit() {
       console.log("提交表单")
       console.log(this.passwordForm)
-      // this.warning = { oldKey: "", newKeyFirst: "", newKeySecond: "" }
-      // if (this.key.old.length === 0) {
-      //   this.warning.oldKey = "请填写旧密码"
-      //   return
-      // } else if (this.key.newFirst.length === 0) {
-      //   this.warning.newKeyFirst = "请填写新密码"
-      //   return
-      // } else if (this.key.newSecond.length === 0) {
-      //   this.warning.newKeySecond = "请再次输入新密码"
-      //   return
-      // } else if (this.key.newSecond !== this.key.newFirst) {
-      //   this.warning.newKeySecond = "两次输入的密码不一致"
-      //   return
-      // } else {
-      //   let that = this
-      //   this.waitInfo.revise = "修改中..."
-      //   this.reviseKey({
-      //     oldKey: this.key.old,
-      //     newKey: this.key.newFirst
-      //   }).then(data => {
-      //     if (data.code === 200) {
-      //       that.key = { old: "", newFirst: "", newSecond: "" }
-      //       that.waitInfo.revise = "确认修改"
-      //       that.adminSetMask = { show: true, info: "修改成功！" }
-      //     } else if (data.code === "oldkey-401") {
-      //       that.warning.oldKey = "原密码不正确"
-      //       that.waitInfo.revise = "确认修改"
-      //     }
-      //   })
-      // }
+      this.errMsg = { oldPwd: "", newPwd: "", surePwd: "" }
+      // console.log(this.passwordForm.oldPwd)
+      if (this.passwordForm.oldPwd.length === 0) {
+        this.errMsg.oldPwd = "请填写旧密码"
+        return
+      } else if (this.passwordForm.newPwd.length === 0) {
+        this.errMsg.newPwd = "请填写新密码"
+        return
+      } else if (this.passwordForm.surePwd.length === 0) {
+        this.errMsg.surePwd = "请再次输入新密码"
+        return
+      } else if (this.passwordForm.surePwd !== this.passwordForm.newPwd) {
+        this.errMsg.surePwd = "两次输入的密码不一致"
+        return
+      } else {
+        // let that = this
+        // this.waitInfo.revise = "修改中..."
+        // this.reviseKey({
+        //   oldPwd: this.passwordForm.oldPwd,
+        //   newKey: this.passwordForm.newFirst
+        // }).then(data => {
+        //   if (data.code === 200) {
+        //     that.key = { oldPwd: "", newFirst: "", newSecond: "" }
+        //     that.waitInfo.revise = "确认修改"
+        //     that.adminSetMask = { show: true, info: "修改成功！" }
+        //   } else if (data.code === "oldkey-401") {
+        //     that.errMsg.oldPwd = "原密码不正确"
+        //     that.waitInfo.revise = "确认修改"
+        //   }
+        // })
+      }
+    },
+    // 重置表单
+    handleReset() {
+      this.passwordForm = { oldPwd: "", newPwd: "", surePwd: "" }
+      this.errMsg = { oldPwd: "", newPwd: "", surePwd: "" }
     },
     // 开始拷贝
     startCopy() {
@@ -190,51 +179,65 @@ export default {
 <style lang="scss" scoped>
 .admin-set {
   color: black;
-  border: solid red 1px;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
   .admin-set-form {
-    border: solid red 1px;
+    padding: 10px;
+    .form-item {
+      display: flex;
+      align-items: center;
+      .form-item-label {
+        width: 80px;
+        font-size: 16px;
+      }
+      .form-item-input {
+        font-size: 16px;
+        padding: 5px;
+        border-radius: 5px;
+        border: 1px solid #dcdfe6;
+        &:focus {
+          border: 1px solid #46b8da;
+          outline: #46b8da;
+        }
+      }
+    }
+    .error-msg {
+      height: 30px;
+      color: red;
+      padding: 5px;
+      font-size: 16px;
+      text-align: start;
+      padding-left: 80px;
+    }
+    .error-msg-no {
+      visibility: hidden;
+    }
+    .operation-btns {
+      // border: solid red 1px;
+      display: flex;
+      justify-content: space-evenly;
+      .operation-btn {
+        // width: 80px;
+        font-size: 16px;
+        padding: 5px 20px;
+        border-radius: 5px;
+        outline: none;
+        border: none;
+        background-color: #409eff;
+        color: #fff;
+        cursor: pointer;
+      }
+      .btn-reset {
+        background-color: #95989d;
+      }
+    }
   }
 }
 
-.revise-key {
-  h3 {
-    text-align: center;
-  }
-  label {
-    color: #606266;
-  }
-  input {
-    box-sizing: border-box;
-    width: 100%;
-    padding: 10px 5px;
-    border: 1px solid #dcdfe6;
-    border-radius: 5px;
-  }
-  input:focus {
-    border: 1px solid #46b8da;
-  }
-}
-.old-key,
-.new-key-first,
-.new-key-second {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 25px 0;
-}
-.input-warning-box {
-  position: relative;
-  width: 50%;
-  flex-shrink: 1;
-}
-.warning-border {
-  border: 1px solid red !important;
-}
-.key-warning {
-  color: red;
-  position: absolute;
-  top: 100%;
-}
 .submit-adminset {
   button {
     position: absolute;
