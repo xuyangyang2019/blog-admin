@@ -55,7 +55,6 @@
         />
       </div>
       <div class="error-msg" :class="{ 'error-msg-no': errMsg.surePwd === '' }" v-text="errMsg.surePwd"></div>
-
       <!-- 提交 -->
       <div class="operation-btns">
         <button class="operation-btn btn-submit" type="submit" form="adminSetForm">{{ waitInfo.revise }}</button>
@@ -65,9 +64,11 @@
     <!-- 数据库备份 -->
     <!-- <div class="db-copy">
       <h3>数据库备份</h3>
-      <button @click="startCopy" :disabled="waitInfo.copy === '备份中...'">{{ waitInfo.copy }}</button>
-      <a href="javascript: void(0)" @click="download" v-show="showDownload">下载到本地</a>
-    </div>-->
+      <button class="db-copy-btn" @click="startCopy" :disabled="waitInfo.copy === '备份中...'">
+        {{ waitInfo.copy }}
+      </button>
+      <button class="db-copy-btn" v-if="showDownload" :disabled="!showDownload" @click="download">下载到本地</button>
+    </div> -->
 
     <!-- 提示框 -->
     <transition name="set-mask">
@@ -93,9 +94,9 @@ export default {
         surePwd: ""
       }, // 表单用到的数据
       errMsg: { oldPwd: "", newPwd: "", surePwd: "" }, // 错误信息
-      waitInfo: { revise: "确认修改", copy: "备份" },
-      adminSetMask: { show: false, info: "" },
-      showDownload: false
+      waitInfo: { revise: "确认修改", copy: "备份" }, // 状态信息
+      adminSetMask: { show: false, info: "" }, // 显示提示框和信息
+      showDownload: false // 显示download
     }
   },
   beforeRouteEnter(to, from, next) {
@@ -156,26 +157,27 @@ export default {
     },
     // 开始拷贝
     startCopy() {
-      let that = this
+      console.log("开始拷贝")
       this.waitInfo.copy = "备份中..."
       this.copyData().then(data => {
         if (data.code === 200) {
-          that.waitInfo.copy = "备份"
-          that.adminSetMask = { show: true, info: "备份成功！" }
-          that.showDownload = true
+          this.waitInfo.copy = "备份"
+          this.adminSetMask = { show: true, info: "备份成功！" }
+          this.showDownload = true
         } else {
-          that.adminSetMask = { show: true, info: "备份失败！" }
+          this.adminSetMask = { show: true, info: "备份失败！" }
         }
       })
     },
     // 下载
     download() {
+      console.log("下载")
       // this.downloadDb()
-      let a = document.createElement("a")
-      let token = localStorage.getItem("map_blog_token_info_item_name")
+      // let a = document.createElement("a")
+      // let token = localStorage.getItem("map_blog_token_info_item_name")
       // a.href = "http://localhost: 8080/api/downloadDb?authToken=" + token
-      a.href = "https://www.mapblog.cn/api/downloadDb?authToken=" + token
-      a.click()
+      // a.href = "https://www.mapblog.cn/api/downloadDb?authToken=" + token
+      // a.click()
     }
   }
 }
@@ -241,27 +243,29 @@ export default {
       }
     }
   }
+  .db-copy {
+    // border: solid red 1px;
+    .db-copy-btn {
+      background: #409eff;
+      border: 1px solid #409eff;
+      border-radius: 5px;
+      padding: 5px 10px;
+      margin: 10px;
+      font-size: 16px;
+      color: #ffffff;
+      cursor: pointer;
+      outline: none;
+    }
+    .db-copy-btn:hover {
+      opacity: 0.9;
+    }
+    .db-copy-btn[disabled] {
+      // cursor: wait;
+      cursor: not-allowed;
+    }
+  }
 }
 
-.submit-adminset {
-  button {
-    position: absolute;
-    right: 0;
-    top: 60px;
-    padding: 5px 10px;
-    border-radius: 4px;
-    background: #5bc0de;
-    border: 1px solid #5bc0de;
-    color: #ffffff;
-    cursor: pointer;
-  }
-  button:hover {
-    opacity: 0.9;
-  }
-  button[disabled] {
-    cursor: wait;
-  }
-}
 .adminset-mask {
   position: fixed;
   top: 0;
@@ -282,54 +286,19 @@ export default {
   button:hover {
     opacity: 0.9;
   }
-}
-.adminset-mask-box {
-  background: #ffffff;
-  width: 25%;
-  border-radius: 5px;
-  margin: 150px auto;
-  padding: 15px;
-  text-align: center;
-  h3 {
-    margin-top: 60px;
-  }
-}
-.db-copy {
-  margin-top: 80px;
-  text-align: center;
-  a {
-    text-decoration: none;
-    color: #67c23a;
-  }
-  a:hover {
-    text-decoration: underline;
-  }
-  button {
-    margin-top: 50px;
+  .adminset-mask-box {
+    background: #ffffff;
     width: 25%;
-    background: #409eff;
-    border: 1px solid #409eff;
     border-radius: 5px;
-    padding: 10px;
-    color: #ffffff;
-    cursor: pointer;
-    outline: none;
-  }
-  button:hover {
-    opacity: 0.9;
-  }
-  button[disabled] {
-    cursor: wait;
+    margin: 150px auto;
+    padding: 15px;
+    text-align: center;
+    h3 {
+      margin-top: 60px;
+    }
   }
 }
-.set-mask-enter,
-.set-mask-leave-to {
-  opacity: 0;
-}
-.set-mask-enter-active,
-.set-mask-leave-active {
-  transition: all ease 0.5s;
-}
+
 @media screen and(max-width: 767px) {
   .input-warning-box {
     width: 80%;
