@@ -20,7 +20,7 @@
           maxlength="20"
           class="form-item-input"
           placeholder="请输入原密码"
-          v-model.trim="passwordForm.oldPwd"
+          v-model.trim.lazy="passwordForm.oldPwd"
           @focus="errMsg.oldPwd = ''"
         />
       </div>
@@ -35,7 +35,7 @@
           maxlength="20"
           class="form-item-input"
           placeholder="请输入新密码"
-          v-model="passwordForm.newPwd"
+          v-model.trim.lazy="passwordForm.newPwd"
           @focus="errMsg.newPwd = ''"
         />
       </div>
@@ -50,7 +50,7 @@
           maxlength="20"
           class="form-item-input"
           placeholder="请再次输入新密码"
-          v-model="passwordForm.surePwd"
+          v-model.trim.lazy="passwordForm.surePwd"
           @focus="errMsg.surePwd = ''"
         />
       </div>
@@ -58,7 +58,7 @@
 
       <!-- 提交 -->
       <div class="operation-btns">
-        <button class="operation-btn btn-submit" type="submit" form="adminSetForm">确认修改</button>
+        <button class="operation-btn btn-submit" type="submit" form="adminSetForm">{{ waitInfo.revise }}</button>
         <button class="operation-btn btn-reset" type="reset" form="adminSetForm">重置</button>
       </div>
     </form>
@@ -69,15 +69,15 @@
       <a href="javascript: void(0)" @click="download" v-show="showDownload">下载到本地</a>
     </div>-->
 
-    <!-- 确认修改密码 -->
-    <!-- <transition name="set-mask">
+    <!-- 提示框 -->
+    <transition name="set-mask">
       <div class="adminset-mask" v-show="adminSetMask.show">
         <div class="adminset-mask-box">
           <h3>{{ adminSetMask.info }}</h3>
           <button @click="adminSetMask.show = false">确认</button>
         </div>
       </div>
-    </transition>-->
+    </transition>
   </div>
 </template>
 
@@ -102,6 +102,14 @@ export default {
     document.title = "后台管理 -账户设置"
     next()
   },
+  // watch: {
+  //   passwordForm: {
+  //     handler(val) {
+  //       console.log(val)
+  //     },
+  //     deep: true
+  //   }
+  // },
   methods: {
     ...mapActions({
       reviseKey: "axios/ReviseKey",
@@ -110,10 +118,7 @@ export default {
     }),
     // 提交表单
     handleSubmit() {
-      console.log("提交表单")
-      console.log(this.passwordForm)
       this.errMsg = { oldPwd: "", newPwd: "", surePwd: "" }
-      // console.log(this.passwordForm.oldPwd)
       if (this.passwordForm.oldPwd.length === 0) {
         this.errMsg.oldPwd = "请填写旧密码"
         return
@@ -127,21 +132,21 @@ export default {
         this.errMsg.surePwd = "两次输入的密码不一致"
         return
       } else {
-        // let that = this
-        // this.waitInfo.revise = "修改中..."
-        // this.reviseKey({
-        //   oldPwd: this.passwordForm.oldPwd,
-        //   newKey: this.passwordForm.newFirst
-        // }).then(data => {
-        //   if (data.code === 200) {
-        //     that.key = { oldPwd: "", newFirst: "", newSecond: "" }
-        //     that.waitInfo.revise = "确认修改"
-        //     that.adminSetMask = { show: true, info: "修改成功！" }
-        //   } else if (data.code === "oldkey-401") {
-        //     that.errMsg.oldPwd = "原密码不正确"
-        //     that.waitInfo.revise = "确认修改"
-        //   }
-        // })
+        this.waitInfo.revise = "修改中..."
+        this.reviseKey({
+          oldKey: this.passwordForm.oldPwd,
+          newKey: this.passwordForm.newPwd
+        }).then(data => {
+          if (data.code === 200) {
+            // console.log("修改成功")
+            this.waitInfo.revise = "确认修改"
+            this.passwordForm = { oldPwd: "", newPwd: "", surePwd: "" }
+            this.adminSetMask = { show: true, info: "修改成功！" }
+          } else if (data.code === "oldkey-401") {
+            this.errMsg.oldPwd = "原密码不正确"
+            this.waitInfo.revise = "确认修改"
+          }
+        })
       }
     },
     // 重置表单
