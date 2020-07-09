@@ -138,7 +138,7 @@ const router = new Router({
     {
       path: "/admin/publish",
       name: "publish",
-      component: () => import(/* webpackChunkName: "admin" */ "./components/admin/EditArticle.vue"),
+      component: () => import(/* webpackChunkName: "admin" */ "./components/admin/PublishArticle.vue"),
       meta: {
         requireAuth: true
       }
