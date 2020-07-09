@@ -1,12 +1,12 @@
 <template>
   <div class="article-review">
-    <div v-for="item in articles.only">
+    <div v-for="(item, index) in articles.only" :key="index">
       <div class="review-title">
         <h2>{{ item.title }}</h2>
       </div>
       <div class="review-tags">
         <h4>标签：</h4>
-        <span v-for="t in item.tag">{{ t }}</span>
+        <span v-for="(t, index) in item.tag" :key="'tab' + index"></span>
       </div>
       <div class="review-abstract">
         <h4>前言：</h4>
@@ -21,20 +21,20 @@
   </div>
 </template>
 <script>
-import { mapState, mapActions, mapMutations } from "vuex";
+import { mapState, mapActions, mapMutations } from "vuex"
 export default {
   beforeRouteLeave(to, from, next) {
-    this.clearOnly();
-    next();
+    this.clearOnly()
+    next()
   },
   created() {
-    this.getOnlyArticle();
-    document.title = "后台管理 -文章预览";
+    this.getOnlyArticle()
+    document.title = "后台管理 -文章预览"
   },
   watch: {
     $route() {
       if (this.$route.name === "review") {
-        this.getOnlyArticle();
+        this.getOnlyArticle()
       }
     }
   },
@@ -50,12 +50,13 @@ export default {
         articleId: this.$route.params.articleId
       }).then(data => {
         this.$nextTick(function() {
-          Prism.highlightAll();
-        });
-      });
+          // eslint-disable-next-line no-undef
+          Prism.highlightAll()
+        })
+      })
     }
   }
-};
+}
 </script>
 <style lang="scss">
 .article-review {
