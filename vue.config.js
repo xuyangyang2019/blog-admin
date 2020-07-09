@@ -1,5 +1,7 @@
 // vue.config.js
 const path = require("path")
+const webpack = require("webpack") //导入 webpack 模块
+
 // 包体积分析
 const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin
 
@@ -85,6 +87,12 @@ module.exports = {
       .set("@", resolve("src"))
       .set("assets", resolve("src/assets"))
       .set("components", resolve("src/components"))
+    // quill-image-resize-module的配置
+    config.plugin("provide").use(webpack.ProvidePlugin, [
+      {
+        "window.Quill": "quill"
+      }
+    ])
   },
 
   configureWebpack: config => {
