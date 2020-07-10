@@ -7,6 +7,11 @@ import filters from "./filters"
 
 Vue.config.productionTip = false
 
+// 导入api接口
+import api from "./api"
+// 将api挂载到vue的原型上复制代码
+Vue.prototype.$api = api
+
 // 全局过滤器
 Object.keys(filters).forEach(filterName => {
   Vue.filter(filterName, filters[filterName])
