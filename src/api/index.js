@@ -3,8 +3,8 @@
  */
 
 // 文章模块接口
-import article from "@/api/article"
+import admin from "@/api/admin"
 
 export default {
-  article
+  admin
 }
