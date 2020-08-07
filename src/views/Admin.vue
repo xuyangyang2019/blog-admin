@@ -10,7 +10,11 @@
       <span class="phone-greet">{{ greet }}好，{{ userName }}！</span>
       <!-- 管理员的信息 -->
       <div class="admin-info">
-        <img src="/img/logo.png" style="width: 20px;height: 20px;vertical-align: middle" alt="xyy" />
+        <img
+          src="/img/logo.png"
+          style="width: 20px;height: 20px;vertical-align: middle"
+          alt="xyy"
+        />
         <span>{{ greet }}好，{{ userName }}！上次登录是：{{ lastLogin }}</span>
       </div>
       <!-- 面包屑导航 -->
@@ -37,7 +41,12 @@
             @click="showPath(item)"
           >
             <i :class="item.icon" aria-hidden="true"></i>
-            <sup class="red-sup" v-if="index === 3 && (redSup.c || redSup.m || redSup.l || redSup.p)"></sup>
+            <sup
+              class="red-sup"
+              v-if="
+                index === 3 && (redSup.c || redSup.m || redSup.l || redSup.p)
+              "
+            ></sup>
             <span class="item-name" v-text="item.name"></span>
           </li>
           <!-- 退出 -->
@@ -51,16 +60,34 @@
       <!-- content -->
       <div class="admin-content" ref="content">
         <!-- 搜索 -->
-        <div class="location-search" v-if="$route.name === 'allArticles' || $route.name === 'draft'">
+        <div
+          class="location-search"
+          v-if="$route.name === 'allArticles' || $route.name === 'draft'"
+        >
           <!-- 搜索框 -->
           <div class="search">
             <div class="search-key" v-show="choseType === 'key'">
-              <input type="text" placeholder="请输入关键词" v-model="searchKey" @keyup.enter="search" />
+              <input
+                type="text"
+                placeholder="请输入关键词"
+                v-model="searchKey"
+                @keyup.enter="search"
+              />
             </div>
             <div class="search-time" v-show="choseType === 'time'">
-              <input type="date" @focus="err.from = false" v-model="date.from" :class="{ 'err-border': err.from }" />
+              <input
+                type="date"
+                @focus="err.from = false"
+                v-model="date.from"
+                :class="{ 'err-border': err.from }"
+              />
               至
-              <input @focus="err.to = false" type="date" v-model="date.to" :class="{ 'err-border': err.to }" />
+              <input
+                @focus="err.to = false"
+                type="date"
+                v-model="date.to"
+                :class="{ 'err-border': err.to }"
+              />
             </div>
             <select name id v-model="choseType">
               <option value="key">关键字</option>
@@ -190,7 +217,8 @@ export default {
         return
       } else {
         if (document.body.clientWidth > 767) {
-          this.$refs.list.style.minHeight = document.body.clientHeight - 55 + "px"
+          this.$refs.list.style.minHeight =
+            document.body.clientHeight - 55 + "px"
         } else {
           this.$refs.list.style = ""
         }
@@ -374,7 +402,6 @@ export default {
       padding: 10px 10px;
       flex: 1 1 auto;
       overflow: hidden;
-
       .location-search {
         display: flex;
         align-items: center;

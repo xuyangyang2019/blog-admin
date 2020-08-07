@@ -1,13 +1,34 @@
 // import Vue from "vue";
 import fetch from "@/utils/fetch"
+import Vue from "vue"
 
 // initial state
 const state = {
   tagsObj: {}, // 标签
-  redSup: { c: false, m: false, l: false, p: false }, // 红点提示
-  forLocation: [], // location
-  news: { pvNum: 0, comment: [], msgboard: [], like: [], pv: [] },
-  articles: { all: [], drafts: [], tags: [], search: [], only: [] }, // 文章列表
+  // 红点提示
+  redSup: {
+    c: false, // 评论
+    m: false, // 留言
+    l: false, // 点赞
+    p: false // 点击
+  },
+  forLocation: [], // 不知道有什么用
+  // 消息
+  news: {
+    pvNum: 0, // 点击数
+    comment: [], // 评论
+    msgboard: [], // 留言板
+    like: [], // 点赞
+    pv: [] // 点击
+  },
+  // 文章
+  articles: {
+    all: [], // 所有文章
+    drafts: [], // 草稿箱
+    tags: [], // 标签
+    search: [], // 搜索结果
+    only: [] // 要预览的文章
+  }, // 文章列表
   pageArray: [], // 已发表页码数组
   msgBoard: [], // 留言板
   comments: [] // 评论
@@ -83,23 +104,25 @@ const actions = {
     return fetch.delete("/api/deleteArticle", payload)
   },
   // 精准获取文章
-  GetArticle({ commit, state }, payload) {
+  GetArticle({ commit }, payload) {
     return fetch.get("/api/getAdminArticle", payload).then(data => {
       if (data.length) {
-        state.articles.only = data
+        commit("SET_ARTICLES_ONLY", data)
         let _tag = data[0].tag[0]
+        let forLocation = []
         if (data[0].publish) {
-          state.forLocation = [
+          forLocation = [
             { pathName: "allArticles", showName: "已发表文章" },
             { pathName: "eachTag", showName: _tag, params: { tag: _tag } },
             { pathName: "review", showName: data[0].title, params: { eTag: _tag, articleId: data[0].articleId } }
           ]
         } else {
-          state.forLocation = [
+          forLocation = [
             { pathName: "draft", showName: "草稿" },
             { pathName: "review", showName: data[0].title, params: { eTag: _tag, articleId: data[0].articleId } }
           ]
         }
+        commit("SET_FOR_LOCATION", forLocation)
       }
       return data
     })
@@ -315,6 +338,17 @@ const mutations = {
         return
       }
     })
+  },
+  ClearOnly(state) {
+    state.articles.only = []
+    state.forLocation = []
+  },
+  SET_ARTICLES_ONLY(state, oa) {
+    // state.articles.only = oa
+    Vue.set(state.articles, "only", oa)
+  },
+  SET_FOR_LOCATION(state, fl) {
+    state.forLocation = fl
   }
 }
 

@@ -66,7 +66,6 @@ const router = new Router({
         {
           path: "review/:eTag/:articleId",
           name: "review",
-          // component: review,
           component: () => import(/* webpackChunkName: "admin" */ "./components/article/ReviewArticle.vue"),
           meta: {
             requireAuth: true,
