@@ -18,7 +18,7 @@ import Admin from "./views/Admin.vue"
 //后台管理界面
 const miss = resolve => require(["@/components/base/miss"], resolve)
 const eachTag = resolve => require(["@/components/article/eachTag"], resolve)
-const review = resolve => require(["@/components/article/review"], resolve)
+// const review = resolve => require(["@/components/article/review"], resolve)
 const search = resolve => require(["@/components/search/search"], resolve)
 // const initEditor = resolve => require(["@/components/ue/initEditor"], resolve)
 
@@ -53,24 +53,26 @@ const router = new Router({
           }
         },
         // 指定标签的 已发表的文章
-        // {
-        //   path: "allArticles/:tag",
-        //   name: "eachTag",
-        //   component: eachTag,
-        //   meta: {
-        //     requireAuth: true,
-        //     keepAlive: true
-        //   }
-        // },
-        // {
-        //   path: "review/:eTag/:articleId",
-        //   name: "review",
-        //   component: review,
-        //   meta: {
-        //     requireAuth: true,
-        //     keepAlive: true
-        //   }
-        // },
+        {
+          path: "allArticles/:tag",
+          name: "eachTag",
+          component: eachTag,
+          meta: {
+            requireAuth: true,
+            keepAlive: true
+          }
+        },
+        // 文章预览
+        {
+          path: "review/:eTag/:articleId",
+          name: "review",
+          // component: review,
+          component: () => import(/* webpackChunkName: "admin" */ "./components/article/ReviewArticle.vue"),
+          meta: {
+            requireAuth: true,
+            keepAlive: true
+          }
+        },
         // 草稿箱
         {
           path: "draft",
