@@ -1,34 +1,47 @@
 <template>
   <div class="article-review">
     <div v-for="(item, index) in articles.only" :key="index">
+      <!-- 文章标题 -->
       <div class="review-title">
         <h2>{{ item.title }}</h2>
       </div>
+      <!-- 标签|前言|时间 -->
       <div class="review-tags">
-        <h4>标签：</h4>
-        <span v-for="(t, index) in item.tag" :key="'tab' + index"></span>
+        <h4 class="review-article-h4">标签：</h4>
+        <span
+          class="review-article-span"
+          v-for="(t, index) in item.tag"
+          :key="'tab' + index"
+          v-text="t"
+        ></span>
       </div>
       <div class="review-abstract">
-        <h4>前言：</h4>
-        <span>{{ item.abstract }}</span>
+        <h4 class="review-article-h4">前言：</h4>
+        <span class="review-article-span" v-text="item.abstract"></span>
       </div>
       <div class="review-date">
-        <h4>发表时间：</h4>
-        <span>{{ item.date | reviseTime }}</span>
+        <h4 class="review-article-h4">发表时间：</h4>
+        <span
+          class="review-article-span"
+          v-text="$options.filters.reviseTime(item.date)"
+        ></span>
       </div>
+      <!-- 文章内容 -->
       <div class="review-content" v-html="item.content">{{ item.content }}</div>
     </div>
   </div>
 </template>
 
 <script>
-import { mapState, mapActions, mapMutations, mapGetters } from "vuex"
+import { mapActions, mapMutations, mapGetters } from "vuex"
 
 export default {
+  // 离开之前清空预览
   beforeRouteLeave(to, from, next) {
-    this.clearOnly()
+    this.$store.commit("admin/ClearOnly")
     next()
   },
+  // 页面创建之前获取文章
   created() {
     this.getOnlyArticle()
     document.title = "后台管理 -文章预览"
@@ -41,30 +54,25 @@ export default {
     }
   },
   computed: {
-    // ...mapState(["articles"])
     ...mapGetters({
       articles: "admin/articles"
     })
   },
   methods: {
-    // ...mapActions(["getArticle"]),
-    // ...mapMutations(["clearOnly"]),
-    ...mapActions({
-      getArticle: "admin/getArticle"
-    }),
-    ...mapMutations({
-      clearOnly: "admin/clearOnly"
-    }),
-    getOnlyArticle: function() {
-      this.getArticle({
-        tag: this.$route.params.eTag,
-        articleId: this.$route.params.articleId
-      }).then(data => {
-        this.$nextTick(function() {
-          // eslint-disable-next-line no-undef
-          Prism.highlightAll()
+    // 精准获取文章
+    getOnlyArticle() {
+      this.$store
+        .dispatch("admin/GetArticle", {
+          tag: this.$route.params.eTag,
+          articleId: this.$route.params.articleId
         })
-      })
+        .then(data => {
+          this.$nextTick(() => {
+            // 代码高亮
+            // eslint-disable-next-line no-undef
+            // Prism.highlightAll()
+          })
+        })
     }
   }
 }
@@ -72,50 +80,49 @@ export default {
 
 <style lang="scss">
 .article-review {
-  box-sizing: border-box;
-  padding: 20px;
-  color: #404040;
-  line-height: 1.8;
   width: 80%;
-  margin: 20px auto 0;
-  box-shadow: 0 0 1px rgba(0, 0, 0, 0.8);
+  height: 100%;
+  // line-height: 1.8;
+  color: #404040;
+  margin: 0 auto;
+  padding: 0 20px;
   border-radius: 2px;
-}
-.review-tags {
-  h4 {
-    display: inline-block;
+  border: solid 1px rgba(0, 0, 0, 0.8);
+  overflow: hidden;
+
+  .review-title {
+    text-align: center;
   }
-  span {
-    margin-right: 10px;
+  .review-tags,
+  .review-abstract,
+  .review-date {
+    text-align: start;
+    .review-article-h4 {
+      display: inline-block;
+    }
+    .review-article-span {
+      display: inline-block;
+      padding: 5px;
+    }
+  }
+
+  .review-content {
+    border: solid red 1px;
+    li {
+      margin-left: 15px;
+    }
+    hr {
+      margin: 15px 0;
+      height: 0;
+      border: 0;
+      border-top: 1px solid #ccc;
+    }
+    img {
+      max-width: 100%;
+    }
   }
 }
-.review-abstract,
-.review-content,
-.review-date {
-  margin-top: 10px;
-}
-.review-abstract h4,
-.review-date h4 {
-  display: inline-block;
-}
-.review-title {
-  margin-top: 10px;
-  text-align: center;
-}
-.review-content {
-  li {
-    margin-left: 15px;
-  }
-  hr {
-    margin: 15px 0;
-    height: 0;
-    border: 0;
-    border-top: 1px solid #ccc;
-  }
-  img {
-    max-width: 100%;
-  }
-}
+
 @media screen and(max-width: 767px) {
   .article-review {
     margin-top: 10px;
