@@ -147,7 +147,7 @@ export default {
   },
   computed: {
     ...mapGetters({
-      news: "axios/news"
+      news: "admin/news"
     })
   },
   methods: {

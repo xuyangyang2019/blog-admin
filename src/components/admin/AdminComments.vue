@@ -18,13 +18,13 @@ export default {
   },
   computed: {
     ...mapGetters({
-      comments: "axios/comments"
+      comments: "admin/comments"
     })
   },
   methods: {
     ...mapActions({
-      getAdminComments: "axios/GetAdminComments",
-      getCommentsCount: "axios/GetCommentsCount"
+      getAdminComments: "admin/GetAdminComments",
+      getCommentsCount: "admin/GetCommentsCount"
     })
   },
   created() {

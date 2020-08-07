@@ -166,8 +166,8 @@ export default {
   },
   computed: {
     ...mapGetters({
-      pageArray: "axios/pageArray",
-      page: "axios/page"
+      pageArray: "admin/pageArray",
+      page: "admin/page"
     })
   },
   components: {
@@ -191,18 +191,18 @@ export default {
   },
   methods: {
     ...mapMutations({
-      reduceArr: "axios/REDUCE_ARR",
-      reduceArr_all: "axios/REDUCE_ARR_ALL",
-      addLocalWord: "axios/ADD_LOCAL_WORD",
-      addLocalComment: "axios/ADD_LOCAL_COMMENT"
+      reduceArr: "admin/REDUCE_ARR",
+      reduceArr_all: "admin/REDUCE_ARR_ALL",
+      addLocalWord: "admin/ADD_LOCAL_WORD",
+      addLocalComment: "admin/ADD_LOCAL_COMMENT"
     }),
     ...mapActions({
-      addBoardReply: "axios/AddBoardReply",
-      addCommentsReply: "axios/AddCommentsReply",
-      removeLeavewords: "axios/RemoveLeavewords",
-      removeComments: "axios/RemoveComments",
-      reduceLeavewords: "axios/ReduceLeavewords",
-      reduceComments: "axios/ReduceComments"
+      addBoardReply: "admin/AddBoardReply",
+      addCommentsReply: "admin/AddCommentsReply",
+      removeLeavewords: "admin/RemoveLeavewords",
+      removeComments: "admin/RemoveComments",
+      reduceLeavewords: "admin/ReduceLeavewords",
+      reduceComments: "admin/ReduceComments"
     }),
     // 单选
     singleChecked() {

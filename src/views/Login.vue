@@ -50,9 +50,9 @@ export default {
     })
   },
   methods: {
-    // ...mapActions(["axios/Login"]),
+    // ...mapActions(["admin/Login"]),
     // ...mapActions({
-    //   login: "axios/Login"
+    //   login: "admin/Login"
     // }),
     // 表单验证
     validate: function(toPath) {
@@ -69,7 +69,7 @@ export default {
       if (!!this.password && !!this.user) {
         // 修改按钮显示的文字 不能再次点击
         this.btnInfo = { text: "登录中...", disabled: true }
-        // axios 登陆
+        // admin 登陆
         this.$api.admin.login(payload).then(data => {
           this.btnInfo = { text: "登录", disabled: false }
           if (data.code === 200) {

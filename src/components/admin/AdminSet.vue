@@ -113,9 +113,9 @@ export default {
   // },
   methods: {
     ...mapActions({
-      reviseKey: "axios/ReviseKey",
-      copyData: "axios/CopyData",
-      downloadDb: "axios/DownloadDb"
+      reviseKey: "admin/ReviseKey",
+      copyData: "admin/CopyData",
+      downloadDb: "admin/DownloadDb"
     }),
     // 提交表单
     handleSubmit() {

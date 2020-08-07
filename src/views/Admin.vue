@@ -135,9 +135,9 @@ export default {
   },
   computed: {
     ...mapGetters({
-      redSup: "axios/redSup", // 红点
-      tagsObj: "axios/tagsObj", // 标签信息
-      forLocation: "axios/forLocation"
+      redSup: "admin/redSup", // 红点
+      tagsObj: "admin/tagsObj", // 标签信息
+      forLocation: "admin/forLocation"
     }),
     // 问候语
     greet() {
@@ -242,9 +242,9 @@ export default {
   },
   created() {
     // 获取最新的标签
-    this.$store.dispatch("axios/GetTagsclass", { publish: true })
+    this.$store.dispatch("admin/GetTagsclass", { publish: true })
     // 获取最新的留言评论
-    this.$store.dispatch("axios/GetNews")
+    this.$store.dispatch("admin/GetNews")
   },
   mounted() {
     // 添加监听事件

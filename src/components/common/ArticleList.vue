@@ -36,9 +36,9 @@
           <td :title="item.title">{{ item.title }}</td>
           <!-- 标签 -->
           <td>
-            <span v-for="(tag, index) in item.tag" :key="'tag' + index" ref="listTag" class="tbody-list-tag">
-              {{ tag | changeLife }}
-            </span>
+            <span v-for="(tag, index) in item.tag" :key="'tag' + index" ref="listTag" class="tbody-list-tag">{{
+              tag | changeLife
+            }}</span>
           </td>
           <!-- 浏览 -->
           <td v-text="item.pv"></td>
@@ -137,7 +137,7 @@ export default {
   },
   computed: {
     ...mapGetters({
-      pageArray: "axios/pageArray"
+      pageArray: "admin/pageArray"
     })
   },
   props: {
@@ -172,7 +172,7 @@ export default {
   },
   methods: {
     ...mapActions({
-      getArticle: "axios/GetArticle"
+      getArticle: "admin/GetArticle"
     }),
     // 随机生成标签的背景色 ok
     initBackground() {
@@ -213,10 +213,10 @@ export default {
     reviewArticle(item) {
       console.log("预览")
       console.log(item)
-      // this.$router.push({
-      //   name: "review",
-      //   params: { eTag: item.tag[0], articleId: item.articleId }
-      // })
+      this.$router.push({
+        name: "review",
+        params: { eTag: item.tag[0], articleId: item.articleId }
+      })
     },
     // 修改文章 ing
     modifyArticle(item) {
@@ -254,16 +254,16 @@ export default {
     sureRemove() {
       if (this.deleteType === "single") {
         // console.log(this.articleIdToDel)
-        this.$store.dispatch("axios/RemoveArticle", { articleId: [this.articleIdToDel.aid] }).then(data => {
+        this.$store.dispatch("admin/RemoveArticle", { articleId: [this.articleIdToDel.aid] }).then(data => {
           // 如果删除成功 删除缓存中的数据
           if (data.deleteCode === 200) {
-            this.$store.commit("axios/REDUCE_ARR", { name: this.$route.name, index: this.articleIdToDel.aindex })
+            this.$store.commit("admin/REDUCE_ARR", { name: this.$route.name, index: this.articleIdToDel.aindex })
           }
         })
       } else {
-        this.$store.dispatch("axios/RemoveArticle", { articleId: this.articlesChose }).then(data => {
+        this.$store.dispatch("admin/RemoveArticle", { articleId: this.articlesChose }).then(data => {
           if (data.deleteCode === 200) {
-            this.$store.commit("axios/REDUCE_ARR_ALL", {
+            this.$store.commit("admin/REDUCE_ARR_ALL", {
               name: this.$route.name,
               removeArr: this.articlesChose
             })

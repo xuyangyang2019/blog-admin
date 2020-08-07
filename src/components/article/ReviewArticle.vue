@@ -20,8 +20,10 @@
     </div>
   </div>
 </template>
+
 <script>
-import { mapState, mapActions, mapMutations } from "vuex"
+import { mapState, mapActions, mapMutations, mapGetters } from "vuex"
+
 export default {
   beforeRouteLeave(to, from, next) {
     this.clearOnly()
@@ -39,11 +41,20 @@ export default {
     }
   },
   computed: {
-    ...mapState(["articles"])
+    // ...mapState(["articles"])
+    ...mapGetters({
+      articles: "admin/articles"
+    })
   },
   methods: {
-    ...mapActions(["getArticle"]),
-    ...mapMutations(["clearOnly"]),
+    // ...mapActions(["getArticle"]),
+    // ...mapMutations(["clearOnly"]),
+    ...mapActions({
+      getArticle: "admin/getArticle"
+    }),
+    ...mapMutations({
+      clearOnly: "admin/clearOnly"
+    }),
     getOnlyArticle: function() {
       this.getArticle({
         tag: this.$route.params.eTag,
@@ -58,6 +69,7 @@ export default {
   }
 }
 </script>
+
 <style lang="scss">
 .article-review {
   box-sizing: border-box;

@@ -42,15 +42,15 @@ export default {
   },
   computed: {
     ...mapGetters({
-      pageArray: "axios/pageArray"
+      pageArray: "admin/pageArray"
     })
   },
   methods: {
     ...mapActions({
-      getArticles: "axios/GetArticles",
-      search: "axios/Search",
-      getMsgBoard: "axios/GetArticles",
-      getAdminComments: "axios/GetAdminComments"
+      getArticles: "admin/GetArticles",
+      search: "admin/Search",
+      getMsgBoard: "admin/GetArticles",
+      getAdminComments: "admin/GetAdminComments"
     }),
     prePage() {
       if (this.currentPage > 1) {

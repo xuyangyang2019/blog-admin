@@ -18,13 +18,13 @@ export default {
   },
   computed: {
     ...mapGetters({
-      msgBoard: "axios/msgBoard"
+      msgBoard: "admin/msgBoard"
     })
   },
   methods: {
     ...mapActions({
-      getMsgBoard: "axios/GetMsgBoard",
-      getMsgCount: "axios/GetMsgCount"
+      getMsgBoard: "admin/GetMsgBoard",
+      getMsgCount: "admin/GetMsgCount"
     })
   },
   created() {

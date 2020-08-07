@@ -14,14 +14,14 @@ export default {
   },
   computed: {
     ...mapGetters({
-      articles: "axios/articles"
+      articles: "admin/articles"
     })
   },
   methods: {
     // ...mapActions(["getArticles", "getArticlesCount"]),
     ...mapActions({
-      getArticles: "axios/GetArticles",
-      getArticlesCount: "axios/GetArticlesCount"
+      getArticles: "admin/GetArticles",
+      getArticlesCount: "admin/GetArticlesCount"
     }),
     allArticles_admin: function() {
       let payload = {

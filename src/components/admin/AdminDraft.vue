@@ -15,12 +15,12 @@ export default {
   },
   computed: {
     ...mapGetters({
-      articles: "axios/articles"
+      articles: "admin/articles"
     })
   },
   methods: {
     ...mapActions({
-      getArticles: "axios/GetArticles"
+      getArticles: "admin/GetArticles"
     }),
     // 分页查询未发表的文章
     allArticles_admin: function() {
