@@ -46,7 +46,10 @@ const router = new Router({
         {
           path: "allArticles",
           name: "allArticles",
-          component: () => import(/* webpackChunkName: "admin" */ "./components/admin/AdminAllArticles.vue"),
+          component: () =>
+            import(
+              /* webpackChunkName: "admin" */ "./components/admin/AdminAllArticles.vue"
+            ),
           meta: {
             requireAuth: true,
             keepAlive: true
@@ -66,7 +69,10 @@ const router = new Router({
         {
           path: "review/:eTag/:articleId",
           name: "review",
-          component: () => import(/* webpackChunkName: "admin" */ "./components/article/ReviewArticle.vue"),
+          component: () =>
+            import(
+              /* webpackChunkName: "admin" */ "./components/article/ReviewArticle.vue"
+            ),
           meta: {
             requireAuth: true,
             keepAlive: true
@@ -77,7 +83,10 @@ const router = new Router({
           path: "draft",
           name: "draft",
           // component: draft,
-          component: () => import(/* webpackChunkName: "admin" */ "./components/admin/AdminDraft.vue"),
+          component: () =>
+            import(
+              /* webpackChunkName: "admin" */ "./components/admin/AdminDraft.vue"
+            ),
           meta: {
             requireAuth: true,
             keepAlive: true
@@ -87,7 +96,10 @@ const router = new Router({
         {
           path: "msgBoard",
           name: "adminMsgBoard",
-          component: () => import(/* webpackChunkName: "admin" */ "./components/admin/AdminMsgBoard.vue"),
+          component: () =>
+            import(
+              /* webpackChunkName: "admin" */ "./components/admin/AdminMsgBoard.vue"
+            ),
           meta: {
             requireAuth: true,
             keepAlive: true
@@ -97,7 +109,10 @@ const router = new Router({
         {
           path: "comments",
           name: "comments",
-          component: () => import(/* webpackChunkName: "admin" */ "./components/admin/AdminComments.vue"),
+          component: () =>
+            import(
+              /* webpackChunkName: "admin" */ "./components/admin/AdminComments.vue"
+            ),
           meta: {
             requireAuth: true,
             keepAlive: true
@@ -108,7 +123,10 @@ const router = new Router({
           path: "newMsg",
           name: "newMsg",
           // component: newMsg,
-          component: () => import(/* webpackChunkName: "admin" */ "./components/admin/AdminNewMsg.vue"),
+          component: () =>
+            import(
+              /* webpackChunkName: "admin" */ "./components/admin/AdminNewMsg.vue"
+            ),
           meta: {
             requireAuth: true,
             keepAlive: true
@@ -118,7 +136,10 @@ const router = new Router({
         {
           path: "adminSet",
           name: "adminSet",
-          component: () => import(/* webpackChunkName: "admin" */ "./components/admin/AdminSet.vue"),
+          component: () =>
+            import(
+              /* webpackChunkName: "admin" */ "./components/admin/AdminSet.vue"
+            ),
           meta: {
             requireAuth: true,
             keepAlive: true
@@ -139,7 +160,10 @@ const router = new Router({
     {
       path: "/admin/publish",
       name: "publish",
-      component: () => import(/* webpackChunkName: "admin" */ "./components/admin/PublishArticle.vue"),
+      component: () =>
+        import(
+          /* webpackChunkName: "admin" */ "./components/admin/PublishArticle.vue"
+        ),
       meta: {
         requireAuth: true
       }
@@ -163,7 +187,8 @@ const router = new Router({
     {
       path: "/login",
       name: "login",
-      component: () => import(/* webpackChunkName: "admin" */ "./views/Login.vue")
+      component: () =>
+        import(/* webpackChunkName: "admin" */ "./views/Login.vue")
     },
     {
       path: "/*",

@@ -5,7 +5,12 @@
       <thead>
         <tr>
           <th>
-            <input type="checkbox" id="checkAll" v-model="allChecked" @click="allChoose" />
+            <input
+              type="checkbox"
+              id="checkAll"
+              v-model="allChecked"
+              @click="allChoose"
+            />
             <label for="checkAll">全选</label>
           </th>
           <th>ID</th>
@@ -27,7 +32,12 @@
         >
           <!-- 选中框 -->
           <td>
-            <input type="checkbox" v-bind:value="item.articleId" @click="singleChecked()" v-model="articlesChose" />
+            <input
+              type="checkbox"
+              v-bind:value="item.articleId"
+              @click="singleChecked()"
+              v-model="articlesChose"
+            />
             <span style="visibility:hidden;">单选</span>
           </td>
           <!-- 序号 -->
@@ -36,9 +46,13 @@
           <td :title="item.title">{{ item.title }}</td>
           <!-- 标签 -->
           <td>
-            <span v-for="(tag, index) in item.tag" :key="'tag' + index" ref="listTag" class="tbody-list-tag">
-              {{ tag | changeLife }}
-            </span>
+            <span
+              v-for="(tag, index) in item.tag"
+              :key="'tag' + index"
+              ref="listTag"
+              class="tbody-list-tag"
+              >{{ tag | changeLife }}</span
+            >
           </td>
           <!-- 浏览 -->
           <td v-text="item.pv"></td>
@@ -55,12 +69,27 @@
               <i class="fa fa-eye fa-lg" aria-hidden="true" title="预览"></i>
             </button>
             <!-- 修改 -->
-            <button class="operation-btn" @click="modifyArticle(item)" :class="{ waiting: updateInfo.wait }">
-              <i class="fa fa-pencil-square-o fa-lg" aria-hidden="true" title="修改"></i>
+            <button
+              class="operation-btn"
+              @click="modifyArticle(item)"
+              :class="{ waiting: updateInfo.wait }"
+            >
+              <i
+                class="fa fa-pencil-square-o fa-lg"
+                aria-hidden="true"
+                title="修改"
+              ></i>
             </button>
             <!-- 删除 -->
-            <button class="operation-btn" @click="deleteArticle(item.articleId, index)">
-              <i class="fa fa-trash-o fa-lg" aria-hidden="true" title="删除"></i>
+            <button
+              class="operation-btn"
+              @click="deleteArticle(item.articleId, index)"
+            >
+              <i
+                class="fa fa-trash-o fa-lg"
+                aria-hidden="true"
+                title="删除"
+              ></i>
             </button>
           </td>
         </tr>
@@ -98,7 +127,9 @@
       <div class="validate-mask" v-show="updateInfo.show">
         <div class="update-warning">
           <h3>数据抓取超时，请稍后再试...</h3>
-          <button @click="updateInfo = { show: false, wait: false }">确定</button>
+          <button @click="updateInfo = { show: false, wait: false }">
+            确定
+          </button>
         </div>
       </div>
     </transition>
@@ -248,27 +279,37 @@ export default {
     deleteArticles() {
       this.showDeleteDialog = true
       this.deleteType = "multi"
-      this.deleteDialogMsg = "确定删除选中的" + this.articlesChose.length + "项么？"
+      this.deleteDialogMsg =
+        "确定删除选中的" + this.articlesChose.length + "项么？"
     },
     // 确认删除文章
     sureRemove() {
       if (this.deleteType === "single") {
         // console.log(this.articleIdToDel)
-        this.$store.dispatch("admin/RemoveArticle", { articleId: [this.articleIdToDel.aid] }).then(data => {
-          // 如果删除成功 删除缓存中的数据
-          if (data.deleteCode === 200) {
-            this.$store.commit("admin/REDUCE_ARR", { name: this.$route.name, index: this.articleIdToDel.aindex })
-          }
-        })
+        this.$store
+          .dispatch("admin/RemoveArticle", {
+            articleId: [this.articleIdToDel.aid]
+          })
+          .then(data => {
+            // 如果删除成功 删除缓存中的数据
+            if (data.deleteCode === 200) {
+              this.$store.commit("admin/REDUCE_ARR", {
+                name: this.$route.name,
+                index: this.articleIdToDel.aindex
+              })
+            }
+          })
       } else {
-        this.$store.dispatch("admin/RemoveArticle", { articleId: this.articlesChose }).then(data => {
-          if (data.deleteCode === 200) {
-            this.$store.commit("admin/REDUCE_ARR_ALL", {
-              name: this.$route.name,
-              removeArr: this.articlesChose
-            })
-          }
-        })
+        this.$store
+          .dispatch("admin/RemoveArticle", { articleId: this.articlesChose })
+          .then(data => {
+            if (data.deleteCode === 200) {
+              this.$store.commit("admin/REDUCE_ARR_ALL", {
+                name: this.$route.name,
+                removeArr: this.articlesChose
+              })
+            }
+          })
       }
       this.showDeleteDialog = false // 退出确认框
     }

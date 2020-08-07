@@ -63,18 +63,20 @@ const actions = {
   },
   // 获取技术文章的tag 生成导航
   GetTagsclass({ commit }, payload) {
-    return fetch.get("/api/adminTags", { publish: payload.publish }).then(data => {
-      if (data.tags && data.tags.length) {
-        // data.tags.forEach((item, index, arr) => {
-        //   if (item.tag === "life") {
-        //     item.tag = "生活"
-        //   }
-        // })
-        // state.tagsObj = data
-        commit("SET_TAGS", data)
-      }
-      // return data
-    })
+    return fetch
+      .get("/api/adminTags", { publish: payload.publish })
+      .then(data => {
+        if (data.tags && data.tags.length) {
+          // data.tags.forEach((item, index, arr) => {
+          //   if (item.tag === "life") {
+          //     item.tag = "生活"
+          //   }
+          // })
+          // state.tagsObj = data
+          commit("SET_TAGS", data)
+        }
+        // return data
+      })
   },
   // 获取文章
   GetArticles({ commit }, payload) {
@@ -114,12 +116,20 @@ const actions = {
           forLocation = [
             { pathName: "allArticles", showName: "已发表文章" },
             { pathName: "eachTag", showName: _tag, params: { tag: _tag } },
-            { pathName: "review", showName: data[0].title, params: { eTag: _tag, articleId: data[0].articleId } }
+            {
+              pathName: "review",
+              showName: data[0].title,
+              params: { eTag: _tag, articleId: data[0].articleId }
+            }
           ]
         } else {
           forLocation = [
             { pathName: "draft", showName: "草稿" },
-            { pathName: "review", showName: data[0].title, params: { eTag: _tag, articleId: data[0].articleId } }
+            {
+              pathName: "review",
+              showName: data[0].title,
+              params: { eTag: _tag, articleId: data[0].articleId }
+            }
           ]
         }
         commit("SET_FOR_LOCATION", forLocation)
@@ -300,9 +310,11 @@ const mutations = {
       })
     }
     if (payload.name === "draft") {
-      state.articles.drafts = state.articles.drafts.filter((item, index, arr) => {
-        return payload.removeArr.indexOf(item.articleId) < 0
-      })
+      state.articles.drafts = state.articles.drafts.filter(
+        (item, index, arr) => {
+          return payload.removeArr.indexOf(item.articleId) < 0
+        }
+      )
     }
     if (payload.name === "adminMsgBoard") {
       state.msgBoard = state.msgBoard.filter((item, index, arr) => {
