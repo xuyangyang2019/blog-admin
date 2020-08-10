@@ -27,13 +27,14 @@
         ></span>
       </div>
       <!-- 文章内容 -->
-      <div class="review-content" v-html="item.content">{{ item.content }}</div>
+      <div class="review-content" v-html="item.content"></div>
     </div>
   </div>
 </template>
 
 <script>
-import { mapActions, mapMutations, mapGetters } from "vuex"
+import { mapGetters } from "vuex"
+import Prism from "prismjs"
 
 export default {
   // 离开之前清空预览
@@ -69,8 +70,7 @@ export default {
         .then(data => {
           this.$nextTick(() => {
             // 代码高亮
-            // eslint-disable-next-line no-undef
-            // Prism.highlightAll()
+            Prism.highlightAll()
           })
         })
     }
@@ -107,16 +107,17 @@ export default {
   }
 
   .review-content {
-    border: solid red 1px;
-    li {
-      margin-left: 15px;
-    }
-    hr {
-      margin: 15px 0;
-      height: 0;
-      border: 0;
-      border-top: 1px solid #ccc;
-    }
+    text-align: start;
+    // border: solid red 1px;
+    // li {
+    //   margin-left: 15px;
+    // }
+    // hr {
+    //   margin: 15px 0;
+    //   height: 0;
+    //   border: 0;
+    //   border-top: 1px solid #ccc;
+    // }
     img {
       max-width: 100%;
     }
