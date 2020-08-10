@@ -82,13 +82,14 @@ export default {
 .article-review {
   width: 80%;
   height: 100%;
-  // line-height: 1.8;
   color: #404040;
   margin: 0 auto;
   padding: 0 20px;
   border-radius: 2px;
-  border: solid 1px rgba(0, 0, 0, 0.8);
-  overflow: hidden;
+  // border: solid 1px rgba(0, 0, 0, 0.8);
+  overflow: auto;
+  // overflow: hidden;
+  @include scroll;
 
   .review-title {
     text-align: center;
@@ -108,9 +109,9 @@ export default {
 
   .review-content {
     text-align: start;
-    // border: solid red 1px;
     // li {
     //   margin-left: 15px;
+    //   border: solid red 1px;
     // }
     // hr {
     //   margin: 15px 0;
@@ -118,9 +119,9 @@ export default {
     //   border: 0;
     //   border-top: 1px solid #ccc;
     // }
-    img {
-      max-width: 100%;
-    }
+    // img {
+    //   max-width: 100%;
+    // }
   }
 }
 
