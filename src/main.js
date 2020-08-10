@@ -17,6 +17,10 @@ Object.keys(filters).forEach(filterName => {
   Vue.filter(filterName, filters[filterName])
 })
 
+// 选择高亮的css 通过babel配置
+// prism-coy prism-dark prism-funky prism-okaidia prism-tomorrow prism-twilight
+// import "prismjs/themes/prism-okaidia.css"
+
 new Vue({
   router,
   store,
