@@ -168,22 +168,30 @@ const router = new Router({
         requireAuth: true
       }
     },
-    // {
-    //   path: "/admin/draftrevise",
-    //   name: "draftrevise",
-    //   component: initEditor,
-    //   meta: {
-    //     requireAuth: true
-    //   }
-    // },
-    // {
-    //   path: "/admin/update",
-    //   name: "update",
-    //   component: initEditor,
-    //   meta: {
-    //     requireAuth: true
-    //   }
-    // },
+    {
+      path: "/admin/draftrevise",
+      name: "draftrevise",
+      // component: initEditor,
+      component: () =>
+        import(
+          /* webpackChunkName: "admin" */ "./components/ue/initEditor.vue"
+        ),
+      meta: {
+        requireAuth: true
+      }
+    },
+    {
+      path: "/admin/update",
+      name: "update",
+      // component: initEditor,
+      component: () =>
+        import(
+          /* webpackChunkName: "admin" */ "./components/ue/initEditor.vue"
+        ),
+      meta: {
+        requireAuth: true
+      }
+    },
     {
       path: "/login",
       name: "login",
