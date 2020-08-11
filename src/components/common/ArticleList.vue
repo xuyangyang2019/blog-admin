@@ -137,7 +137,7 @@
 </template>
 
 <script>
-import { mapMutations, mapActions, mapGetters } from "vuex"
+import { mapGetters } from "vuex"
 
 import page from "@/components/base/page"
 
@@ -202,9 +202,6 @@ export default {
     }
   },
   methods: {
-    ...mapActions({
-      getArticle: "admin/GetArticle"
-    }),
     // 随机生成标签的背景色 ok
     initBackground() {
       // 随机生成标签的背景色
@@ -240,34 +237,36 @@ export default {
         this.articlesChose = []
       }
     },
-    // 预览文章 ing
+    // 预览文章 ok
     reviewArticle(item) {
-      // console.log("预览")
-      // console.log(item)
       this.$router.push({
         name: "review",
         params: { eTag: item.tag[0], articleId: item.articleId }
       })
     },
-    // 修改文章 ing
+    // 修改文章 ok
     modifyArticle(item) {
-      console.log("modifyArticle")
-      // let that = this
-      // this.updateInfo = { show: false, wait: true }
-      // this.getArticle({ tag: item.tag[0], articleId: item.articleId }).then(data => {
-      //   if (data.length) {
-      //     this.updateInfo = { show: false, wait: false }
-      //     if (that.$route.path === "/admin/draft") {
-      //       that.$router.push({ name: "draftrevise" })
-      //     } else {
-      //       that.$router.push({ name: "update" })
-      //     }
-      //   } else {
-      //     this.updateInfo = { show: true, wait: false }
-      //   }
-      // })
+      this.updateInfo = { show: false, wait: true }
+      this.$store
+        .dispatch("admin/GetArticle", {
+          tag: item.tag[0],
+          articleId: item.articleId
+        })
+        .then(data => {
+          if (data.length) {
+            this.updateInfo = { show: false, wait: false }
+            // 如果当前是草稿箱 跳转到draftrevise
+            if (this.$route.path === "/admin/draft") {
+              this.$router.push({ name: "draftrevise" })
+            } else {
+              this.$router.push({ name: "update" })
+            }
+          } else {
+            this.updateInfo = { show: true, wait: false }
+          }
+        })
     },
-    // 删除单篇文章
+    // 删除单篇文章 ok
     deleteArticle(aid, index) {
       this.showDeleteDialog = true
       this.articleIdToDel.aid = aid
@@ -275,7 +274,7 @@ export default {
       this.deleteDialogMsg = "确定删除此项么？"
       this.deleteType = "single"
     },
-    // 删除多篇文章
+    // 删除多篇文章 ok
     deleteArticles() {
       this.showDeleteDialog = true
       this.deleteType = "multi"
@@ -285,7 +284,6 @@ export default {
     // 确认删除文章
     sureRemove() {
       if (this.deleteType === "single") {
-        // console.log(this.articleIdToDel)
         this.$store
           .dispatch("admin/RemoveArticle", {
             articleId: [this.articleIdToDel.aid]
