@@ -5,9 +5,7 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
-import UE from "./UEditor";
-
+import UE from "./UEditor"
 export default {
   components: {
     UE
@@ -15,8 +13,9 @@ export default {
   data() {
     return {
       config: {
-        initialFrameWidth: null,
-        initialFrameHeight: 300,
+        initialFrameWidth: null, // ue默认宽
+        initialFrameHeight: 300, // ue默认高
+        // ue工具栏
         toolbars: [
           [
             "source",
@@ -70,19 +69,17 @@ export default {
           ]
         ]
       }
-    };
+    }
   },
   created() {
-    this.confirmToken();
-  },
-  methods: {
-    ...mapActions(["confirmToken"])
+    this.$store.dispatch("admin/ConfirmToken")
   }
-};
+}
 </script>
 
 <style lang="scss">
 .ue-box {
   background: #195f88;
+  height: 100%;
 }
 </style>

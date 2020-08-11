@@ -1,46 +1,85 @@
 <template>
-  <div class="ue">
+  <div class="my-ue">
     <div class="back">
       <div>
-        <span class="icon-home" @click="backHome" title="回到管理首页"></span>
+        <i
+          class="fa fa-home fa-2x"
+          aria-hidden="true"
+          @click="backHome"
+          title="回到管理首页"
+        ></i>
         <span class="client-greet">{{ greet }}好，admin！</span>
       </div>
       <span class="phone-greet">{{ greet }}好，admin！</span>
-      <span class="icon-exit" title="退出管理界面" @click="exit"></span>
+      <i
+        class="fa fa-sign-out"
+        aria-hidden="true"
+        title="退出管理界面"
+        @click="exit"
+      ></i>
     </div>
     <div class="article-details">
       <div class="article-type">
         <label for>
           <strong>类 型 ：</strong>
         </label>
-        <input ref="a" @click="onlyTech" checked id="tech" type="radio" name="rt" />
+        <input
+          ref="a"
+          @click="onlyTech"
+          checked
+          id="tech"
+          type="radio"
+          name="rt"
+        />
         <label for="tech">技术文章</label>
         <input ref="l" id="life" @click="onlyLife" type="radio" name="rt" />
         <label for="life">生活感悟</label>
         |
-        <input type="radio" name="original" value="true" v-model="articleInfo.original" />
+        <input
+          type="radio"
+          name="original"
+          value="true"
+          v-model="articleInfo.original"
+        />
         <label for>原创</label>
-        <input type="radio" name="original" value="false" v-model="articleInfo.original" />
+        <input
+          type="radio"
+          name="original"
+          value="false"
+          v-model="articleInfo.original"
+        />
         <label for>转载</label>
       </div>
+
       <div class="article-details-title">
         <label for>
           <strong>标 题 ：</strong>
         </label>
         <div class="ueditor-input-box">
-          <input type="text" placeholder="请输入文章标题" v-model="articleInfo.title" />
+          <input
+            type="text"
+            placeholder="请输入文章标题"
+            v-model="articleInfo.title"
+          />
         </div>
       </div>
       <div class="article-details-tag">
         <label for>
           <strong>标 签 ：</strong>
         </label>
-        <div class="ueditor-input-box" @mousedown="flag = false" @click="getFocus">
+        <div
+          class="ueditor-input-box"
+          @mousedown="flag = false"
+          @click="getFocus"
+        >
           <div class="hasChosed">
-            <span v-for="(tag, index) in articleInfo.tags" class="first-floor-span">
+            <!-- <span
+              v-for="(tag, index) in articleInfo.tags"
+              class="first-floor-span"
+            >
               {{ tag | changeLife }}
               <span class="remove" @click="removeTag(tag, index)">x</span>
-            </span>
+            </span>-->
           </div>
           <div class="input-box-move">
             <input
@@ -56,30 +95,31 @@
             />
             <!--  componsitionstart和componsitionend为中文输入法下，在input框中预输入的英文字符触发的
             事件，..start在预输入的第一个字符时触发一次，输入完成时（回车输入中文字符或者删除全部字符），..end事件触发，然后触发input绑定的keyup事件-->
-
             <!-- 增加@focus事件解决页面切换回来导致标签索引不显示-->
             <div class="tag-chart" v-show="tagFlag.recommend" ref="tagChart">
               <div class="tag-nav">
-                <span
+                <!-- <span
                   v-for="(item, index) in recommend.nav"
                   :class="{ 'nav-bg': recommend.list[index].active }"
                   @click="changeNav(index)"
-                  >{{ item }}</span
+                >{{ item }}</span-->
                 >
               </div>
-              <ul class="tag-content">
+              <!-- <ul class="tag-content">
                 <li v-for="item in recommend.list" v-show="item.active">
                   <span v-for="tag in item.data" @click="choseRecommend(tag)">
                     {{ tag }}
                   </span>
                 </li>
-              </ul>
+              </ul>-->
             </div>
             <!-- 筛选标签 -->
-            <div class="diy-tag" ref="recommend" v-show="tagFlag.filter">
-              <li v-for="recom in recommendTag" @click="choseFilter(recom)">{{ recom }}</li>
+            <!-- <div class="diy-tag" ref="recommend" v-show="tagFlag.filter">
+              <li v-for="recom in recommendTag" @click="choseFilter(recom)">
+                {{ recom }}
+              </li>
               <li @click="choseFilter(createTag)">创建标签 {{ createTag }}</li>
-            </div>
+            </div>-->
           </div>
         </div>
       </div>
@@ -88,24 +128,40 @@
           <strong>前 言 ：</strong>
         </label>
         <div class="ueditor-input-box">
-          <input type="text" placeholder="请输入文章前言" v-model="articleInfo.abstract" />
+          <input
+            type="text"
+            placeholder="请输入文章前言"
+            v-model="articleInfo.abstract"
+          />
         </div>
       </div>
     </div>
     <!-- 编辑器 -->
-    <div class="editor-container">
+    <!-- <div class="editor-container">
       <div class="editor-write">
         <script id="editor" type="text/plain"></script>
       </div>
       <div class="preview">
         <div v-html="articleInfo.content">{{ articleInfo.content }}</div>
       </div>
-    </div>
+    </div>-->
     <!-- 对文章的一系列操作: 1.文章发表 2.存为草稿 3.已发表文章的更新 4.草稿的更新 5.草稿发表 -->
     <div class="article-handle">
       <div class="publish" v-if="this.$route.path === '/admin/publish'">
-        <button :disabled="wating.disabled" class="true-publish" @click="publish($event)">{{ wating.info.p }}</button>
-        <button :disabled="wating.disabled" class="false-publish" @click="publish($event)">{{ wating.info.sd }}</button>
+        <button
+          :disabled="wating.disabled"
+          class="true-publish"
+          @click="publish($event)"
+        >
+          {{ wating.info.p }}
+        </button>
+        <button
+          :disabled="wating.disabled"
+          class="false-publish"
+          @click="publish($event)"
+        >
+          {{ wating.info.sd }}
+        </button>
       </div>
       <div class="publish" v-if="this.$route.path === '/admin/update'">
         <button
@@ -118,10 +174,19 @@
         </button>
       </div>
       <div class="publish" v-if="this.$route.path === '/admin/draftrevise'">
-        <button v-show="showBtn" :disabled="wating.disabled" class="draft-update" @click="update_draftPublish($event)">
+        <button
+          v-show="showBtn"
+          :disabled="wating.disabled"
+          class="draft-update"
+          @click="update_draftPublish($event)"
+        >
           {{ wating.info.su }}
         </button>
-        <button :disabled="wating.disabled" class="draft-publish" @click="update_draftPublish($event)">
+        <button
+          :disabled="wating.disabled"
+          class="draft-publish"
+          @click="update_draftPublish($event)"
+        >
           {{ wating.info.p }}
         </button>
       </div>
@@ -137,10 +202,13 @@
   </div>
 </template>
 <script>
-import { mapState, mapActions, mapMutations } from "vuex"
-import "@/../static/UE/prism.css"
-import Prism from "@/../static/UE/prism.js"
+import { mapActions, mapMutations, mapGetters } from "vuex"
+
+import "@/../public/UE/prism.css"
+import Prism from "@/../public/UE/prism.js"
 import { recommendTag } from "./recommendTag"
+// import UE from "@/../public/UE"
+
 export default {
   props: {
     config: {
@@ -181,12 +249,10 @@ export default {
       }
     }
   },
-  mounted() {
-    this.initUeditor()
-    this.initUeditorContent()
-  },
   computed: {
-    ...mapState(["articles"]),
+    ...mapGetters({
+      articles: "admin/articles"
+    }),
     filterArray: function() {
       let filter_arr = []
       this.recommend.list.forEach((item, index, arr) => {
@@ -196,7 +262,8 @@ export default {
       })
       return filter_arr
     },
-    greet: function() {
+    // eslint-disable-next-line vue/return-in-computed-property
+    greet() {
       let hour = new Date().getHours()
       if (hour >= 0 && hour < 6) {
         return "凌晨"
@@ -217,16 +284,18 @@ export default {
   },
   methods: {
     ...mapActions(["saveArticle", "updateArticle"]),
-    ...mapMutations(["clearOnly"]),
+    // 返回首页
     backHome: function() {
       this.$router.push({ name: "admin" })
     },
+    // 退出
     exit: function() {
       localStorage.removeItem("map_blog_token_info_item_name")
       localStorage.removeItem("userName")
       localStorage.removeItem("lastLogin")
       this.$router.push({ name: "login" })
     },
+    // 获取焦点
     getFocus: function() {
       this.flag = true
       this.$refs.ipt.focus()
@@ -247,10 +316,15 @@ export default {
         this.createTag = ""
       }
     },
+    // 标签
     tagIndex: function(event) {
       if (this.inputFlag) {
         if (this.createTag === "") {
-          if (this.tagFlag.delete && event.keyCode === 8 && this.articleInfo.tags.indexOf("life") === -1) {
+          if (
+            this.tagFlag.delete &&
+            event.keyCode === 8 &&
+            this.articleInfo.tags.indexOf("life") === -1
+          ) {
             this.articleInfo.tags.pop()
           }
           this.tagFlag = { filter: false, recommend: true, delete: true }
@@ -264,6 +338,7 @@ export default {
         }
       }
     },
+    // 过滤器
     choseFilter: function(tag) {
       let tags = this.articleInfo.tags
       if (tag === "life") {
@@ -271,7 +346,11 @@ export default {
         this.articleInfo.tags = ["life"]
       }
       if (tags.indexOf("life") === -1) {
-        if (tags.indexOf(tag) === -1 && tags.indexOf("life") === -1 && tags.length < 4) {
+        if (
+          tags.indexOf(tag) === -1 &&
+          tags.indexOf("life") === -1 &&
+          tags.length < 4
+        ) {
           this.articleInfo.tags.push(tag)
         }
         this.tagFlag.filter = false
@@ -282,13 +361,19 @@ export default {
         }, 0)
       }
     },
+    //
     choseRecommend: function(tag) {
       let tags = this.articleInfo.tags
       this.tagFlag.delete = true
-      if (tags.indexOf(tag) === -1 && tags.indexOf("life") === -1 && tags.length < 4) {
+      if (
+        tags.indexOf(tag) === -1 &&
+        tags.indexOf("life") === -1 &&
+        tags.length < 4
+      ) {
         this.articleInfo.tags.push(tag)
       }
     },
+    //
     removeTag: function(tag, index) {
       if (tag === "life") {
         alert("请更换文章类型")
@@ -297,6 +382,7 @@ export default {
         this.$refs.a.checked = true
       }
     },
+    //
     changeNav: function(index) {
       this.recommend.list.forEach((item, currentIndex, arr) => {
         if (currentIndex === index) {
@@ -306,16 +392,20 @@ export default {
         }
       })
     },
+    //
     onlyLife: function() {
       this.articleInfo.tags = ["life"]
     },
+    //
     onlyTech: function() {
       this.articleInfo.tags.splice(this.articleInfo.tags.indexOf("life"), 1)
     },
+    //
     start: function() {
       this.tagFlag.delete = false
       this.inputFlag = false
     },
+    //
     end: function() {
       this.inputFlag = true
     },
@@ -431,10 +521,12 @@ export default {
         })
       }
     },
+    //
     getUEContent() {
       // 获取内容方法
       return this.editor.getContent()
     },
+    //
     validate: function() {
       let _title = this.articleInfo.title,
         _tags = this.articleInfo.tags,
@@ -460,6 +552,7 @@ export default {
         return true
       }
     },
+    //
     transformStr() {
       let dom = document.createElement("div")
       dom.innerHTML = this.getUEContent()
@@ -468,7 +561,8 @@ export default {
         let el = strArr[i],
           preContent = el.innerHTML,
           code = document.createElement("code"),
-          cls = "language-" + el.className.substring(6, el.className.indexOf(";"))
+          cls =
+            "language-" + el.className.substring(6, el.className.indexOf(";"))
         let tempCls = el.className
         el.className = tempCls + " " + "line-numbers"
         code.className = cls
@@ -481,38 +575,42 @@ export default {
         Prism.highlightAll()
       })
     },
-    initUeditor: function() {
-      let _this = this
-      require
-        .ensure(
-          [],
-          require => {
-            require("@/../static/UE/ueditor.config.js")
-            require("@/../static/UE/ueditor.all.min.js")
-            require("@/../static/UE/lang/zh-cn/zh-cn.js")
-            require("@/../static/UE/ueditor.parse.min.js")
-          },
-          "ue"
-        )
-        .then(() => {
-          this.editor = UE.getEditor("editor", this.config) // 初始化UE
-          //editor内容变化监听事件
-          this.editor.addListener("contentChange", () => {
-            if (!this.showBtn) {
-              this.showBtn = true
-            }
-            _this.transformStr()
-          })
-          this.editor.addListener("ready", () => {
-            if (_this.articles.only.length) {
-              _this.editor.setContent(_this.articles.only[0].content)
-            }
-          })
-        })
+    // 初始化编辑器
+    initUeditor() {
+      console.log("initUeditor")
+      // let _this = this
+      // require
+      //   .ensure(
+      //     [],
+      //     require => {
+      //       require("@/../public/UE/ueditor.config.js")
+      //       require("@/../public/UE/ueditor.all.min.js")
+      //       require("@/../public/UE/lang/zh-cn/zh-cn.js")
+      //       require("@/../public/UE/ueditor.parse.min.js")
+      //     },
+      //     "ue"
+      //   )
+      //   .then(() => {
+      //     this.editor = UE.getEditor("editor", this.config) // 初始化UE
+      //     //editor内容变化监听事件
+      //     this.editor.addListener("contentChange", () => {
+      //       if (!this.showBtn) {
+      //         this.showBtn = true
+      //       }
+      //       _this.transformStr()
+      //     })
+      //     this.editor.addListener("ready", () => {
+      //       if (_this.articles.only.length) {
+      //         _this.editor.setContent(_this.articles.only[0].content)
+      //       }
+      //     })
+      //   })
     },
-    initUeditorContent: function() {
+    // 初始化编辑器内容
+    initUeditorContent() {
       if (this.articles.only.length) {
         let atc = this.articles.only[0]
+        console.log(atc)
         if (this.$route.path !== "/admin/publish") {
           let _original = atc.original === true ? "true" : "false"
           this.articleInfo = {
@@ -529,53 +627,117 @@ export default {
       }
     }
   },
+  mounted() {
+    this.initUeditor()
+    this.initUeditorContent()
+  },
   destroyed() {
     if (this.editor !== null) {
       this.editor.destroy()
     }
     this.articleInfo = { title: "", tags: [], abstract: "", content: "" }
-    this.clearOnly()
+    this.$store.commit("admin/ClearOnly")
   }
 }
 </script>
 <style lang="scss">
-.edui-box {
+.my-ue {
   color: #000;
-}
-.back {
-  padding: 15px;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  color: #ccc;
-  border-bottom: 1px solid #ccc;
-  span {
-    vertical-align: middle;
+  flex-direction: column;
+  justify-content: flex-start;
+  border: solid red 1px;
+  .back {
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: #ccc;
+    border-bottom: 1px solid #ccc;
+    span {
+      vertical-align: middle;
+    }
+    .icon-home {
+      font-size: 26px;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+    .icon-exit {
+      font-size: 26px;
+      cursor: pointer;
+    }
   }
-  .icon-home {
-    font-size: 26px;
-    cursor: pointer;
-    margin-right: 10px;
+
+  .article-details {
+    color: #fff;
+    padding: 0 15px 15px 15px;
+    .article-details-title,
+    .article-details-tag,
+    .article-details-abstract {
+      display: flex;
+      align-items: center;
+      label {
+        display: inline-block;
+        width: 70px;
+      }
+    }
   }
-  .icon-exit {
-    font-size: 26px;
-    cursor: pointer;
+
+  .article-handle {
+    button {
+      border: 1px solid #409eff;
+      border-radius: 5px;
+      padding: 5px 10px;
+      background: #409eff;
+      cursor: pointer;
+      color: #ffffff;
+    }
+    button:hover {
+      opacity: 0.9;
+    }
+    button[disabled] {
+      cursor: wait;
+    }
+    .publish {
+      padding: 0 10px 10px;
+      text-align: right;
+    }
+    .publish-mask {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+    }
+    .mask-box {
+      background: #ffffff;
+      border-radius: 5px;
+      margin: 150px auto;
+      width: 30%;
+      text-align: center;
+      overflow: hidden; /*消除对父元素的margin-top绑架*/
+      h3 {
+        margin-top: 50px;
+        color: #e6a23c;
+      }
+      button {
+        padding: 5px 10px;
+        border: 1px solid #5bc0de;
+        background: #5bc0de;
+        margin: 50px 0 20px;
+        color: #ffffff;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      button:hover {
+        opacity: 0.9;
+      }
+    }
   }
 }
-.article-details {
-  color: #fff;
-  padding: 0 15px 15px 15px;
-}
-.article-details-title,
-.article-details-tag,
-.article-details-abstract {
-  display: flex;
-  align-items: center;
-  label {
-    display: inline-block;
-    width: 70px;
-  }
-}
+
 .ueditor-input-box {
   padding: 5px;
   background: #ffffff;
@@ -700,59 +862,7 @@ export default {
     max-width: 100%;
   }
 }
-.article-handle {
-  button {
-    border: 1px solid #409eff;
-    border-radius: 5px;
-    padding: 5px 10px;
-    background: #409eff;
-    cursor: pointer;
-    color: #ffffff;
-  }
-  button:hover {
-    opacity: 0.9;
-  }
-  button[disabled] {
-    cursor: wait;
-  }
-}
-.publish {
-  padding: 0 10px 10px;
-  text-align: right;
-}
-.publish-mask {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 1000;
-}
-.mask-box {
-  background: #ffffff;
-  border-radius: 5px;
-  margin: 150px auto;
-  width: 30%;
-  text-align: center;
-  overflow: hidden; /*消除对父元素的margin-top绑架*/
-  h3 {
-    margin-top: 50px;
-    color: #e6a23c;
-  }
-  button {
-    padding: 5px 10px;
-    border: 1px solid #5bc0de;
-    background: #5bc0de;
-    margin: 50px 0 20px;
-    color: #ffffff;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  button:hover {
-    opacity: 0.9;
-  }
-}
+
 .publish-enter-active,
 .publish-leave-active {
   transition: all ease 0.5s;
@@ -764,6 +874,7 @@ export default {
 .phone-greet {
   display: none;
 }
+
 @media screen and(max-width: 767px) {
   .phone-greet {
     display: inline-block;

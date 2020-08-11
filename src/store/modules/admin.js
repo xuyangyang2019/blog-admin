@@ -203,6 +203,10 @@ const actions = {
   // 下载数据库
   DownloadDb() {
     return fetch.get("/api/downloadSingle")
+  },
+  // 确认token
+  ConfirmToken() {
+    return fetch.get("/api/confirmToken")
   }
 }
 
