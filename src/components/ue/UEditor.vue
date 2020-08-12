@@ -1,15 +1,14 @@
 <template>
   <div class="my-ue">
+    <!-- 返回|退出 -->
     <div class="back">
-      <div>
-        <i
-          class="fa fa-home fa-2x"
-          aria-hidden="true"
-          @click="backHome"
-          title="回到管理首页"
-        ></i>
-        <span class="client-greet">{{ greet }}好，admin！</span>
-      </div>
+      <i
+        class="fa fa-home fa-2x"
+        aria-hidden="true"
+        @click="backHome"
+        title="回到管理首页"
+      ></i>
+      <span class="client-greet">{{ greet }}好，admin！</span>
       <span class="phone-greet">{{ greet }}好，admin！</span>
       <i
         class="fa fa-sign-out"
@@ -18,11 +17,11 @@
         @click="exit"
       ></i>
     </div>
+    <!-- 类型|标题|标签|前言 -->
     <div class="article-details">
-      <div class="article-type">
-        <label for>
-          <strong>类 型 ：</strong>
-        </label>
+      <!-- 类型 -->
+      <div class="article-details-type">
+        <div class="item-title">类 型 ：</div>
         <input
           ref="a"
           @click="onlyTech"
@@ -34,7 +33,7 @@
         <label for="tech">技术文章</label>
         <input ref="l" id="life" @click="onlyLife" type="radio" name="rt" />
         <label for="life">生活感悟</label>
-        |
+        &nbsp;|&nbsp;
         <input
           type="radio"
           name="original"
@@ -50,36 +49,35 @@
         />
         <label for>转载</label>
       </div>
-
-      <div class="article-details-title">
-        <label for>
-          <strong>标 题 ：</strong>
-        </label>
+      <!-- 标题 -->
+      <div class="article-details-item">
+        <div class="item-title">标 题 ：</div>
         <div class="ueditor-input-box">
           <input
             type="text"
+            class="item-input"
             placeholder="请输入文章标题"
             v-model="articleInfo.title"
           />
         </div>
       </div>
-      <div class="article-details-tag">
-        <label for>
-          <strong>标 签 ：</strong>
-        </label>
+      <!-- 标签 -->
+      <div class="article-details-item">
+        <div class="item-title">标 签 ：</div>
         <div
           class="ueditor-input-box"
           @mousedown="flag = false"
           @click="getFocus"
         >
           <div class="hasChosed">
-            <!-- <span
+            <span
               v-for="(tag, index) in articleInfo.tags"
+              :key="'tag' + index"
               class="first-floor-span"
             >
               {{ tag | changeLife }}
               <span class="remove" @click="removeTag(tag, index)">x</span>
-            </span>-->
+            </span>
           </div>
           <div class="input-box-move">
             <input
@@ -98,35 +96,46 @@
             <!-- 增加@focus事件解决页面切换回来导致标签索引不显示-->
             <div class="tag-chart" v-show="tagFlag.recommend" ref="tagChart">
               <div class="tag-nav">
-                <!-- <span
+                <span
                   v-for="(item, index) in recommend.nav"
+                  :key="'nav' + index"
                   :class="{ 'nav-bg': recommend.list[index].active }"
                   @click="changeNav(index)"
-                >{{ item }}</span-->
-                >
+                  v-text="item"
+                ></span>
               </div>
-              <!-- <ul class="tag-content">
-                <li v-for="item in recommend.list" v-show="item.active">
-                  <span v-for="tag in item.data" @click="choseRecommend(tag)">
-                    {{ tag }}
-                  </span>
+              <ul class="tag-content">
+                <li
+                  v-for="(item, index) in recommend.list"
+                  :key="'il' + index"
+                  v-show="item.active"
+                >
+                  <span
+                    v-for="(tag, index) in item.data"
+                    :key="'tag' + index"
+                    @click="choseRecommend(tag)"
+                    v-text="tag"
+                  ></span>
                 </li>
-              </ul>-->
+              </ul>
             </div>
             <!-- 筛选标签 -->
-            <!-- <div class="diy-tag" ref="recommend" v-show="tagFlag.filter">
-              <li v-for="recom in recommendTag" @click="choseFilter(recom)">
+            <div class="diy-tag" ref="recommend" v-show="tagFlag.filter">
+              <li
+                v-for="(recom, index) in recommendTag"
+                :key="'recom' + index"
+                @click="choseFilter(recom)"
+              >
                 {{ recom }}
               </li>
               <li @click="choseFilter(createTag)">创建标签 {{ createTag }}</li>
-            </div>-->
+            </div>
           </div>
         </div>
       </div>
-      <div class="article-details-abstract">
-        <label for>
-          <strong>前 言 ：</strong>
-        </label>
+      <!-- 前言 -->
+      <div class="article-details-item">
+        <div class="item-title">前 言 ：</div>
         <div class="ueditor-input-box">
           <input
             type="text"
@@ -146,6 +155,7 @@
       </div>
     </div>-->
     <!-- 对文章的一系列操作: 1.文章发表 2.存为草稿 3.已发表文章的更新 4.草稿的更新 5.草稿发表 -->
+    <!-- 操作 -->
     <div class="article-handle">
       <div class="publish" v-if="this.$route.path === '/admin/publish'">
         <button
@@ -191,6 +201,7 @@
         </button>
       </div>
     </div>
+
     <transition name="publish">
       <div class="publish-mask" v-show="dialog.show">
         <div class="mask-box">
@@ -643,10 +654,11 @@ export default {
 <style lang="scss">
 .my-ue {
   color: #000;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  border: solid red 1px;
+  // height: 100%;
+  // flex: 1 1 auto;
+  // display: flex;
+  // flex-direction: column;
+  // border: solid red 1px;
   .back {
     padding: 15px;
     display: flex;
@@ -654,15 +666,7 @@ export default {
     justify-content: space-between;
     color: #ccc;
     border-bottom: 1px solid #ccc;
-    span {
-      vertical-align: middle;
-    }
-    .icon-home {
-      font-size: 26px;
-      cursor: pointer;
-      margin-right: 10px;
-    }
-    .icon-exit {
+    .fa {
       font-size: 26px;
       cursor: pointer;
     }
@@ -670,20 +674,48 @@ export default {
 
   .article-details {
     color: #fff;
-    padding: 0 15px 15px 15px;
-    .article-details-title,
-    .article-details-tag,
-    .article-details-abstract {
+    padding: 15px;
+    .article-details-item {
       display: flex;
       align-items: center;
-      label {
-        display: inline-block;
+      text-align: start;
+      // border: solid red 1px;
+      padding: 5px;
+      .item-title {
         width: 70px;
+        font-weight: 600;
+      }
+      .ueditor-input-box {
+        width: 100%;
+        border-radius: 5px;
+        background: #ffffff;
+        display: flex;
+        padding: 2px;
+        // border: solid red 1px;
+        // cursor: text;
+        .remove {
+          cursor: pointer;
+        }
+        input {
+          // box-sizing: border-box;
+          font-size: 16px;
+          flex: 1 1 auto;
+          border: none;
+          outline: none;
+        }
+      }
+    }
+    .article-details-type {
+      @extend .article-details-item;
+      // border: solid red 1px;
+      input {
+        margin-left: 10px;
       }
     }
   }
 
   .article-handle {
+    border: solid red 1px;
     button {
       border: 1px solid #409eff;
       border-radius: 5px;
@@ -738,26 +770,6 @@ export default {
   }
 }
 
-.ueditor-input-box {
-  padding: 5px;
-  background: #ffffff;
-  border-radius: 5px;
-  color: #017e66;
-  font-size: 12px;
-  width: 100%;
-  cursor: text;
-  .remove {
-    cursor: pointer;
-  }
-  input {
-    box-sizing: border-box;
-    font-size: 16px;
-    width: 100%;
-    padding: 8px 0;
-    border: none;
-    outline: none;
-  }
-}
 .hasChosed {
   display: inline-block;
   .first-floor-span {
