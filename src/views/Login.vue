@@ -4,7 +4,13 @@
       <div class="input">
         <label for="i">用户名 ：</label>
         <div class="input-box">
-          <input type="text" id="i" v-model="user" @focus="clearErr" placeholder="请输入用户名" />
+          <input
+            type="text"
+            id="i"
+            v-model="user"
+            @focus="clearErr"
+            placeholder="请输入用户名"
+          />
           <span class="err">{{ err.user }}</span>
         </div>
       </div>
@@ -24,7 +30,9 @@
         </div>
       </div>
       <div class="submit">
-        <button :disabled="btnInfo.disabled" @click="validate(toPath)">{{ btnInfo.text }}</button>
+        <button :disabled="btnInfo.disabled" @click="validate(toPath)">
+          {{ btnInfo.text }}
+        </button>
       </div>
     </div>
     <div class="login-mask"></div>

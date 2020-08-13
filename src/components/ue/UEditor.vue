@@ -154,9 +154,11 @@
         <div v-html="articleInfo.content">{{ articleInfo.content }}</div>
       </div>
     </div>-->
+
     <!-- 对文章的一系列操作: 1.文章发表 2.存为草稿 3.已发表文章的更新 4.草稿的更新 5.草稿发表 -->
     <!-- 操作 -->
     <div class="article-handle">
+      <!-- 创建文章的按钮 -->
       <div class="publish" v-if="this.$route.path === '/admin/publish'">
         <button
           :disabled="wating.disabled"
@@ -173,6 +175,7 @@
           {{ wating.info.sd }}
         </button>
       </div>
+      <!-- 已发表的文章 按钮 -->
       <div class="publish" v-if="this.$route.path === '/admin/update'">
         <button
           v-show="showBtn"
@@ -183,6 +186,7 @@
           {{ wating.info.su }}
         </button>
       </div>
+      <!-- 草稿箱的按钮 -->
       <div class="publish" v-if="this.$route.path === '/admin/draftrevise'">
         <button
           v-show="showBtn"
@@ -212,13 +216,16 @@
     </transition>
   </div>
 </template>
-<script>
-import { mapActions, mapMutations, mapGetters } from "vuex"
 
+<script>
+import { mapActions, mapGetters } from "vuex"
+
+// 高亮的css
 import "@/../public/UE/prism.css"
+// 代码高亮的js
 import Prism from "@/../public/UE/prism.js"
+// 标签
 import { recommendTag } from "./recommendTag"
-// import UE from "@/../public/UE"
 
 export default {
   props: {
@@ -307,7 +314,7 @@ export default {
       this.$router.push({ name: "login" })
     },
     // 获取焦点
-    getFocus: function() {
+    getFocus() {
       this.flag = true
       this.$refs.ipt.focus()
       if (!this.tagFlag.filter) {
@@ -338,9 +345,17 @@ export default {
           ) {
             this.articleInfo.tags.pop()
           }
-          this.tagFlag = { filter: false, recommend: true, delete: true }
+          this.tagFlag = {
+            filter: false,
+            recommend: true,
+            delete: true
+          }
         } else {
-          this.tagFlag = { filter: true, recommend: false, delete: false }
+          this.tagFlag = {
+            filter: true,
+            recommend: false,
+            delete: false
+          }
           let tag = this.createTag
           let pattern = new RegExp("^" + tag, "gi")
           this.recommendTag = this.filterArray.filter((item, index, arr) => {
@@ -588,8 +603,31 @@ export default {
     },
     // 初始化编辑器
     initUeditor() {
-      console.log("initUeditor")
+      console.log("初始化编辑器")
       // let _this = this
+      Promise.all([
+        import("@/../public/UE/ueditor.config.js"),
+        import("@/../public/UE/ueditor.all.min.js"),
+        import("@/../public/UE/lang/zh-cn/zh-cn.js"),
+        import("@/../public/UE/ueditor.parse.min.js")
+      ]).then(([module1, module2, module3]) => {
+        console.log("加载需要的js完成")
+        // eslint-disable-next-line no-undef
+        this.editor = UE.getEditor("editor", this.config) // 初始化UE
+        //editor内容变化监听事件
+        this.editor.addListener("contentChange", () => {
+          if (!this.showBtn) {
+            this.showBtn = true
+          }
+          this.transformStr()
+        })
+        this.editor.addListener("ready", () => {
+          if (this.articles.only.length) {
+            this.editor.setContent(this.articles.only[0].content)
+          }
+        })
+      })
+
       // require
       //   .ensure(
       //     [],
@@ -622,6 +660,7 @@ export default {
       if (this.articles.only.length) {
         let atc = this.articles.only[0]
         console.log(atc)
+        // 标题 | 标签 | 前言
         if (this.$route.path !== "/admin/publish") {
           let _original = atc.original === true ? "true" : "false"
           this.articleInfo = {
@@ -632,6 +671,7 @@ export default {
             content: ""
           }
         }
+        // 技术文章 | 生活感悟
         if (this.articleInfo.tags[0] === "life") {
           this.$refs.l.checked = true
         }
@@ -643,10 +683,18 @@ export default {
     this.initUeditorContent()
   },
   destroyed() {
+    console.log("离开页面，销毁")
+    console.log(this.editor)
     if (this.editor !== null) {
       this.editor.destroy()
     }
-    this.articleInfo = { title: "", tags: [], abstract: "", content: "" }
+
+    this.articleInfo = {
+      title: "",
+      tags: [],
+      abstract: "",
+      content: ""
+    }
     this.$store.commit("admin/ClearOnly")
   }
 }
@@ -697,7 +745,7 @@ export default {
           cursor: pointer;
         }
         input {
-          // box-sizing: border-box;
+          box-sizing: border-box;
           font-size: 16px;
           flex: 1 1 auto;
           border: none;
