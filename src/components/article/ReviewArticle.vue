@@ -67,7 +67,7 @@ export default {
           tag: this.$route.params.eTag,
           articleId: this.$route.params.articleId
         })
-        .then(data => {
+        .then((data) => {
           this.$nextTick(() => {
             // 代码高亮
             Prism.highlightAll()
