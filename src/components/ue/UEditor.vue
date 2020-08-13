@@ -17,6 +17,7 @@
         @click="exit"
       ></i>
     </div>
+
     <!-- 类型|标题|标签|前言 -->
     <div class="article-details">
       <!-- 类型 -->
@@ -145,15 +146,23 @@
         </div>
       </div>
     </div>
-    <!-- 编辑器 -->
-    <!-- <div class="editor-container">
+
+    <!-- 百度富文本编辑器 | 预览 -->
+    <div class="editor-container">
+      <!-- 百度富文本编辑器 -->
       <div class="editor-write">
-        <script id="editor" type="text/plain"></script>
+        <!-- <script id="editor" type="text/plain"></script> -->
+        <div
+          id="editor"
+          type="text/plain"
+          style="width:100%;height:350px;"
+        ></div>
       </div>
+      <!-- 预览 -->
       <div class="preview">
-        <div v-html="articleInfo.content">{{ articleInfo.content }}</div>
+        <div v-html="articleInfo.content"></div>
       </div>
-    </div>-->
+    </div>
 
     <!-- 对文章的一系列操作: 1.文章发表 2.存为草稿 3.已发表文章的更新 4.草稿的更新 5.草稿发表 -->
     <!-- 操作 -->
@@ -221,11 +230,18 @@
 import { mapActions, mapGetters } from "vuex"
 
 // 高亮的css
-import "@/../public/UE/prism.css"
+// import "@/../public/UE/prism.css"
 // 代码高亮的js
-import Prism from "@/../public/UE/prism.js"
+// import Prism from "@/../public/UE/prism.js"
+import Prism from "prismjs"
 // 标签
 import { recommendTag } from "./recommendTag"
+//
+import "@/../public/UE/ueditor.config.js"
+import "@/../public/UE/ueditor.all.min.js"
+import "@/../public/UE/lang/zh-cn/zh-cn"
+// import "@/../public/UE/ueditor.parse.min.js"
+import "@/../public/UE/themes/default/css/ueditor.css"
 
 export default {
   props: {
@@ -235,19 +251,19 @@ export default {
   },
   data() {
     return {
-      editor: null,
+      editor: null, // ueditor
       articleInfo: {
         original: "true",
         title: "",
         tags: [],
         abstract: "",
         content: ""
-      },
-      createTag: "",
-      dialog: { show: false, info: "" },
-      recommendTag: [],
+      }, // 文章信息
+      createTag: "", // 创建标签
+      dialog: { show: false, info: "" }, // 对话框
+      recommendTag: [], // 回显标签
       flag: true,
-      showBtn: false,
+      showBtn: true, // 显示按钮
       inputFlag: true, //中文输入法下预输入触发事件的标志位
       tagFlag: { recommend: false, filter: false, delete: false },
       wating: {
@@ -468,7 +484,7 @@ export default {
           original: _original,
           pv: 0,
           date: Date.now()
-        }).then(data => {
+        }).then((data) => {
           if (data.code === 200) {
             that.editor.setContent("") //清空编辑器
             that.wating = {
@@ -530,7 +546,7 @@ export default {
           content: this.articleInfo.content,
           tag: this.articleInfo.tags,
           publish: isPublish
-        }).then(data => {
+        }).then((data) => {
           that.editor.setContent("") //清空编辑器
           that.articleInfo = {
             original: "true",
@@ -578,7 +594,7 @@ export default {
         return true
       }
     },
-    //
+    // 转化内容
     transformStr() {
       let dom = document.createElement("div")
       dom.innerHTML = this.getUEContent()
@@ -604,62 +620,26 @@ export default {
     // 初始化编辑器
     initUeditor() {
       console.log("初始化编辑器")
-      // let _this = this
-      Promise.all([
-        import("@/../public/UE/ueditor.config.js"),
-        import("@/../public/UE/ueditor.all.min.js"),
-        import("@/../public/UE/lang/zh-cn/zh-cn.js"),
-        import("@/../public/UE/ueditor.parse.min.js")
-      ]).then(([module1, module2, module3]) => {
-        console.log("加载需要的js完成")
-        // eslint-disable-next-line no-undef
-        this.editor = UE.getEditor("editor", this.config) // 初始化UE
-        //editor内容变化监听事件
-        this.editor.addListener("contentChange", () => {
-          if (!this.showBtn) {
-            this.showBtn = true
-          }
-          this.transformStr()
-        })
-        this.editor.addListener("ready", () => {
-          if (this.articles.only.length) {
-            this.editor.setContent(this.articles.only[0].content)
-          }
-        })
+      // eslint-disable-next-line no-undef
+      this.editor = UE.getEditor("editor", this.config) // 初始化UE
+      console.log(this.editor)
+      //editor内容变化监听事件
+      this.editor.addListener("contentChange", () => {
+        if (!this.showBtn) {
+          this.showBtn = true
+        }
+        this.transformStr()
       })
-
-      // require
-      //   .ensure(
-      //     [],
-      //     require => {
-      //       require("@/../public/UE/ueditor.config.js")
-      //       require("@/../public/UE/ueditor.all.min.js")
-      //       require("@/../public/UE/lang/zh-cn/zh-cn.js")
-      //       require("@/../public/UE/ueditor.parse.min.js")
-      //     },
-      //     "ue"
-      //   )
-      //   .then(() => {
-      //     this.editor = UE.getEditor("editor", this.config) // 初始化UE
-      //     //editor内容变化监听事件
-      //     this.editor.addListener("contentChange", () => {
-      //       if (!this.showBtn) {
-      //         this.showBtn = true
-      //       }
-      //       _this.transformStr()
-      //     })
-      //     this.editor.addListener("ready", () => {
-      //       if (_this.articles.only.length) {
-      //         _this.editor.setContent(_this.articles.only[0].content)
-      //       }
-      //     })
-      //   })
+      this.editor.addListener("ready", () => {
+        if (this.articles.only.length) {
+          this.editor.setContent(this.articles.only[0].content)
+        }
+      })
     },
     // 初始化编辑器内容
     initUeditorContent() {
       if (this.articles.only.length) {
         let atc = this.articles.only[0]
-        console.log(atc)
         // 标题 | 标签 | 前言
         if (this.$route.path !== "/admin/publish") {
           let _original = atc.original === true ? "true" : "false"
@@ -668,7 +648,7 @@ export default {
             title: atc.title,
             tags: atc.tag,
             abstract: atc.abstract,
-            content: ""
+            content: atc.content
           }
         }
         // 技术文章 | 生活感悟
@@ -699,14 +679,16 @@ export default {
   }
 }
 </script>
+
 <style lang="scss">
 .my-ue {
   color: #000;
-  // height: 100%;
-  // flex: 1 1 auto;
-  // display: flex;
-  // flex-direction: column;
+  height: 100%;
+  overflow: hidden;
   // border: solid red 1px;
+  display: flex;
+  flex-direction: column;
+
   .back {
     padding: 15px;
     display: flex;
@@ -762,8 +744,49 @@ export default {
     }
   }
 
+  .editor-container {
+    // flex: 1 1 auto;
+    display: flex;
+    padding: 10px;
+    overflow: scroll;
+
+    // .editor-write {
+    //   width: 50%;
+    //   border: solid red 1px;
+    // }
+
+    .editor-write,
+    .preview {
+      border: solid red 1px;
+      flex: 1 1 auto;
+
+      width: 50%;
+      font-size: 14px;
+      border-radius: 2px;
+      margin-left: 10px;
+      padding: 15px;
+      // overflow: hidden;
+
+      background: #fff;
+      line-height: 1.5;
+      text-align: start;
+      // li {
+      //   margin-left: 15px;
+      // }
+      // hr {
+      //   margin: 15px 0;
+      //   height: 0;
+      //   border: 0;
+      //   border-top: 1px solid #ccc;
+      // }
+      // img {
+      //   max-width: 100%;
+      // }
+    }
+  }
+
   .article-handle {
-    border: solid red 1px;
+    // border: solid red 1px;
     button {
       border: 1px solid #409eff;
       border-radius: 5px;
@@ -779,18 +802,19 @@ export default {
       cursor: wait;
     }
     .publish {
-      padding: 0 10px 10px;
+      padding: 10px 10px;
       text-align: right;
     }
-    .publish-mask {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-      z-index: 1000;
-    }
+  }
+
+  .publish-mask {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
     .mask-box {
       background: #ffffff;
       border-radius: 5px;
@@ -839,15 +863,15 @@ export default {
     background: #ccc;
   }
 }
-.article-type {
-  input {
-    margin: 10px 5px 10px 5px;
-  }
-}
-.article-details-tag,
-.article-details-abstract {
-  margin-top: 10px;
-}
+// .article-type {
+//   input {
+//     margin: 10px 5px 10px 5px;
+//   }
+// }
+// .article-details-tag,
+// .article-details-abstract {
+//   margin-top: 10px;
+// }
 .tag-chart,
 .diy-tag {
   position: absolute;
@@ -893,36 +917,6 @@ export default {
   background: #009a61;
   color: #ffffff;
 }
-.editor-container {
-  display: flex;
-  padding: 10px;
-}
-.editor-write {
-  width: 50%;
-}
-.preview {
-  width: 50%;
-  font-size: 14px;
-  border-radius: 2px;
-  margin-left: 10px;
-  padding: 15px;
-  overflow: scroll;
-  background: #fff;
-  line-height: 1.5;
-  li {
-    margin-left: 15px;
-  }
-  hr {
-    margin: 15px 0;
-    height: 0;
-    border: 0;
-    border-top: 1px solid #ccc;
-  }
-  img {
-    max-width: 100%;
-  }
-}
-
 .publish-enter-active,
 .publish-leave-active {
   transition: all ease 0.5s;
