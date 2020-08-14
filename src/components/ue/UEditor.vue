@@ -151,7 +151,6 @@
     <div class="editor-container">
       <!-- 百度富文本编辑器 -->
       <div class="editor-write">
-        <!-- <script id="editor" type="text/plain"></script> -->
         <div
           id="editor"
           type="text/plain"
@@ -159,9 +158,9 @@
         ></div>
       </div>
       <!-- 预览 -->
-      <div class="preview">
+      <!-- <div class="preview">
         <div v-html="articleInfo.content"></div>
-      </div>
+      </div>-->
     </div>
 
     <!-- 对文章的一系列操作: 1.文章发表 2.存为草稿 3.已发表文章的更新 4.草稿的更新 5.草稿发表 -->
@@ -263,7 +262,7 @@ export default {
       dialog: { show: false, info: "" }, // 对话框
       recommendTag: [], // 回显标签
       flag: true,
-      showBtn: true, // 显示按钮
+      showBtn: false, // 显示按钮
       inputFlag: true, //中文输入法下预输入触发事件的标志位
       tagFlag: { recommend: false, filter: false, delete: false },
       wating: {
@@ -685,7 +684,6 @@ export default {
   color: #000;
   height: 100%;
   overflow: hidden;
-  // border: solid red 1px;
   display: flex;
   flex-direction: column;
 
@@ -745,31 +743,32 @@ export default {
   }
 
   .editor-container {
-    // flex: 1 1 auto;
+    flex: 1 1 auto;
+    margin: 0 20px;
+    overflow-y: scroll;
     display: flex;
-    padding: 10px;
-    overflow: scroll;
+    justify-content: space-between;
+    overflow: hidden;
 
-    // .editor-write {
-    //   width: 50%;
-    //   border: solid red 1px;
-    // }
-
-    .editor-write,
-    .preview {
+    ::v-deep .editor-write {
+      overflow-y: scroll;
       border: solid red 1px;
-      flex: 1 1 auto;
+      .edui-default .edui-editor-toolbarboxouter {
+        border: solid red 1px;
+      }
+    }
 
-      width: 50%;
+    .preview {
+      width: 49%;
+      padding: 5px;
+      text-align: start;
       font-size: 14px;
       border-radius: 2px;
-      margin-left: 10px;
-      padding: 15px;
-      // overflow: hidden;
-
-      background: #fff;
       line-height: 1.5;
-      text-align: start;
+      overflow-y: scroll;
+      background-color: #fff;
+      border: solid red 1px;
+
       // li {
       //   margin-left: 15px;
       // }
@@ -787,6 +786,7 @@ export default {
 
   .article-handle {
     // border: solid red 1px;
+    margin: 0 20px;
     button {
       border: 1px solid #409eff;
       border-radius: 5px;
@@ -802,7 +802,7 @@ export default {
       cursor: wait;
     }
     .publish {
-      padding: 10px 10px;
+      padding: 10px 0;
       text-align: right;
     }
   }
