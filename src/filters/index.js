@@ -10,7 +10,7 @@
 // }
 
 // 函数表达式的值是在JS运行时确定，并且在表达式赋值完成后，该函数才能调用
-const ifZero = value => {
+const ifZero = (value) => {
   if (value > 0) {
     return value
   } else {
@@ -34,7 +34,7 @@ const ifZero = value => {
 //   }
 // }
 
-const reviseTime = value => {
+const reviseTime = (value) => {
   let localTime = new Date(value),
     year = localTime.getFullYear(),
     month = localTime.getMonth() + 1,
