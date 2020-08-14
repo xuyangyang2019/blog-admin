@@ -22,9 +22,9 @@ export default {
 </script>
 
 <style lang="scss">
-// @import "./styles/reset.scss";
+@import "./styles/reset.scss";
 @import "./styles/common.scss";
-@import "./styles/normalize.scss";
+@import "./styles/normalize.css";
 @import "~@/assets/font-awesome/css/font-awesome.css";
 // @import "~@/assets/iconfont/iconfont.css";
 
