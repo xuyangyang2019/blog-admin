@@ -2,5 +2,5 @@ node_modules
 dist/
 test
 build/
-assets/*
+src/assets/*
 public/*
