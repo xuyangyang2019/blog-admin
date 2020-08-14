@@ -1,8 +1,30 @@
 <template>
   <transition name="fade">
     <div class="m-toast" v-show="show">
-      <span v-if="type === 'success'">成功</span>
-      {{message}}
+      <span v-if="type === 'success'">
+        <svg class="icon" aria-hidden="true">
+          <use xlink:href="#icon-success" />
+        </svg>
+        {{ message }}成功
+      </span>
+      <span v-else-if="type === 'warning'">
+        <svg class="icon" aria-hidden="true">
+          <use xlink:href="#icon-warning" />
+        </svg>
+        {{ message }}
+      </span>
+      <span v-else-if="type === 'error'">
+        <svg class="icon" aria-hidden="true">
+          <use xlink:href="#icon-error" />
+        </svg>
+        {{ message }}
+      </span>
+      <span v-else>
+        <svg class="icon" aria-hidden="true">
+          <use xlink:href="#icon-info" />
+        </svg>
+        {{ message }}
+      </span>
     </div>
   </transition>
 </template>
@@ -12,8 +34,8 @@ export default {
   data() {
     return {
       show: false,
-      message: '',
-      type: ''
+      message: "",
+      type: ""
     }
   }
 }
