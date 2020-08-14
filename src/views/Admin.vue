@@ -32,6 +32,27 @@
       <!-- aside -->
       <div class="admin-aside" ref="list">
         <ul class="aside-menu" @click="showListDelay">
+          <!-- 发布文章 -->
+          <li class="aside-item" @click="showPublishNav = !showPublishNav">
+            <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+            <span class="item-name">发布文章</span>
+            <i
+              class="fa fa-angle-right more-nav"
+              :class="{ 'fa-angle-down': showPublishNav }"
+              aria-hidden="true"
+            ></i>
+          </li>
+          <ul class="child-navs" v-if="showPublishNav">
+            <li class="child-navs-item" @click="publishArticle('ue')">
+              UEditor
+            </li>
+            <li class="child-navs-item" @click="publishArticle('md')">
+              MarkDown
+            </li>
+            <li class="child-navs-item" @click="publishArticle('qe')">
+              QuillEditor
+            </li>
+          </ul>
           <!-- menu -->
           <li
             class="aside-item"
@@ -114,13 +135,14 @@ export default {
     return {
       lastLogin: localStorage.getItem("lastLogin") || "My Lord", // 最近一次的登陆时间
       userName: localStorage.getItem("userName") || "", // 用户名
-      // showChildMenu: true, // 显示所有文章的子菜单
       // location: [], // 当前位置
       choseType: "key", // 搜索类型
       searchKey: "", // 关键词
       date: { from: "", to: "" }, // 搜索时间
       err: { from: false, to: false }, // 错误信息
       showList: false, // 面包屑导航
+      showPublishNav: false, // 显示发表文章的子菜单
+      // showChildMenu: true, // 显示所有文章的子菜单
       menu: [
         {
           name: "已发表",
@@ -151,11 +173,6 @@ export default {
           name: "账户设置",
           icon: "fa fa-user",
           path: "/admin/adminSet"
-        },
-        {
-          name: "发表文章",
-          icon: "fa fa-pencil-square-o",
-          path: "/admin/publish"
         }
       ]
     }
@@ -209,6 +226,20 @@ export default {
         window.open(item.path, "_blank")
       } else {
         this.$router.push({ path: item.path })
+      }
+    },
+    // 发布文章路由 默认是富文本
+    publishArticle(pModel) {
+      switch (pModel) {
+        case "md":
+          window.open("/admin/publish", "_blank")
+          break
+        case "qe":
+          this.$router.push({ path: "/admin/publish" })
+          break
+        default:
+          this.$router.push({ path: "/admin/publish" })
+          break
       }
     },
     //不管什么情况下都把list高度设为首屏高度
@@ -375,6 +406,10 @@ export default {
             text-align: start;
             margin-left: 10px;
           }
+          .more-nav {
+            position: absolute;
+            right: 10px;
+          }
           .red-sup {
             position: absolute;
             top: 15px;
@@ -392,6 +427,18 @@ export default {
           background: #4895fc;
           &:hover {
             background: #4895fc;
+          }
+        }
+
+        .child-navs {
+          margin-left: 38px;
+          .child-navs-item {
+            text-align: start;
+            padding: 10px 5px;
+            &:hover {
+              background: #0f1215;
+              cursor: pointer;
+            }
           }
         }
       }
