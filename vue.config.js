@@ -83,7 +83,7 @@ module.exports = {
     }
   },
 
-  chainWebpack: config => {
+  chainWebpack: (config) => {
     config.resolve.alias
       .set("@", resolve("src"))
       .set("assets", resolve("src/assets"))
@@ -96,7 +96,7 @@ module.exports = {
     ])
   },
 
-  configureWebpack: config => {
+  configureWebpack: (config) => {
     // 生产环境打包分析体积
     if (process.env.NODE_ENV === "production") {
       return {
