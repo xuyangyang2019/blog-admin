@@ -1,7 +1,13 @@
 <template>
   <div class="toast">
     <transition-group tag="div" name="toastShow">
-      <div class="toastMsg" v-for="message in messages" :key="message.id">
+      <div
+        class="toastMsg"
+        v-for="message in messages"
+        :key="message.id"
+        :class="message.cssClass"
+        :style="message.style"
+      >
         <!-- v-if="message.show" -->
         {{ message.content }}
       </div>
