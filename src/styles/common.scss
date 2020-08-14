@@ -1,3 +1,11 @@
+.icon {
+  width: 1em;
+  height: 1em;
+  vertical-align: -0.15em;
+  fill: currentColor;
+  overflow: hidden;
+}
+
 // 不能选中
 .can-not-select {
   -webkit-user-select: none;
