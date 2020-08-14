@@ -6,7 +6,10 @@ import store from "./store"
 // 导入api接口
 import api from "./api"
 import filters from "./filters"
+// 自定义的toast
 import Toast from "./components/toast/index"
+// 导入icon-font
+import "@/assets/font/iconfont.js"
 
 Vue.config.productionTip = false
 // 将api挂载到vue的原型上复制代码
