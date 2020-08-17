@@ -16,10 +16,10 @@ import Admin from "./views/Admin.vue"
 // const Login = resolve => { require.ensure([], () => { resolve(require('./views/Login.vue')) }, 'login') }
 
 //后台管理界面
-const miss = resolve => require(["@/components/base/miss"], resolve)
-const eachTag = resolve => require(["@/components/article/eachTag"], resolve)
+// const miss = (resolve) => require(["@/components/base/miss"], resolve)
+const eachTag = (resolve) => require(["@/components/article/eachTag"], resolve)
 // const review = resolve => require(["@/components/article/review"], resolve)
-const search = resolve => require(["@/components/search/search"], resolve)
+const search = (resolve) => require(["@/components/search/search"], resolve)
 // const initEditor = resolve => require(["@/components/ue/initEditor"], resolve)
 
 Vue.use(Router)
@@ -192,16 +192,19 @@ const router = new Router({
         requireAuth: true
       }
     },
+    // 登陆页面
     {
       path: "/login",
       name: "login",
       component: () =>
         import(/* webpackChunkName: "admin" */ "./views/Login.vue")
     },
+    // 其他
     {
       path: "/*",
       name: "miss",
-      component: miss
+      component: () =>
+        import(/* webpackChunkName: "admin" */ "@/components/base/MissPage.vue")
     }
   ]
 })
@@ -209,7 +212,7 @@ const router = new Router({
 // 全局前置守卫
 router.beforeEach((to, from, next) => {
   // 如果要去的路由 需要验证
-  if (to.matched.some(res => res.meta.requireAuth)) {
+  if (to.matched.some((res) => res.meta.requireAuth)) {
     if (localStorage.getItem("validateToken")) {
       next()
     } else {
@@ -238,7 +241,7 @@ router.beforeResolve((to, from, next) => {
 //     console.log(from)
 // })
 
-router.onError(e => {
+router.onError((e) => {
   console.log(e)
 })
 
