@@ -16,24 +16,9 @@ let id = 0
 
 // 全局配置
 const globalOptions = {
-  show: true
-  // cssClass: {},
-  // style: {},
-  // position: "middle",
-  // duration: 3000
-}
-
-// 移除toast
-const moveToast = (toasts) => {
-  console.log("moveToast")
-  console.log(toasts)
-  let length = toasts.length
-  toasts.forEach((item, idx) => {
-    let value
-    value = `translateY(-${(length - 1 - idx) * 100}%);`
-    console.log(value)
-    item.style["transform"] = value
-  })
+  show: true,
+  duration: 3000,
+  showClose: false
 }
 
 Toast.install = (Vue) => {
@@ -45,50 +30,39 @@ Toast.install = (Vue) => {
   instance.$mount()
   // 第四步：在body添加组件
   document.body.appendChild(instance.$el)
-
   // 第五步：添加实例方法，以供全局调用
-  Vue.prototype.$toast = (msg, type, duration = 2000) => {
-    // instance.message = msg
-    // instance.type = type
-    // instance.show = true
-    if (!msg) return
-    let options = {
+  Vue.prototype.$toast = (options) => {
+    if (!options.message) return
+    options = {
       id: id++,
-      type: type,
-      content: msg,
-      duration: duration,
       ...globalOptions,
-      // ...options,
+      ...options,
       onRemove: () => {
-        let i = instance.$data.messages.findIndex((item) => {
+        let i = instance.$data.toasts.findIndex((item) => {
           return item.id === options.id
         })
+        // 隐藏toast
         i >= 0 && (options.show = false)
-        i >= 0 && instance.$data.messages.splice(i, 1)
+        // 删除toast
+        i >= 0 && instance.$data.toasts.splice(i, 1)
       }
     }
-
-    // moveToast(instance.$data.messages)
-
-    instance.$data.messages.push(options)
-
-    // instance.messages.push({
-    //   id: id++,
-    //   content: msg,
-    //   type: type,
-    //   duration: duration
-    // })
-
-    if (instance.$data.messages.length > 6) {
+    instance.$data.toasts.push(options)
+    // 如果toasts超过6个 立马移除第一个
+    if (instance.$data.toasts.length > 6) {
       setTimeout(() => {
-        clearTimeout(instance.$data.messages[0].timer)
-        instance.$data.messages[0].onRemove()
+        clearTimeout(instance.$data.toasts[0].timer)
+        instance.$data.toasts[0].onRemove()
       })
     }
-
-    options.timer = setTimeout(() => {
-      options.onRemove()
-    }, options.duration)
+    // 添加定时器
+    if (options.duration > 0) {
+      options.timer = setTimeout(() => {
+        options.onRemove()
+      }, options.duration)
+    } else if (options.duration === 0) {
+      console.log("不自动隐藏")
+    }
   }
 }
 

@@ -1,9 +1,11 @@
 <template>
   <div class="toast">
     <transition-group tag="div" name="toastShow">
-      <div class="toastMsg" v-for="message in messages" :key="message.id">
-        <!-- v-if="message.show" -->
-        {{ message.content }}
+      <div class="toastMsg" v-for="toast in toasts" :key="toast.id">
+        <svg class="icon" aria-hidden="true">
+          <use :xlink:href="iconMap[toast.type]" />
+        </svg>
+        {{ toast.message }}
       </div>
     </transition-group>
   </div>
@@ -13,7 +15,13 @@
 export default {
   data() {
     return {
-      messages: []
+      toasts: [],
+      iconMap: {
+        success: "#icon-success",
+        warning: "#icon-warning",
+        info: "#icon-info",
+        error: "#icon-error"
+      }
     }
   },
   methods: {}
@@ -28,6 +36,7 @@ export default {
   transform: translateX(-50%);
   z-index: 999;
 }
+
 .toastMsg {
   margin-bottom: 5px;
   padding: 0 16px;
