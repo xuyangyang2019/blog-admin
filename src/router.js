@@ -20,7 +20,6 @@ import Admin from "./views/Admin.vue"
 const eachTag = (resolve) => require(["@/components/article/eachTag"], resolve)
 // const review = resolve => require(["@/components/article/review"], resolve)
 const search = (resolve) => require(["@/components/search/search"], resolve)
-// const initEditor = resolve => require(["@/components/ue/initEditor"], resolve)
 
 Vue.use(Router)
 
@@ -156,10 +155,10 @@ const router = new Router({
         }
       ]
     },
-    //操作文章的路由
+    // 发表文章
     {
-      path: "/admin/publish",
-      name: "publish",
+      path: "/admin/qe",
+      name: "qe",
       component: () =>
         import(
           /* webpackChunkName: "admin" */ "./components/admin/PublishArticle.vue"
@@ -169,24 +168,46 @@ const router = new Router({
       }
     },
     {
-      path: "/admin/draftrevise",
-      name: "draftrevise",
-      // component: initEditor,
+      path: "/admin/md",
+      name: "md",
       component: () =>
         import(
-          /* webpackChunkName: "admin" */ "./components/ue/initEditor.vue"
+          /* webpackChunkName: "admin" */ "./components/admin/PublishArticle.vue"
         ),
       meta: {
         requireAuth: true
       }
     },
     {
-      path: "/admin/update",
-      name: "update",
-      // component: initEditor,
+      path: "/admin/publish",
+      name: "publish",
       component: () =>
         import(
-          /* webpackChunkName: "admin" */ "./components/ue/initEditor.vue"
+          /* webpackChunkName: "admin" */ "./components/ue/InitEditor.vue"
+        ),
+      meta: {
+        requireAuth: true
+      }
+    },
+    // 草稿修改
+    {
+      path: "/admin/draftrevise",
+      name: "draftrevise",
+      component: () =>
+        import(
+          /* webpackChunkName: "admin" */ "./components/ue/InitEditor.vue"
+        ),
+      meta: {
+        requireAuth: true
+      }
+    },
+    // 更新文章
+    {
+      path: "/admin/update",
+      name: "update",
+      component: () =>
+        import(
+          /* webpackChunkName: "admin" */ "./components/ue/InitEditor.vue"
         ),
       meta: {
         requireAuth: true

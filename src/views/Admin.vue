@@ -232,27 +232,20 @@ export default {
     publishArticle(pModel) {
       switch (pModel) {
         case "md":
-          // window.open("/admin/publish", "_blank")
-          this.$toast("msg", "success", 2000)
-          // this.$toast.info("info")
-
-          // this.$Toast(`mdmdmdmdm`)
-          // this.$Toast({
-          //   message: `mdmdmdmdm`,
-          //   type: "success",
-          //   duration: 2000
-          // })
-
-          // this.$toast("msg", "info", 2000)
-          // this.$toast("msg", "warning", 2000)
-          // this.$toast("msg", "error", 2000)
+          this.$toast({
+            message: "敬请期待！",
+            type: "warning",
+            duration: 2000
+          })
           break
         case "qe":
-          this.$toast("msg", "info", 2000)
-          // this.$router.push({ path: "/admin/publish" })
-
-          // this.$Toast(`qeqeqeqeqeqeq`)
-
+          this.$toast({
+            message: "qeqeqeqeqe",
+            type: "info",
+            duration: 2000
+          })
+          this.$router.push({ path: "/admin/qe" })
+          // window.open(item.path, "_blank")
           break
         default:
           this.$router.push({ path: "/admin/publish" })
