@@ -36,19 +36,30 @@
         <label for="life">生活感悟</label>
         &nbsp;|&nbsp;
         <input
+          id="original"
           type="radio"
           name="original"
           value="true"
           v-model="articleInfo.original"
         />
-        <label for>原创</label>
+        <label for="original">原创</label>
+
         <input
+          id="reprint"
           type="radio"
           name="original"
           value="false"
           v-model="articleInfo.original"
         />
-        <label for>转载</label>
+        <label for="reprint">转载</label>
+        <!-- <input
+          type="radio"
+          name="original"
+          value="3"
+          id="translate"
+          v-model="articleInfo.original"
+        />
+        <label for="translate">翻译</label>-->
       </div>
       <!-- 标题 -->
       <div class="article-details-item">
@@ -63,23 +74,25 @@
         </div>
       </div>
       <!-- 标签 -->
-      <div class="article-details-item">
+      <div class="article-details-tags">
         <div class="item-title">标 签 ：</div>
         <div
           class="ueditor-input-box"
           @mousedown="flag = false"
           @click="getFocus"
         >
-          <div class="hasChosed">
+          <!-- 已经选择的标签 -->
+          <div class="has-chosed">
             <span
+              class="first-floor-span"
               v-for="(tag, index) in articleInfo.tags"
               :key="'tag' + index"
-              class="first-floor-span"
             >
               {{ tag | changeLife }}
               <span class="remove" @click="removeTag(tag, index)">x</span>
             </span>
           </div>
+          <!-- 可选的标签 -->
           <div class="input-box-move">
             <input
               type="text"
@@ -171,14 +184,14 @@
         <button
           :disabled="wating.disabled"
           class="true-publish"
-          @click="publish($event)"
+          @click="publishArticle($event)"
         >
           {{ wating.info.p }}
         </button>
         <button
           :disabled="wating.disabled"
           class="false-publish"
-          @click="publish($event)"
+          @click="publishArticle($event)"
         >
           {{ wating.info.sd }}
         </button>
@@ -235,10 +248,11 @@ import { mapActions, mapGetters } from "vuex"
 import Prism from "prismjs"
 // 标签
 import { recommendTag } from "./recommendTag"
-//
+// ue相关的文件
 import "@/../public/UE/ueditor.config.js"
 import "@/../public/UE/ueditor.all.min.js"
 import "@/../public/UE/lang/zh-cn/zh-cn"
+// 下面注释的文件会报错
 // import "@/../public/UE/ueditor.parse.min.js"
 import "@/../public/UE/themes/default/css/ueditor.css"
 
@@ -251,25 +265,27 @@ export default {
   data() {
     return {
       editor: null, // ueditor
+      // 文章信息
       articleInfo: {
-        original: "true",
-        title: "",
-        tags: [],
-        abstract: "",
-        content: ""
-      }, // 文章信息
+        original: "true", // 原创
+        title: "", // 标题
+        tags: [], // 标签
+        abstract: "", // 前言
+        content: "" // 内容
+      },
       createTag: "", // 创建标签
       dialog: { show: false, info: "" }, // 对话框
-      recommendTag: [], // 回显标签
+      recommendTag: [], // 推荐标签
       flag: true,
+      recommend: recommendTag,
+      tagFlag: { recommend: false, filter: false, delete: false }, // tag的标志位
+
       showBtn: false, // 显示按钮
       inputFlag: true, //中文输入法下预输入触发事件的标志位
-      tagFlag: { recommend: false, filter: false, delete: false },
       wating: {
         disabled: false,
         info: { p: "发表文章", sd: "存为草稿", su: "更新" }
-      },
-      recommend: recommendTag
+      }
     }
   },
   filters: {
@@ -318,19 +334,20 @@ export default {
   methods: {
     ...mapActions(["saveArticle", "updateArticle"]),
     // 返回首页
-    backHome: function() {
+    backHome() {
       this.$router.push({ name: "admin" })
     },
     // 退出
-    exit: function() {
+    exit() {
       localStorage.removeItem("map_blog_token_info_item_name")
       localStorage.removeItem("userName")
       localStorage.removeItem("lastLogin")
       this.$router.push({ name: "login" })
     },
-    // 获取焦点
+    // 标签框获取焦点
     getFocus() {
       this.flag = true
+      // 获取输入框的焦点
       this.$refs.ipt.focus()
       if (!this.tagFlag.filter) {
         this.tagFlag.recommend = true
@@ -342,7 +359,8 @@ export default {
      *失焦点，blur事件触发，this.itSelf为false,没有反应。这样就避免了标签推荐
      *页由于input的得失焦点而产生的“闪烁”问题
      */
-    blurChange: function() {
+    blurChange() {
+      console.log("blurChange")
       if (this.flag) {
         this.tagFlag.recommend = false
         this.tagFlag.filter = false
@@ -350,7 +368,7 @@ export default {
       }
     },
     // 标签
-    tagIndex: function(event) {
+    tagIndex(event) {
       if (this.inputFlag) {
         if (this.createTag === "") {
           if (
@@ -380,7 +398,7 @@ export default {
       }
     },
     // 过滤器
-    choseFilter: function(tag) {
+    choseFilter(tag) {
       let tags = this.articleInfo.tags
       if (tag === "life") {
         this.$refs.l.checked = true
@@ -403,7 +421,7 @@ export default {
       }
     },
     //
-    choseRecommend: function(tag) {
+    choseRecommend(tag) {
       let tags = this.articleInfo.tags
       this.tagFlag.delete = true
       if (
@@ -414,8 +432,8 @@ export default {
         this.articleInfo.tags.push(tag)
       }
     },
-    //
-    removeTag: function(tag, index) {
+    // 移除标签
+    removeTag(tag, index) {
       if (tag === "life") {
         alert("请更换文章类型")
       } else {
@@ -436,6 +454,7 @@ export default {
     //
     onlyLife: function() {
       this.articleInfo.tags = ["life"]
+      console.log(this.articleInfo.tags)
     },
     //
     onlyTech: function() {
@@ -450,60 +469,107 @@ export default {
     end: function() {
       this.inputFlag = true
     },
-    //发表文章或存为草稿，通过设置isPublish来区别
-    publish: function(event) {
-      if (this.validate()) {
-        let isPublish,
-          _title = this.articleInfo.title,
-          _tags = this.articleInfo.tags,
-          _abstract = this.articleInfo.abstract,
-          _content = this.articleInfo.content,
-          that = this,
-          _original = this.articleInfo.original === "true" ? true : false
-        if (event.target.className === "true-publish") {
-          isPublish = true
-          this.wating = {
-            disabled: true,
-            info: { p: "发表中...", sd: "存为草稿", su: "更新" }
-          }
-        } else {
-          isPublish = false
-          this.wating = {
-            disabled: true,
-            info: { p: "发表文章", sd: "保存中...", su: "更新" }
-          }
-        }
-        this.saveArticle({
-          articleId: 0,
-          title: _title,
-          abstract: _abstract,
-          content: _content,
-          tag: _tags,
-          publish: isPublish,
-          original: _original,
-          pv: 0,
-          date: Date.now()
-        }).then((data) => {
-          if (data.code === 200) {
-            that.editor.setContent("") //清空编辑器
-            that.wating = {
-              disabled: false,
-              info: { p: "发表文章", sd: "存为草稿", su: "更新" }
-            }
-            that.articleInfo = {
-              original: "true",
-              title: "",
-              tags: [],
-              content: "",
-              abstract: ""
-            }
-            if (isPublish) {
-              that.dialog = { show: true, info: "文章发表成功！" }
-            } else {
-              that.dialog = { show: true, info: "草稿保存成功！" }
-            }
-          }
+    // 表单验证验证
+    validate() {
+      if (this.articleInfo.title === "") {
+        // this.dialog = { show: true, info: "请填写文章标题" }
+        this.$toast({
+          message: "请填写文章标题",
+          type: "warning",
+          duration: 2000
         })
+        return false
+      }
+      if (this.articleInfo.tags.length === 0) {
+        // this.dialog = { show: true, info: "请填写文章标签" }
+        this.$toast({
+          message: "请填写文章标签",
+          type: "warning",
+          duration: 2000
+        })
+        return false
+      }
+      if (this.articleInfo.abstract === "") {
+        // this.dialog = { show: true, info: "请填写文章前言" }
+        this.$toast({
+          message: "请填写文章前言",
+          type: "warning",
+          duration: 2000
+        })
+        return false
+      }
+      if (this.articleInfo.content.length === 0) {
+        // this.dialog = { show: true, info: "内容不能为空" }
+        this.$toast({
+          message: "内容不能为空",
+          type: "warning",
+          duration: 2000
+        })
+        return false
+      }
+      return true
+      // if (!this.dialog.info) {
+      //   return true
+      // }
+    },
+    //发表文章或存为草稿，通过设置isPublish来区别
+    publishArticle(event) {
+      // 如果验证通过
+      if (this.validate()) {
+        console.log(this.articleInfo)
+        // let isPublish,
+        //   _title = this.articleInfo.title,
+        //   _tags = this.articleInfo.tags,
+        //   _abstract = this.articleInfo.abstract,
+        //   _content = this.articleInfo.content,
+        //   that = this,
+        //   _original = this.articleInfo.original === "true" ? true : false
+
+        // if (event.target.className === "true-publish") {
+        //   isPublish = true
+        //   this.wating = {
+        //     disabled: true,
+        //     info: { p: "发表中...", sd: "存为草稿", su: "更新" }
+        //   }
+        // } else {
+        //   isPublish = false
+        //   this.wating = {
+        //     disabled: true,
+        //     info: { p: "发表文章", sd: "保存中...", su: "更新" }
+        //   }
+        // }
+
+        // this.saveArticle({
+        //   articleId: 0,
+        //   title: _title,
+        //   abstract: _abstract,
+        //   content: _content,
+        //   tag: _tags,
+        //   publish: isPublish,
+        //   original: _original,
+        //   pv: 0,
+        //   date: Date.now()
+        // }).then((data) => {
+        //   if (data.code === 200) {
+        //     that.editor.setContent("") //清空编辑器
+        //     that.wating = {
+        //       disabled: false,
+        //       info: { p: "发表文章", sd: "存为草稿", su: "更新" }
+        //     }
+        //     that.articleInfo = {
+        //       original: "true",
+        //       title: "",
+        //       tags: [],
+        //       content: "",
+        //       abstract: ""
+        //     }
+        //     if (isPublish) {
+        //       that.dialog = { show: true, info: "文章发表成功！" }
+        //     } else {
+        //       that.dialog = { show: true, info: "草稿保存成功！" }
+        //     }
+        //   }
+        // })
       }
     },
     //update_draftPublish三个作用  ---> 已发表文章的更新 + 草稿的更新 + 草稿文章的发表
@@ -567,32 +633,6 @@ export default {
       // 获取内容方法
       return this.editor.getContent()
     },
-    //
-    validate: function() {
-      let _title = this.articleInfo.title,
-        _tags = this.articleInfo.tags,
-        _abstract = this.articleInfo.abstract,
-        _content = this.articleInfo.content
-      if (_title === "") {
-        this.dialog = { show: true, info: "请填写文章标题" }
-        return false
-      }
-      if (_tags.length === 0) {
-        this.dialog = { show: true, info: "请填写文章标签" }
-        return false
-      }
-      if (_abstract === "") {
-        this.dialog = { show: true, info: "请填写文章前言" }
-        return false
-      }
-      if (_content.length === 0) {
-        this.dialog = { show: true, info: "内容不能为空" }
-        return false
-      }
-      if (!this.dialog.info) {
-        return true
-      }
-    },
     // 转化内容
     transformStr() {
       let dom = document.createElement("div")
@@ -618,10 +658,8 @@ export default {
     },
     // 初始化编辑器
     initUeditor() {
-      console.log("初始化编辑器")
       // eslint-disable-next-line no-undef
       this.editor = UE.getEditor("editor", this.config) // 初始化UE
-      console.log(this.editor)
       //editor内容变化监听事件
       this.editor.addListener("contentChange", () => {
         if (!this.showBtn) {
@@ -721,9 +759,6 @@ export default {
         padding: 2px;
         // border: solid red 1px;
         // cursor: text;
-        .remove {
-          cursor: pointer;
-        }
         input {
           box-sizing: border-box;
           font-size: 16px;
@@ -735,9 +770,40 @@ export default {
     }
     .article-details-type {
       @extend .article-details-item;
-      // border: solid red 1px;
       input {
         margin-left: 10px;
+      }
+    }
+    .article-details-tags {
+      @extend .article-details-item;
+      border: solid red 1px;
+      .ueditor-input-box {
+        cursor: text;
+      }
+
+      .has-chosed {
+        display: inline-block;
+        .first-floor-span {
+          display: inline-block;
+          padding: 6px;
+          margin-right: 2px;
+          border-radius: 4px;
+          background: #94d1f5;
+          .remove {
+            padding: 6px 0 6px 4px;
+            cursor: pointer;
+          }
+        }
+      }
+
+      .input-box-move {
+        display: inline-block;
+        position: relative;
+        width: 160px;
+        border: solid red 1px;
+        input:disabled {
+          background: #ccc;
+        }
       }
     }
   }
@@ -749,6 +815,7 @@ export default {
     display: flex;
     justify-content: space-between;
     overflow: hidden;
+    border: solid red 1px;
 
     ::v-deep .editor-write {
       overflow-y: scroll;
@@ -842,27 +909,6 @@ export default {
   }
 }
 
-.hasChosed {
-  display: inline-block;
-  .first-floor-span {
-    display: inline-block;
-    padding: 6px;
-    margin-right: 2px;
-    border-radius: 4px;
-    background: #94d1f5;
-    span {
-      padding: 6px 0 6px 4px;
-    }
-  }
-}
-.input-box-move {
-  display: inline-block;
-  position: relative;
-  width: 30%;
-  input:disabled {
-    background: #ccc;
-  }
-}
 // .article-type {
 //   input {
 //     margin: 10px 5px 10px 5px;
@@ -942,7 +988,7 @@ export default {
   .input-box-move {
     width: 100% !important;
   }
-  .hasChosed {
+  .has-chosed {
     display: block;
   }
   .preview {
