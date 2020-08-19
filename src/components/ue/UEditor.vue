@@ -23,48 +23,38 @@
       <!-- 类型 -->
       <div class="article-details-type">
         <div class="item-title">类 型 ：</div>
-        <input
-          ref="a"
-          @click="onlyTech"
-          checked
-          id="tech"
-          type="radio"
-          name="rt"
-        />
-        <label for="tech">技术文章</label>
-        <input ref="l" id="life" @click="onlyLife" type="radio" name="rt" />
-        <label for="life">生活感悟</label>
-        &nbsp;|&nbsp;
-        <input
-          id="original"
-          type="radio"
-          name="original"
-          value="true"
-          v-model="articleInfo.original"
-        />
-        <label for="original">原创</label>
+        <div class="item-content">
+          <input
+            id="original"
+            type="radio"
+            name="original"
+            value="true"
+            v-model="articleInfo.original"
+          />
+          <label class="itme-label" for="original">原创</label>
 
-        <input
-          id="reprint"
-          type="radio"
-          name="original"
-          value="false"
-          v-model="articleInfo.original"
-        />
-        <label for="reprint">转载</label>
-        <!-- <input
+          <input
+            id="reprint"
+            type="radio"
+            name="original"
+            value="false"
+            v-model="articleInfo.original"
+          />
+          <label class="itme-label" for="reprint">转载</label>
+          <!-- <input
           type="radio"
           name="original"
           value="3"
           id="translate"
           v-model="articleInfo.original"
         />
-        <label for="translate">翻译</label>-->
+          <label for="translate">翻译</label>-->
+        </div>
       </div>
       <!-- 标题 -->
       <div class="article-details-item">
         <div class="item-title">标 题 ：</div>
-        <div class="ueditor-input-box">
+        <div class="item-content">
           <input
             type="text"
             class="item-input"
@@ -76,11 +66,7 @@
       <!-- 标签 -->
       <div class="article-details-tags">
         <div class="item-title">标 签 ：</div>
-        <div
-          class="ueditor-input-box"
-          @mousedown="flag = false"
-          @click="getFocus"
-        >
+        <div class="item-content" @mousedown="flag = false" @click="getFocus">
           <!-- 已经选择的标签 -->
           <div class="has-chosed">
             <span
@@ -105,8 +91,9 @@
               @blur="blurChange"
               ref="ipt"
             />
-            <!--  componsitionstart和componsitionend为中文输入法下，在input框中预输入的英文字符触发的
-            事件，..start在预输入的第一个字符时触发一次，输入完成时（回车输入中文字符或者删除全部字符），..end事件触发，然后触发input绑定的keyup事件-->
+            <!--  componsitionstart和componsitionend为中文输入法下，在input框中预输入的英文字符触发的事件，
+            ..start在预输入的第一个字符时触发一次，输入完成时（回车输入中文字符或者删除全部字符），
+            ..end事件触发，然后触发input绑定的keyup事件-->
             <!-- 增加@focus事件解决页面切换回来导致标签索引不显示-->
             <div class="tag-chart" v-show="tagFlag.recommend" ref="tagChart">
               <div class="tag-nav">
@@ -150,9 +137,10 @@
       <!-- 前言 -->
       <div class="article-details-item">
         <div class="item-title">前 言 ：</div>
-        <div class="ueditor-input-box">
+        <div class="item-content">
           <input
             type="text"
+            class="item-input"
             placeholder="请输入文章前言"
             v-model="articleInfo.abstract"
           />
@@ -246,7 +234,7 @@ import { mapActions, mapGetters } from "vuex"
 // 代码高亮的js
 // import Prism from "@/../public/UE/prism.js"
 import Prism from "prismjs"
-// 标签
+// 推荐的标签
 import { recommendTag } from "./recommendTag"
 // ue相关的文件
 import "@/../public/UE/ueditor.config.js"
@@ -349,6 +337,7 @@ export default {
       this.flag = true
       // 获取输入框的焦点
       this.$refs.ipt.focus()
+      // 显示推荐的标签
       if (!this.tagFlag.filter) {
         this.tagFlag.recommend = true
       }
@@ -401,7 +390,7 @@ export default {
     choseFilter(tag) {
       let tags = this.articleInfo.tags
       if (tag === "life") {
-        this.$refs.l.checked = true
+        this.$refs.typeOfLife.checked = true
         this.articleInfo.tags = ["life"]
       }
       if (tags.indexOf("life") === -1) {
@@ -434,11 +423,14 @@ export default {
     },
     // 移除标签
     removeTag(tag, index) {
+      console.log("移除标签")
+      console.log(this.articleInfo)
+      // 如果文章类型是生活
       if (tag === "life") {
         alert("请更换文章类型")
       } else {
         this.articleInfo.tags.splice(index, 1)
-        this.$refs.a.checked = true
+        this.$refs.typeOftech.checked = true
       }
     },
     //
@@ -451,15 +443,7 @@ export default {
         }
       })
     },
-    //
-    onlyLife: function() {
-      this.articleInfo.tags = ["life"]
-      console.log(this.articleInfo.tags)
-    },
-    //
-    onlyTech: function() {
-      this.articleInfo.tags.splice(this.articleInfo.tags.indexOf("life"), 1)
-    },
+
     //
     start: function() {
       this.tagFlag.delete = false
@@ -690,7 +674,7 @@ export default {
         }
         // 技术文章 | 生活感悟
         if (this.articleInfo.tags[0] === "life") {
-          this.$refs.l.checked = true
+          this.$refs.typeOfLife.checked = true
         }
       }
     }
@@ -745,21 +729,23 @@ export default {
       display: flex;
       align-items: center;
       text-align: start;
-      // border: solid red 1px;
       padding: 5px;
+
       .item-title {
         width: 70px;
         font-weight: 600;
       }
-      .ueditor-input-box {
+
+      .item-content {
         width: 100%;
         border-radius: 5px;
         background: #ffffff;
         display: flex;
+        align-items: center;
         padding: 2px;
-        // border: solid red 1px;
+        height: 28px;
         // cursor: text;
-        input {
+        .item-input {
           box-sizing: border-box;
           font-size: 16px;
           flex: 1 1 auto;
@@ -768,16 +754,29 @@ export default {
         }
       }
     }
+
     .article-details-type {
       @extend .article-details-item;
-      input {
-        margin-left: 10px;
+      .item-content {
+        // color: black;
+        font-size: 16px;
+        background-color: inherit;
+        #original {
+          margin-right: 5px;
+        }
+        #reprint {
+          margin: 0 5px 0 20px;
+        }
+        .itme-label {
+          cursor: pointer;
+        }
       }
     }
+
     .article-details-tags {
       @extend .article-details-item;
-      border: solid red 1px;
-      .ueditor-input-box {
+      // border: solid red 1px;
+      .item-content {
         cursor: text;
       }
 
@@ -909,15 +908,6 @@ export default {
   }
 }
 
-// .article-type {
-//   input {
-//     margin: 10px 5px 10px 5px;
-//   }
-// }
-// .article-details-tag,
-// .article-details-abstract {
-//   margin-top: 10px;
-// }
 .tag-chart,
 .diy-tag {
   position: absolute;
@@ -963,6 +953,7 @@ export default {
   background: #009a61;
   color: #ffffff;
 }
+
 .publish-enter-active,
 .publish-leave-active {
   transition: all ease 0.5s;
