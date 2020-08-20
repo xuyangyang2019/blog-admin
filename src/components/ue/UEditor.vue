@@ -387,7 +387,7 @@ export default {
       }
       return filter_arr
     },
-    // eslint-disable-next-line vue/return-in-computed-property
+    // 问候语
     greet() {
       let hour = new Date().getHours()
       if (hour >= 0 && hour < 6) {
@@ -405,6 +405,7 @@ export default {
       if (hour >= 18 && hour < 24) {
         return "晚上"
       }
+      return ""
     }
   },
   methods: {
@@ -449,6 +450,12 @@ export default {
       // this.tagFlag.delete = true
       if (tags.indexOf(tag) === -1 && tags.length < 4) {
         this.articleInfo.tags.push(tag)
+      } else if (tags.length === 4) {
+        this.$toast({
+          message: "最多只能设置4个标签！",
+          type: "warning",
+          duration: 2000
+        })
       }
     },
     // 移除标签
@@ -474,7 +481,6 @@ export default {
         this.createTag = this.createTag.trim()
         // 如果没有创建标签
         if (this.createTag === "") {
-          return
           // if (
           //   this.tagFlag.delete &&
           //   event.keyCode === 8 &&
@@ -482,11 +488,11 @@ export default {
           // ) {
           //   this.articleInfo.tags.pop()
           // }
-          // this.tagFlag = {
-          //   filter: false,
-          //   recommend: true,
-          //   delete: true
-          // }
+          this.tagFlag = {
+            filter: false,
+            recommend: true
+            // delete: true
+          }
         } else {
           this.tagFlag = {
             filter: true,
@@ -501,28 +507,23 @@ export default {
         }
       }
     },
-    //
+    // 选择或创建标签
     choseOrCreateTag(tag) {
       let tags = this.articleInfo.tags
-      if (tag === "life") {
-        this.$refs.typeOfLife.checked = true
-        this.articleInfo.tags = ["life"]
+      if (tags.indexOf(tag) === -1 && tags.length < 4) {
+        this.articleInfo.tags.push(tag)
+      } else if (tags.length === 4) {
+        this.$toast({
+          message: "最多只能设置4个标签！",
+          type: "warning",
+          duration: 2000
+        })
       }
-      if (tags.indexOf("life") === -1) {
-        if (
-          tags.indexOf(tag) === -1 &&
-          tags.indexOf("life") === -1 &&
-          tags.length < 4
-        ) {
-          this.articleInfo.tags.push(tag)
-        }
-        this.tagFlag.filter = false
-        // this.tagFlag.delete = true
-        this.createTag = ""
-        setTimeout(() => {
-          this.tagFlag.recommend = false //先让getFocus触发
-        }, 0)
-      }
+      this.tagFlag.filter = false
+      this.createTag = ""
+      setTimeout(() => {
+        this.tagFlag.recommend = false //先让getFocus触发
+      }, 0)
     },
 
     // 表单验证验证
@@ -873,7 +874,6 @@ export default {
       .input-box-move {
         display: inline-block;
         position: relative;
-        border: solid red 1px;
         input:disabled {
           background: #ccc;
         }
