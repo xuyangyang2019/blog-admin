@@ -36,14 +36,14 @@ const state = {
 
 // getters
 const getters = {
-  tagsObj: state => state.tagsObj,
-  redSup: state => state.redSup,
-  forLocation: state => state.forLocation,
-  news: state => state.news,
-  articles: state => state.articles,
-  pageArray: state => state.pageArray,
-  msgBoard: state => state.msgBoard,
-  comments: state => state.comments
+  tagsObj: (state) => state.tagsObj,
+  redSup: (state) => state.redSup,
+  forLocation: (state) => state.forLocation,
+  news: (state) => state.news,
+  articles: (state) => state.articles,
+  pageArray: (state) => state.pageArray,
+  msgBoard: (state) => state.msgBoard,
+  comments: (state) => state.comments
 }
 
 // actions
@@ -54,7 +54,7 @@ const actions = {
   },
   // 获取新消息
   GetNews({ commit }) {
-    return fetch.get("/api/getNews").then(data => {
+    return fetch.get("/api/getNews").then((data) => {
       if (data.newsArr && data.newsArr.length) {
         commit("HANDLE_NEWS", data)
       }
@@ -65,7 +65,7 @@ const actions = {
   GetTagsclass({ commit }, payload) {
     return fetch
       .get("/api/adminTags", { publish: payload.publish })
-      .then(data => {
+      .then((data) => {
         if (data.tags && data.tags.length) {
           // data.tags.forEach((item, index, arr) => {
           //   if (item.tag === "life") {
@@ -89,7 +89,7 @@ const actions = {
     } else {
       params = payload
     }
-    return fetch.get("/api/getAdminArticles", params).then(data => {
+    return fetch.get("/api/getAdminArticles", params).then((data) => {
       // console.log(data)
       commit("SET_ARTICLES", { data: data, payload: payload })
       // return data
@@ -97,7 +97,7 @@ const actions = {
   },
   // 获取对应模块的文章总数，为分页按钮个数提供支持
   GetArticlesCount({ commit, state }, payload) {
-    return fetch.get("/api/getCount", payload).then(data => {
+    return fetch.get("/api/getCount", payload).then((data) => {
       commit("PAGE_ARRAY", data)
     })
   },
@@ -107,7 +107,7 @@ const actions = {
   },
   // 精准获取文章
   GetArticle({ commit }, payload) {
-    return fetch.get("/api/getAdminArticle", payload).then(data => {
+    return fetch.get("/api/getAdminArticle", payload).then((data) => {
       if (data.length) {
         commit("SET_ARTICLES_ONLY", data)
         let _tag = data[0].tag[0]
@@ -139,7 +139,7 @@ const actions = {
   },
   // 获取留言
   GetMsgBoard({ commit }, payload) {
-    return fetch.get("/api/getAdminBoard", payload).then(data => {
+    return fetch.get("/api/getAdminBoard", payload).then((data) => {
       if (data.length) {
         commit("SET_MSG_BOARD", data)
       }
@@ -148,14 +148,14 @@ const actions = {
   },
   // 获取留言数量
   GetMsgCount({ commit }) {
-    return fetch.get("/api/getMsgCount").then(data => {
+    return fetch.get("/api/getMsgCount").then((data) => {
       commit("PAGE_ARRAY", data)
     })
     // return data
   },
   // 获取评论
   GetAdminComments({ commit }, payload) {
-    return fetch.get("/api/getAdminComments", payload).then(data => {
+    return fetch.get("/api/getAdminComments", payload).then((data) => {
       if (data.length) {
         commit("SET_COMMENTS", data)
       }
@@ -164,7 +164,7 @@ const actions = {
   },
   // 获取评论数
   GetCommentsCount({ commit }) {
-    return fetch.get("/api/getCommentsCount").then(data => {
+    return fetch.get("/api/getCommentsCount").then((data) => {
       commit("PAGE_ARRAY", data)
     })
   },
@@ -207,6 +207,14 @@ const actions = {
   // 确认token
   ConfirmToken() {
     return fetch.get("/api/confirmToken")
+  },
+  // 发表或保存文章
+  SaveArticle({ commit }, payload) {
+    return fetch.post("/api/saveArticle", payload)
+  },
+  // 更新文章
+  UpdateArticle({ commit }, payload) {
+    return fetch.patch("/api/updata", payload)
   }
 }
 
