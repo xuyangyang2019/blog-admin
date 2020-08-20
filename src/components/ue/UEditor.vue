@@ -66,7 +66,11 @@
       <!-- 标签 -->
       <div class="article-details-tags">
         <div class="item-title">标 签 ：</div>
-        <div class="item-content" @mousedown="flag = false" @click="getFocus">
+        <div
+          class="item-content"
+          @mousedown="canHide = false"
+          @click="getFocus"
+        >
           <!-- 已经选择的标签 -->
           <div class="has-chosed">
             <span
@@ -74,14 +78,16 @@
               v-for="(tag, index) in articleInfo.tags"
               :key="'tag' + index"
             >
-              {{ tag | changeLife }}
+              {{ tag }}
               <span class="remove" @click="removeTag(tag, index)">x</span>
             </span>
           </div>
-          <!-- 可选的标签 -->
+
+          <!-- 推荐标签 -->
           <div class="input-box-move">
             <input
               type="text"
+              class="item-input"
               placeholder="请输入标签(最多四个)"
               v-model="createTag"
               @keyup="tagIndex($event)"
@@ -95,41 +101,40 @@
             ..start在预输入的第一个字符时触发一次，输入完成时（回车输入中文字符或者删除全部字符），
             ..end事件触发，然后触发input绑定的keyup事件-->
             <!-- 增加@focus事件解决页面切换回来导致标签索引不显示-->
+
             <div class="tag-chart" v-show="tagFlag.recommend" ref="tagChart">
+              <!-- 推荐的标签的nav -->
               <div class="tag-nav">
                 <span
-                  v-for="(item, index) in recommend.nav"
-                  :key="'nav' + index"
-                  :class="{ 'nav-bg': recommend.list[index].active }"
-                  @click="changeNav(index)"
-                  v-text="item"
+                  v-for="(tag, index) in recommendTags"
+                  :key="index"
+                  :class="{ 'nav-bg': currentTagNav === index }"
+                  @click="currentTagNav = index"
+                  v-text="tag.name"
                 ></span>
               </div>
-              <ul class="tag-content">
-                <li
-                  v-for="(item, index) in recommend.list"
-                  :key="'il' + index"
-                  v-show="item.active"
-                >
-                  <span
-                    v-for="(tag, index) in item.data"
-                    :key="'tag' + index"
-                    @click="choseRecommend(tag)"
-                    v-text="tag"
-                  ></span>
-                </li>
-              </ul>
+              <!-- 推荐的标签的nav的数据 -->
+              <div class="tag-content">
+                <span
+                  v-for="(tag, index) in recommendTags[currentTagNav].data"
+                  :key="'tag' + index"
+                  @click="choseRecommend(tag)"
+                  v-text="tag"
+                ></span>
+              </div>
             </div>
-            <!-- 筛选标签 -->
+            <!-- 筛选|创建 标签 -->
             <div class="diy-tag" ref="recommend" v-show="tagFlag.filter">
               <li
-                v-for="(recom, index) in recommendTag"
+                v-for="(recom, index) in screenTags"
                 :key="'recom' + index"
-                @click="choseFilter(recom)"
+                @click="choseOrCreateTag(recom)"
               >
                 {{ recom }}
               </li>
-              <li @click="choseFilter(createTag)">创建标签 {{ createTag }}</li>
+              <li @click="choseOrCreateTag(createTag)">
+                创建标签 {{ createTag }}
+              </li>
             </div>
           </div>
         </div>
@@ -234,8 +239,6 @@ import { mapActions, mapGetters } from "vuex"
 // 代码高亮的js
 // import Prism from "@/../public/UE/prism.js"
 import Prism from "prismjs"
-// 推荐的标签
-import { recommendTag } from "./recommendTag"
 // ue相关的文件
 import "@/../public/UE/ueditor.config.js"
 import "@/../public/UE/ueditor.all.min.js"
@@ -261,28 +264,111 @@ export default {
         abstract: "", // 前言
         content: "" // 内容
       },
+      currentTagNav: "languages", // 当前的标签nav
+      // 标签库
+      recommendTags: {
+        languages: {
+          name: "开发语言",
+          data: [
+            "html",
+            "css",
+            "javascript",
+            "nodejs",
+            "less",
+            "sass",
+            "php",
+            "pythen",
+            "typescript",
+            "ruby",
+            "objective-c",
+            "asp.net",
+            "perl",
+            "java",
+            "c",
+            "c++"
+          ]
+        },
+        plants: {
+          name: "平台框架",
+          data: [
+            "vue",
+            "angular",
+            "react",
+            "express",
+            "jQuery",
+            "axios",
+            "Dojo",
+            "prototype",
+            "Yui-ext",
+            "laravel",
+            "spring",
+            "koa",
+            "ruby-on-rails",
+            "struts"
+          ]
+        },
+        servers: {
+          name: "服务器",
+          data: [
+            "nginx",
+            "apache",
+            "tomcat",
+            "linux",
+            "windows",
+            "ubuntu",
+            "centos",
+            "unix",
+            "docker"
+          ]
+        },
+        dbs: {
+          name: "数据库和缓存",
+          data: ["mysql", "mongodb", "nosql", "oracle", "redis", "sql"]
+        },
+        tools: {
+          name: "开发工具",
+          data: [
+            "git",
+            "github",
+            "chrome",
+            "sublime-text",
+            "eclipse",
+            "ide",
+            "xcode",
+            "vue-tools",
+            "visual-studio"
+          ]
+        },
+        browsers: {
+          name: "浏览器",
+          data: [
+            "chrome",
+            "firefox",
+            "ie",
+            "opera",
+            "safari",
+            "android",
+            "ios",
+            "windows",
+            "linux"
+          ]
+        }
+      },
+      canHide: true, // 能隐藏标签页面
       createTag: "", // 创建标签
-      dialog: { show: false, info: "" }, // 对话框
-      recommendTag: [], // 推荐标签
-      flag: true,
-      recommend: recommendTag,
-      tagFlag: { recommend: false, filter: false, delete: false }, // tag的标志位
+      screenTags: [], // 标签搜索结果
+      inputFlag: true, // 中文输入法下预输入触发事件的标志位
+      tagFlag: {
+        recommend: false, // 显示推荐标签
+        filter: false // 显示过滤的标签
+        // delete: false // 删除标签
+      },
 
       showBtn: false, // 显示按钮
-      inputFlag: true, //中文输入法下预输入触发事件的标志位
+      dialog: { show: false, info: "" }, // 对话框
       wating: {
         disabled: false,
         info: { p: "发表文章", sd: "存为草稿", su: "更新" }
-      }
-    }
-  },
-  filters: {
-    changeLife: function(value) {
-      if (value === "life") {
-        value = "生活"
-        return value
-      } else {
-        return value
       }
     }
   },
@@ -290,13 +376,15 @@ export default {
     ...mapGetters({
       articles: "admin/articles"
     }),
-    filterArray: function() {
+    // 所有标签集合
+    filterArray() {
       let filter_arr = []
-      this.recommend.list.forEach((item, index, arr) => {
-        item.data.forEach((_item, _index, _arr) => {
-          filter_arr.push(_item)
-        })
-      })
+      for (const key in this.recommendTags) {
+        if (this.recommendTags.hasOwnProperty(key)) {
+          const tags = this.recommendTags[key].data
+          filter_arr = filter_arr.concat(tags)
+        }
+      }
       return filter_arr
     },
     // eslint-disable-next-line vue/return-in-computed-property
@@ -334,10 +422,10 @@ export default {
     },
     // 标签框获取焦点
     getFocus() {
-      this.flag = true
+      this.canHide = true
       // 获取输入框的焦点
       this.$refs.ipt.focus()
-      // 显示推荐的标签
+      // 显示推荐标签页面
       if (!this.tagFlag.filter) {
         this.tagFlag.recommend = true
       }
@@ -349,45 +437,72 @@ export default {
      *页由于input的得失焦点而产生的“闪烁”问题
      */
     blurChange() {
-      console.log("blurChange")
-      if (this.flag) {
+      if (this.canHide) {
         this.tagFlag.recommend = false
         this.tagFlag.filter = false
         this.createTag = ""
       }
     },
-    // 标签
+    // 选择标签
+    choseRecommend(tag) {
+      let tags = this.articleInfo.tags
+      // this.tagFlag.delete = true
+      if (tags.indexOf(tag) === -1 && tags.length < 4) {
+        this.articleInfo.tags.push(tag)
+      }
+    },
+    // 移除标签
+    removeTag(tag, index) {
+      // 如果文章类型是生活
+      this.articleInfo.tags.splice(index, 1)
+      // 选中科技文章 这里已经去掉了
+      // this.$refs.a.checked = true
+    },
+    // 中文环境输入开始
+    start() {
+      // this.tagFlag.delete = false
+      this.inputFlag = false
+    },
+    // 中文环境输入结束
+    end() {
+      this.inputFlag = true
+    },
+    // 自动匹配标签
     tagIndex(event) {
+      // 如果输入结束
       if (this.inputFlag) {
+        this.createTag = this.createTag.trim()
+        // 如果没有创建标签
         if (this.createTag === "") {
-          if (
-            this.tagFlag.delete &&
-            event.keyCode === 8 &&
-            this.articleInfo.tags.indexOf("life") === -1
-          ) {
-            this.articleInfo.tags.pop()
-          }
-          this.tagFlag = {
-            filter: false,
-            recommend: true,
-            delete: true
-          }
+          return
+          // if (
+          //   this.tagFlag.delete &&
+          //   event.keyCode === 8 &&
+          //   this.articleInfo.tags.indexOf("life") === -1
+          // ) {
+          //   this.articleInfo.tags.pop()
+          // }
+          // this.tagFlag = {
+          //   filter: false,
+          //   recommend: true,
+          //   delete: true
+          // }
         } else {
           this.tagFlag = {
             filter: true,
-            recommend: false,
-            delete: false
+            recommend: false
+            // delete: false
           }
           let tag = this.createTag
           let pattern = new RegExp("^" + tag, "gi")
-          this.recommendTag = this.filterArray.filter((item, index, arr) => {
+          this.screenTags = this.filterArray.filter((item, index, arr) => {
             return pattern.test(item)
           })
         }
       }
     },
-    // 过滤器
-    choseFilter(tag) {
+    //
+    choseOrCreateTag(tag) {
       let tags = this.articleInfo.tags
       if (tag === "life") {
         this.$refs.typeOfLife.checked = true
@@ -402,57 +517,14 @@ export default {
           this.articleInfo.tags.push(tag)
         }
         this.tagFlag.filter = false
-        this.tagFlag.delete = true
+        // this.tagFlag.delete = true
         this.createTag = ""
         setTimeout(() => {
           this.tagFlag.recommend = false //先让getFocus触发
         }, 0)
       }
     },
-    //
-    choseRecommend(tag) {
-      let tags = this.articleInfo.tags
-      this.tagFlag.delete = true
-      if (
-        tags.indexOf(tag) === -1 &&
-        tags.indexOf("life") === -1 &&
-        tags.length < 4
-      ) {
-        this.articleInfo.tags.push(tag)
-      }
-    },
-    // 移除标签
-    removeTag(tag, index) {
-      console.log("移除标签")
-      console.log(this.articleInfo)
-      // 如果文章类型是生活
-      if (tag === "life") {
-        alert("请更换文章类型")
-      } else {
-        this.articleInfo.tags.splice(index, 1)
-        this.$refs.typeOftech.checked = true
-      }
-    },
-    //
-    changeNav: function(index) {
-      this.recommend.list.forEach((item, currentIndex, arr) => {
-        if (currentIndex === index) {
-          item.active = true
-        } else {
-          item.active = false
-        }
-      })
-    },
 
-    //
-    start: function() {
-      this.tagFlag.delete = false
-      this.inputFlag = false
-    },
-    //
-    end: function() {
-      this.inputFlag = true
-    },
     // 表单验证验证
     validate() {
       if (this.articleInfo.title === "") {
@@ -682,6 +754,11 @@ export default {
   mounted() {
     this.initUeditor()
     this.initUeditorContent()
+    // document.addEventListener("click", (e) => {
+    //   if (!this.$el.contains(e.target)) {
+    //     this.show = false //这句话的意思是点击其他区域关闭（也可以根据自己需求写触发事件）
+    //   }
+    // })
   },
   destroyed() {
     console.log("离开页面，销毁")
@@ -730,12 +807,10 @@ export default {
       align-items: center;
       text-align: start;
       padding: 5px;
-
       .item-title {
         width: 70px;
         font-weight: 600;
       }
-
       .item-content {
         width: 100%;
         border-radius: 5px;
@@ -744,7 +819,6 @@ export default {
         align-items: center;
         padding: 2px;
         height: 28px;
-        // cursor: text;
         .item-input {
           box-sizing: border-box;
           font-size: 16px;
@@ -769,15 +843,16 @@ export default {
         }
         .itme-label {
           cursor: pointer;
+          @include can-not-select;
         }
       }
     }
 
     .article-details-tags {
       @extend .article-details-item;
-      // border: solid red 1px;
       .item-content {
         cursor: text;
+        // border: solid red 1px;
       }
 
       .has-chosed {
@@ -798,10 +873,55 @@ export default {
       .input-box-move {
         display: inline-block;
         position: relative;
-        width: 160px;
         border: solid red 1px;
         input:disabled {
           background: #ccc;
+        }
+        .tag-chart,
+        .diy-tag {
+          position: absolute;
+          top: 28px;
+          width: 500px;
+          z-index: 1000;
+          color: #017e66;
+          background: #ffffff;
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+          padding: 15px;
+          border-radius: 5px;
+          li {
+            list-style: none;
+          }
+
+          .tag-nav {
+            display: flex;
+            flex-wrap: wrap;
+            span {
+              cursor: pointer;
+              padding: 5px;
+              border-radius: 5px;
+            }
+            .nav-bg {
+              background: #009a61;
+              color: #ffffff;
+            }
+          }
+          .tag-content {
+            // li {
+            display: flex;
+            flex-wrap: wrap;
+            span {
+              cursor: pointer;
+              background: #94d1f5;
+              padding: 5px;
+              margin: 3px;
+              border-radius: 2px;
+            }
+            // }
+          }
+        }
+        .diy-tag li {
+          margin-top: 2px;
+          cursor: pointer;
         }
       }
     }
@@ -906,52 +1026,6 @@ export default {
       }
     }
   }
-}
-
-.tag-chart,
-.diy-tag {
-  position: absolute;
-  top: 40px;
-  width: 270px;
-  z-index: 1000;
-  color: #017e66;
-  background: #ffffff;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-  padding: 15px;
-  border-radius: 5px;
-  li {
-    list-style: none;
-  }
-}
-.diy-tag li {
-  margin-top: 2px;
-  cursor: pointer;
-}
-.tag-nav {
-  display: flex;
-  flex-wrap: wrap;
-  span {
-    cursor: pointer;
-    padding: 5px;
-    border-radius: 5px;
-  }
-}
-.tag-content {
-  li {
-    display: flex;
-    flex-wrap: wrap;
-    span {
-      cursor: pointer;
-      background: #94d1f5;
-      padding: 5px;
-      margin: 3px;
-      border-radius: 2px;
-    }
-  }
-}
-.nav-bg {
-  background: #009a61;
-  color: #ffffff;
 }
 
 .publish-enter-active,
