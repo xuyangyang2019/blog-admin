@@ -177,14 +177,14 @@
         <button
           :disabled="wating.disabled"
           class="true-publish"
-          @click="publishArticle($event)"
+          @click="publishArticle(1)"
         >
           {{ wating.info.p }}
         </button>
         <button
           :disabled="wating.disabled"
           class="false-publish"
-          @click="publishArticle($event)"
+          @click="publishArticle(0)"
         >
           {{ wating.info.sd }}
         </button>
@@ -409,7 +409,10 @@ export default {
     }
   },
   methods: {
-    ...mapActions(["saveArticle", "updateArticle"]),
+    ...mapActions({
+      SaveArticle: "admin/SaveArticle",
+      UpdateArticle: "admin/UpdateArticle"
+    }),
     // 返回首页
     backHome() {
       this.$router.push({ name: "admin" })
@@ -525,7 +528,6 @@ export default {
         this.tagFlag.recommend = false //先让getFocus触发
       }, 0)
     },
-
     // 表单验证验证
     validate() {
       if (this.articleInfo.title === "") {
@@ -565,68 +567,55 @@ export default {
         return false
       }
       return true
-      // if (!this.dialog.info) {
-      //   return true
-      // }
     },
     //发表文章或存为草稿，通过设置isPublish来区别
-    publishArticle(event) {
+    publishArticle(flag) {
       // 如果验证通过
       if (this.validate()) {
-        console.log(this.articleInfo)
-        // let isPublish,
-        //   _title = this.articleInfo.title,
-        //   _tags = this.articleInfo.tags,
-        //   _abstract = this.articleInfo.abstract,
-        //   _content = this.articleInfo.content,
-        //   that = this,
-        //   _original = this.articleInfo.original === "true" ? true : false
-
-        // if (event.target.className === "true-publish") {
-        //   isPublish = true
-        //   this.wating = {
-        //     disabled: true,
-        //     info: { p: "发表中...", sd: "存为草稿", su: "更新" }
-        //   }
-        // } else {
-        //   isPublish = false
-        //   this.wating = {
-        //     disabled: true,
-        //     info: { p: "发表文章", sd: "保存中...", su: "更新" }
-        //   }
-        // }
-
-        // this.saveArticle({
-        //   articleId: 0,
-        //   title: _title,
-        //   abstract: _abstract,
-        //   content: _content,
-        //   tag: _tags,
-        //   publish: isPublish,
-        //   original: _original,
-        //   pv: 0,
-        //   date: Date.now()
-        // }).then((data) => {
-        //   if (data.code === 200) {
-        //     that.editor.setContent("") //清空编辑器
-        //     that.wating = {
-        //       disabled: false,
-        //       info: { p: "发表文章", sd: "存为草稿", su: "更新" }
-        //     }
-        //     that.articleInfo = {
-        //       original: "true",
-        //       title: "",
-        //       tags: [],
-        //       content: "",
-        //       abstract: ""
-        //     }
-        //     if (isPublish) {
-        //       that.dialog = { show: true, info: "文章发表成功！" }
-        //     } else {
-        //       that.dialog = { show: true, info: "草稿保存成功！" }
-        //     }
-        //   }
-        // })
+        let isPublish = flag ? true : false
+        let _original = this.articleInfo.original === "true" ? true : false
+        if (flag) {
+          this.wating = {
+            disabled: true,
+            info: { p: "发表中...", sd: "存为草稿", su: "更新" }
+          }
+        } else {
+          this.wating = {
+            disabled: true,
+            info: { p: "发表文章", sd: "保存中...", su: "更新" }
+          }
+        }
+        this.SaveArticle({
+          articleId: 0,
+          title: this.articleInfo.title,
+          abstract: this.articleInfo.abstract,
+          content: this.articleInfo.content,
+          tag: this.articleInfo.tags,
+          publish: flag ? true : false,
+          original: this.articleInfo.original === "true" ? true : false,
+          pv: 0,
+          date: Date.now()
+        }).then((data) => {
+          if (data.code === 200) {
+            this.editor.setContent("") //清空编辑器
+            this.wating = {
+              disabled: false,
+              info: { p: "发表文章", sd: "存为草稿", su: "更新" }
+            }
+            this.articleInfo = {
+              original: "true",
+              title: "",
+              tags: [],
+              content: "",
+              abstract: ""
+            }
+            if (isPublish) {
+              this.dialog = { show: true, info: "文章发表成功！" }
+            } else {
+              this.dialog = { show: true, info: "草稿保存成功！" }
+            }
+          }
+        })
       }
     },
     //update_draftPublish三个作用  ---> 已发表文章的更新 + 草稿的更新 + 草稿文章的发表
@@ -634,7 +623,6 @@ export default {
       if (this.validate()) {
         let isPublish,
           a = this.articles.only[0],
-          that = this,
           _original = this.articleInfo.original === "true" ? true : false
         if (event.target.className === "draft-update") {
           isPublish = false
@@ -660,7 +648,7 @@ export default {
           }
           this.dialog.info = "发表成功！"
         }
-        this.updateArticle({
+        this.UpdateArticle({
           articleId: a.articleId,
           original: _original,
           title: this.articleInfo.title,
@@ -669,19 +657,19 @@ export default {
           tag: this.articleInfo.tags,
           publish: isPublish
         }).then((data) => {
-          that.editor.setContent("") //清空编辑器
-          that.articleInfo = {
+          this.editor.setContent("") //清空编辑器
+          this.articleInfo = {
             original: "true",
             title: "",
             tags: [],
             content: "",
             abstract: ""
           }
-          that.wating = {
+          this.wating = {
             disabled: false,
             info: { p: "发表文章", sd: "存为草稿", su: "更新" }
           }
-          that.dialog.show = true
+          this.dialog.show = true
         })
       }
     },
@@ -971,12 +959,12 @@ export default {
   }
 
   .article-handle {
-    // border: solid red 1px;
     margin: 0 20px;
     button {
       border: 1px solid #409eff;
       border-radius: 5px;
       padding: 5px 10px;
+      margin-right: 10px;
       background: #409eff;
       cursor: pointer;
       color: #ffffff;
