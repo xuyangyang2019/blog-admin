@@ -73,6 +73,13 @@ module.exports = {
           "^/api": "/api"
         }
       },
+      "/ueditor": {
+        target: "http://localhost:6180",
+        changeOrigin: true,
+        pathRewrite: {
+          "^/ueditor": "/ueditor"
+        }
+      },
       "/img": {
         target: "http://localhost:6180",
         changeOrigin: true,
