@@ -172,7 +172,7 @@
     <!-- 对文章的一系列操作: 1.文章发表 2.存为草稿 3.已发表文章的更新 4.草稿的更新 5.草稿发表 -->
     <!-- 操作 -->
     <div class="article-handle">
-      <!-- 创建文章的按钮 -->
+      <!-- 发布文章 发表文章按钮 | 存为草稿按钮 -->
       <div class="publish" v-if="this.$route.path === '/admin/publish'">
         <button
           :disabled="wating.disabled"
@@ -189,31 +189,31 @@
           {{ wating.info.sd }}
         </button>
       </div>
-      <!-- 已发表的文章 按钮 -->
+      <!-- 已发表的文章 更新按钮 -->
       <div class="publish" v-if="this.$route.path === '/admin/update'">
         <button
           v-show="showBtn"
           :disabled="wating.disabled"
           class="published-update"
-          @click="update_draftPublish($event)"
+          @click="updateOrDraftPublish(1)"
         >
           {{ wating.info.su }}
         </button>
       </div>
-      <!-- 草稿箱的按钮 -->
+      <!-- 草稿箱的按钮 更新按钮 | 发表文章按钮 -->
       <div class="publish" v-if="this.$route.path === '/admin/draftrevise'">
         <button
           v-show="showBtn"
           :disabled="wating.disabled"
           class="draft-update"
-          @click="update_draftPublish($event)"
+          @click="updateOrDraftPublish(2)"
         >
           {{ wating.info.su }}
         </button>
         <button
           :disabled="wating.disabled"
           class="draft-publish"
-          @click="update_draftPublish($event)"
+          @click="updateOrDraftPublish(3)"
         >
           {{ wating.info.p }}
         </button>
@@ -568,7 +568,7 @@ export default {
       }
       return true
     },
-    //发表文章或存为草稿，通过设置isPublish来区别
+    // 发表文章或存为草稿，通过设置isPublish来区别
     publishArticle(flag) {
       // 如果验证通过
       if (this.validate()) {
@@ -618,59 +618,69 @@ export default {
         })
       }
     },
-    //update_draftPublish三个作用  ---> 已发表文章的更新 + 草稿的更新 + 草稿文章的发表
-    update_draftPublish: function(event) {
+    // updateOrDraftPublish三个作用  ---> 已发表文章的更新 + 草稿的更新 + 草稿文章的发表
+    updateOrDraftPublish(flag) {
+      // 如果通过表单验证
       if (this.validate()) {
-        let isPublish,
-          a = this.articles.only[0],
-          _original = this.articleInfo.original === "true" ? true : false
-        if (event.target.className === "draft-update") {
-          isPublish = false
-          this.wating = {
-            disabled: true,
-            info: { p: "发表文章", sd: "存为草稿", su: "更新中..." }
-          }
-          this.dialog.info = "更新成功！"
-        }
-        if (event.target.className === "published-update") {
-          isPublish = true
-          this.wating = {
-            disabled: true,
-            info: { p: "发表文章", sd: "存为草稿", su: "更新中..." }
-          }
-          this.dialog.info = "更新成功！"
-        }
-        if (event.target.className === "draft-publish") {
-          isPublish = true
-          this.wating = {
-            disabled: true,
-            info: { p: "发表中...", sd: "存为草稿", su: "更新" }
-          }
-          this.dialog.info = "发表成功！"
-        }
-        this.UpdateArticle({
-          articleId: a.articleId,
-          original: _original,
-          title: this.articleInfo.title,
-          abstract: this.articleInfo.abstract,
-          content: this.articleInfo.content,
-          tag: this.articleInfo.tags,
-          publish: isPublish
-        }).then((data) => {
-          this.editor.setContent("") //清空编辑器
-          this.articleInfo = {
-            original: "true",
-            title: "",
-            tags: [],
-            content: "",
-            abstract: ""
-          }
-          this.wating = {
-            disabled: false,
-            info: { p: "发表文章", sd: "存为草稿", su: "更新" }
-          }
-          this.dialog.show = true
-        })
+        let isPublish
+        let a = this.articles.only[0]
+        let _original = this.articleInfo.original === "true" ? true : false
+        console.log(a)
+        // switch (flag) {
+        //   // 已发表文章的更新
+        //   case 1:
+        //     isPublish = false
+        //     this.wating = {
+        //       disabled: true,
+        //       info: { p: "发表文章", sd: "存为草稿", su: "更新中..." }
+        //     }
+        //     this.dialog.info = "更新成功！"
+        //     break
+        //   // 草稿的更新
+        //   case 2:
+        //     isPublish = true
+        //     this.wating = {
+        //       disabled: true,
+        //       info: { p: "发表文章", sd: "存为草稿", su: "更新中..." }
+        //     }
+        //     this.dialog.info = "更新成功！"
+        //     break
+        //   // 草稿文章的发表
+        //   case 3:
+        //     isPublish = true
+        //     this.wating = {
+        //       disabled: true,
+        //       info: { p: "发表中...", sd: "存为草稿", su: "更新" }
+        //     }
+        //     this.dialog.info = "发表成功！"
+        //     break
+        //   default:
+        //     break
+        // }
+
+        // this.UpdateArticle({
+        //   articleId: a.articleId,
+        //   original: _original,
+        //   title: this.articleInfo.title,
+        //   abstract: this.articleInfo.abstract,
+        //   content: this.articleInfo.content,
+        //   tag: this.articleInfo.tags,
+        //   publish: isPublish
+        // }).then((data) => {
+        //   this.editor.setContent("") //清空编辑器
+        //   this.articleInfo = {
+        //     original: "true",
+        //     title: "",
+        //     tags: [],
+        //     content: "",
+        //     abstract: ""
+        //   }
+        //   this.wating = {
+        //     disabled: false,
+        //     info: { p: "发表文章", sd: "存为草稿", su: "更新" }
+        //   }
+        //   this.dialog.show = true
+        // })
       }
     },
     //
