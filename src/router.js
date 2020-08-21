@@ -19,7 +19,7 @@ import Admin from "./views/Admin.vue"
 // const miss = (resolve) => require(["@/components/base/miss"], resolve)
 const eachTag = (resolve) => require(["@/components/article/eachTag"], resolve)
 // const review = resolve => require(["@/components/article/review"], resolve)
-const search = (resolve) => require(["@/components/search/search"], resolve)
+// const search = (resolve) => require(["@/components/search/search"], resolve)
 
 Vue.use(Router)
 
