@@ -32,7 +32,7 @@ export default {
     this.getAdminComments({ page: 1 })
   },
   beforeRouteEnter(to, from, next) {
-    next(vm => {
+    next((vm) => {
       // 获取评论数
       vm.getCommentsCount()
       document.title = "后台管理 -文章评论"

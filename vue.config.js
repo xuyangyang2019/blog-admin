@@ -10,10 +10,6 @@ function resolve(dir) {
   return path.join(__dirname, dir)
 }
 
-console.log("当前的env环境")
-console.log(process.env.NODE_ENV)
-console.log(process.env.VUE_APP_CURRENTMODE)
-
 module.exports = {
   // 部署生产环境和开发环境下的URL。
   // 默认情况下，Vue CLI 会假设你的应用是被部署在一个域名的根路径上
@@ -62,7 +58,7 @@ module.exports = {
     // 配置多个代理
     proxy: {
       "/api": {
-        target: "http://localhost:6180", // 要访问的接口域名
+        target: "http://192.168.0.111:8098", // 要访问的接口域名
         ws: true, // 是否启用websockets
         // 开启代理：在本地会创建一个虚拟服务端，然后发送请求的数据，并同时接收请求的数据，
         // 这样服务端和服务端进行数据的交互就不会有跨域问题
@@ -74,14 +70,14 @@ module.exports = {
         }
       },
       "/ueditor": {
-        target: "http://localhost:6180",
+        target: "http://192.168.0.111:8098",
         changeOrigin: true,
         pathRewrite: {
           "^/ueditor": "/ueditor"
         }
       },
       "/img": {
-        target: "http://localhost:6180",
+        target: "http://192.168.0.111:8098",
         changeOrigin: true,
         pathRewrite: {
           "^/img": "/img"

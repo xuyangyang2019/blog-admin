@@ -7,11 +7,12 @@ const axios = require("axios")
 
 import router from "../router"
 
-axios.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded; charset=UTF-8"
+axios.defaults.headers.post["Content-Type"] =
+  "application/x-www-form-urlencoded; charset=UTF-8"
 
 //拦截器，为后端每一个请求加上authorization
 axios.interceptors.request.use(
-  config => {
+  (config) => {
     const token = localStorage.getItem("validateToken")
     if (token) {
       config.headers.Authorization = token
@@ -19,14 +20,14 @@ axios.interceptors.request.use(
     }
     return config
   },
-  error => {
+  (error) => {
     return Promise.reject(error)
   }
 )
 
 //拦截器，后端验证token失败后跳转到登录界面
 axios.interceptors.response.use(
-  data => {
+  (data) => {
     // 如果返回401
     if (data.data.code && data.data.code === 401) {
       if (router.currentRoute.path !== "/login") {
@@ -51,7 +52,7 @@ axios.interceptors.response.use(
     // }
     return data
   },
-  error => {
+  (error) => {
     return Promise.reject(error)
   }
 )
@@ -65,14 +66,14 @@ function ajax(type, url, options) {
       params: type === "get" || type === "delete" ? options : null,
       data: type !== "get" && type !== "delete" ? qs.stringify(options) : null
     })
-      .then(res => {
+      .then((res) => {
         if (res.status === 200) {
           resolve(res.data)
         } else {
           reject("request error in " + url)
         }
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err, url)
       })
   })
@@ -82,10 +83,10 @@ const config = {
   get(url, options) {
     return new Promise((resolve, reject) => {
       ajax("get", url, options)
-        .then(data => {
+        .then((data) => {
           resolve(data)
         })
-        .catch(error => {
+        .catch((error) => {
           reject(error)
         })
     })
@@ -93,10 +94,10 @@ const config = {
   post(url, options) {
     return new Promise((resolve, reject) => {
       ajax("post", url, options)
-        .then(data => {
+        .then((data) => {
           resolve(data)
         })
-        .catch(error => {
+        .catch((error) => {
           reject(error)
         })
     })
@@ -104,10 +105,10 @@ const config = {
   put(url, options) {
     return new Promise((resolve, reject) => {
       ajax("put", url, options)
-        .then(data => {
+        .then((data) => {
           resolve(data)
         })
-        .catch(error => {
+        .catch((error) => {
           reject(error)
         })
     })
@@ -115,10 +116,10 @@ const config = {
   patch(url, options) {
     return new Promise((resolve, reject) => {
       ajax("patch", url, options)
-        .then(data => {
+        .then((data) => {
           resolve(data)
         })
-        .catch(error => {
+        .catch((error) => {
           reject(error)
         })
     })
@@ -126,10 +127,10 @@ const config = {
   delete(url, options) {
     return new Promise((resolve, reject) => {
       ajax("delete", url, options)
-        .then(data => {
+        .then((data) => {
           resolve(data)
         })
-        .catch(error => {
+        .catch((error) => {
           reject(error)
         })
     })

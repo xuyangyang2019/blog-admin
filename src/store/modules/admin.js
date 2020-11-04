@@ -139,11 +139,11 @@ const actions = {
   },
   // 获取留言
   GetMsgBoard({ commit }, payload) {
-    return fetch.get("/api/getAdminBoard", payload).then((data) => {
+    fetch.get("/api/getAdminBoard", payload).then((data) => {
+      console.log(data)
       if (data.length) {
         commit("SET_MSG_BOARD", data)
       }
-      // return data
     })
   },
   // 获取留言数量

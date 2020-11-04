@@ -31,7 +31,7 @@ export default {
     this.getMsgBoard({ page: 1 })
   },
   beforeRouteEnter(to, from, next) {
-    next(vm => {
+    next((vm) => {
       vm.getMsgCount()
       document.title = "后台管理 -留言管理"
     })

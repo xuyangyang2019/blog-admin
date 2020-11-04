@@ -18,7 +18,6 @@ export default {
     })
   },
   methods: {
-    // ...mapActions(["getArticles", "getArticlesCount"]),
     ...mapActions({
       getArticles: "admin/GetArticles",
       getArticlesCount: "admin/GetArticlesCount"
@@ -36,13 +35,14 @@ export default {
   },
   //组件缓存后，为了让每个模块显示正确的页码，故重新计算页码数
   beforeRouteEnter(to, from, next) {
-    next(vm => {
+    next((vm) => {
       vm.getArticlesCount({ publish: true })
       document.title = "后台管理 -已发表文章"
     })
   }
 }
 </script>
+
 <style lang="scss">
 .admin-articles {
   margin-top: 15px;

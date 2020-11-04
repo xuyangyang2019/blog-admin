@@ -10,7 +10,9 @@
     >
       {{ page }}
     </button>
-    <button @click="nextPage" :disabled="nextDisabled" class="changebtn">></button>
+    <button @click="nextPage" :disabled="nextDisabled" class="changebtn">
+      >
+    </button>
   </div>
 </template>
 <script>
@@ -102,7 +104,8 @@ export default {
             //utc时间0点起
             let startTime = new Date(Date.parse(timeArr[0])).getTime()
             //utc时间24点
-            let endTime = new Date(Date.parse(timeArr[1])).getTime() + 1000 * 60 * 60 * 24
+            let endTime =
+              new Date(Date.parse(timeArr[1])).getTime() + 1000 * 60 * 60 * 24
             this.search({
               publish: true,
               start: startTime,
