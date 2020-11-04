@@ -147,7 +147,10 @@ const router = new Router({
         {
           path: "/admin/search/:base",
           name: "search",
-          component: search,
+          component: () =>
+            import(
+              /* webpackChunkName: "admin" */ "./components/admin/search/search.vue"
+            ),
           meta: {
             requireAuth: true,
             keepAlive: true
