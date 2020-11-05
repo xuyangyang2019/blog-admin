@@ -140,7 +140,6 @@ const actions = {
   // 获取留言
   GetMsgBoard({ commit }, payload) {
     fetch.get("/api/getAdminBoard", payload).then((data) => {
-      console.log(data)
       if (data.length) {
         commit("SET_MSG_BOARD", data)
       }
@@ -155,11 +154,11 @@ const actions = {
   },
   // 获取评论
   GetAdminComments({ commit }, payload) {
-    return fetch.get("/api/getAdminComments", payload).then((data) => {
+    fetch.get("/api/getAdminComments", payload).then((data) => {
+      console.log(data)
       if (data.length) {
         commit("SET_COMMENTS", data)
       }
-      // return data
     })
   },
   // 获取评论数

@@ -3,7 +3,12 @@
     <!-- 表头 -->
     <ul class="ul-title">
       <li>
-        <input type="checkbox" id="checkAll" @click="allChecked" v-model="allChoose" />
+        <input
+          type="checkbox"
+          id="checkAll"
+          @click="allChecked"
+          v-model="allChoose"
+        />
         <label for="checkAll">全选</label>
       </li>
       <li v-for="(th, index) in initTable.th" :key="index" v-text="th"></li>
@@ -19,7 +24,12 @@
       >
         <ul class="ul-item">
           <li>
-            <input type="checkbox" :value="item._id" @click="singleChecked()" v-model="itemsToDel" />
+            <input
+              type="checkbox"
+              :value="item._id"
+              @click="singleChecked()"
+              v-model="itemsToDel"
+            />
             <span style="visibility:hidden;">单选</span>
           </li>
           <li v-text="index + 1"></li>
@@ -27,6 +37,7 @@
           <li v-text="item.name"></li>
           <li v-html="item.content"></li>
           <li v-text="$options.filters.reviseTime(item.date)"></li>
+          <!-- 操作 -->
           <li class="some-handle">
             <button class="operation-btn" @click="reviewBoard(item)">
               <i
@@ -35,13 +46,26 @@
                 aria-hidden="true"
                 title="预览"
               ></i>
-              <i v-else class="fa fa-eye-slash fa-lg" aria-hidden="true" title="预览"></i>
+              <i
+                v-else
+                class="fa fa-eye-slash fa-lg"
+                aria-hidden="true"
+                title="预览"
+              ></i>
             </button>
             <button class="operation-btn" @click="replyBoard(item)">
-              <i class="fa fa-commenting-o fa-lg" aria-hidden="true" title="回复"></i>
+              <i
+                class="fa fa-commenting-o fa-lg"
+                aria-hidden="true"
+                title="回复"
+              ></i>
             </button>
-            <button class="operation-btn" @click="deleteItem(item._id, -1, index, -1)">
-              <i class="fa fa-trash-o fa-lg" aria-hidden="true" title="删除"></i>
+            <button class="operation-btn" @click="deleteItem(item)">
+              <i
+                class="fa fa-trash-o fa-lg"
+                aria-hidden="true"
+                title="删除"
+              ></i>
             </button>
           </li>
         </ul>
@@ -70,10 +94,20 @@
               <span>本条回复：</span>
               <span v-if="!item.reply.length">暂无</span>
               <ul v-else>
-                <li class="admin-reply-li" v-for="(rep, _index) in item.reply" :key="'rep' + _index">
-                  <div class="reply-from-to ellipsis" v-text="rep.name + '@' + rep.aite"></div>
+                <li
+                  class="admin-reply-li"
+                  v-for="(rep, _index) in item.reply"
+                  :key="'rep' + _index"
+                >
+                  <div
+                    class="reply-from-to ellipsis"
+                    v-text="rep.name + '@' + rep.aite"
+                  ></div>
                   <div class="reply-content" v-text="rep.content"></div>
-                  <div class="reply-time" v-text="$options.filters.reviseTime(rep.date)"></div>
+                  <div
+                    class="reply-time"
+                    v-text="$options.filters.reviseTime(rep.date)"
+                  ></div>
                   <div class="reply-opration-btns">
                     <!-- 回复 不能回复自己 -->
                     <button
@@ -84,7 +118,10 @@
                       <i class="fa fa-commenting-o fa-lg"></i>
                     </button>
                     <!-- 删除 -->
-                    <button class="reply-opration-btn" @click="sureDelete(item._id, rep._id, index, _index)">
+                    <button
+                      class="reply-opration-btn"
+                      @click="sureDelete(item._id, rep._id, index, _index)"
+                    >
                       <i class="fa fa-trash-o fa-lg"></i>
                     </button>
                   </div>
@@ -156,7 +193,12 @@ export default {
       showDeleteDialog: false, // 二次确认框
       warningMsg: "", // 警告消息
       deleteType: "single", // 单独删除还是批量删除
-      deleteInfo: { oneLevelId: -1, twoLevelId: -1, oneIndex: -1, twoIndex: -1 }, // 要删除的信息
+      deleteInfo: {
+        oneLevelId: -1,
+        twoLevelId: -1,
+        oneIndex: -1,
+        twoIndex: -1
+      }, // 要删除的信息
       current: { review: [], reply: -1 }, // 需要展示的留言
       aite: "", // 要@的人
       sureInfo: { warning: "", type: "" }, // 确认删除
@@ -317,8 +359,8 @@ export default {
         }
       }
     },
-    deleteItem() {
-      console.log("deleteItem")
+    // 删除某条
+    deleteItem(item) {
       this.showDeleteDialog = true
       this.deleteType = "single"
       if (this.$route.name === "comments") {
@@ -326,7 +368,10 @@ export default {
       } else {
         this.warningMsg = "确定删除此条条留言么？"
       }
+      console.log(item)
+      console.log(this.deleteInfo)
     },
+    // 批量删除
     deleteItems() {
       console.log("deleteItems")
       this.showDeleteDialog = true
@@ -338,30 +383,40 @@ export default {
         this.warningMsg = `确定删除${itemNum}条留言么？`
       }
     },
-    // 删除
+    // 确认删除
     sureRemove() {
+      console.log("确认删除")
       if (this.deleteType === "single") {
-        let ol = this.deleteInfo.oneLevelId,
-          tl = this.deleteInfo.twoLevelId,
-          oi = this.deleteInfo.oneIndex,
-          ti = this.deleteInfo.twoIndex,
-          that = this
+        console.log("单独删除")
+        let ol = this.deleteInfo.oneLevelId
+        let tl = this.deleteInfo.twoLevelId
+        let oi = this.deleteInfo.oneIndex
+        let ti = this.deleteInfo.twoIndex
+        let that = this
         // 删除留言
         if (this.$route.name === "adminMsgBoard") {
           //删除一级留言
           if (ol !== -1 && tl == -1) {
-            this.removeLeavewords({ id: [ol] }).then(data => {
+            this.removeLeavewords({ id: [ol] }).then((data) => {
               if (data.deleteCode === 200) {
-                that.reduceArr({ name: "adminMsgBoard", oneIndex: oi, twoIndex: ti })
+                that.reduceArr({
+                  name: "adminMsgBoard",
+                  oneIndex: oi,
+                  twoIndex: ti
+                })
                 that.sureInfo.type = ""
               }
             })
           }
           //删除二级留言
           if (ol !== -1 && tl !== -1) {
-            this.reduceLeavewords({ mainId: ol, secondId: tl }).then(data => {
+            this.reduceLeavewords({ mainId: ol, secondId: tl }).then((data) => {
               if (data.deleteCode === 200) {
-                that.reduceArr({ name: "adminMsgBoard", oneIndex: oi, twoIndex: ti })
+                that.reduceArr({
+                  name: "adminMsgBoard",
+                  oneIndex: oi,
+                  twoIndex: ti
+                })
                 that.sureInfo.type = ""
               }
             })
@@ -369,40 +424,51 @@ export default {
         }
         // 删除文章评论
         if (this.$route.name === "comments") {
+          console.log("删除文章评论")
           // 删除一级评论
           if (ol !== -1 && tl === -1) {
-            this.removeComments({ id: [ol] }).then(data => {
-              if (data.deleteCode === 200) {
-                that.reduceArr({ name: "comments", oneIndex: oi, twoIndex: ti })
-                that.sureInfo.type = ""
-              }
+            console.log("删除一级评论")
+            this.removeComments({ id: [ol] }).then((data) => {
+              console.log(data)
+              // if (data.deleteCode === 200) {
+              //   that.reduceArr({ name: "comments", oneIndex: oi, twoIndex: ti })
+              //   that.sureInfo.type = ""
+              // }
             })
           }
-          //删除二级评论
+          // 删除二级评论
           if (ol !== -1 && tl !== -1) {
-            this.reduceComments({ mainId: ol, secondId: tl }).then(data => {
-              if (data.deleteCode === 200) {
-                that.reduceArr({ name: "comments", oneIndex: oi, twoIndex: ti })
-                that.sureInfo.type = ""
-              }
+            console.log("删除二级评论")
+            this.reduceComments({ mainId: ol, secondId: tl }).then((data) => {
+              console.log(data)
+              // if (data.deleteCode === 200) {
+              //   that.reduceArr({ name: "comments", oneIndex: oi, twoIndex: ti })
+              //   that.sureInfo.type = ""
+              // }
             })
           }
         }
       } else {
-        // this.removeAll()
+        console.log("批量删除")
         let that = this
         if (this.$route.name === "adminMsgBoard") {
-          this.removeLeavewords({ id: this.itemsToDel }).then(data => {
+          this.removeLeavewords({ id: this.itemsToDel }).then((data) => {
             if (data.deleteCode === 200) {
-              that.reduceArr_all({ name: "adminMsgBoard", removeArr: that.itemsToDel })
+              that.reduceArr_all({
+                name: "adminMsgBoard",
+                removeArr: that.itemsToDel
+              })
               that.sureInfo.type = ""
             }
           })
         }
         if (this.$route.name === "comments") {
-          this.removeComments({ id: this.itemsToDel }).then(data => {
+          this.removeComments({ id: this.itemsToDel }).then((data) => {
             if (data.deleteCode === 200) {
-              that.reduceArr_all({ name: "comments", removeArr: that.itemsToDel })
+              that.reduceArr_all({
+                name: "comments",
+                removeArr: that.itemsToDel
+              })
               that.sureInfo.type = ""
             }
           })
