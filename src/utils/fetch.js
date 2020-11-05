@@ -10,7 +10,7 @@ import router from "../router"
 axios.defaults.headers.post["Content-Type"] =
   "application/x-www-form-urlencoded; charset=UTF-8"
 
-//拦截器，为后端每一个请求加上authorization
+// 拦截器，为后端每一个请求加上authorization
 axios.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("validateToken")
@@ -25,7 +25,7 @@ axios.interceptors.request.use(
   }
 )
 
-//拦截器，后端验证token失败后跳转到登录界面
+// 拦截器，后端验证token失败后跳转到登录界面
 axios.interceptors.response.use(
   (data) => {
     // 如果返回401
@@ -64,6 +64,9 @@ function ajax(type, url, options) {
       url: url,
       // baseURL: "http://localhost:8080",//开发模式下vue-cli已经配置了请求转发，所以不用基础路径即可
       params: type === "get" || type === "delete" ? options : null,
+      paramsSerializer: (params) => {
+        return qs.stringify(params, { indices: false })
+      },
       data: type !== "get" && type !== "delete" ? qs.stringify(options) : null
     })
       .then((res) => {
