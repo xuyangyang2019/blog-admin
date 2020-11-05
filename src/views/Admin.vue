@@ -117,6 +117,7 @@
             <button @click="search">查询</button>
           </div>
         </div>
+
         <!-- 子路由 -->
         <keep-alive v-if="$route.meta.keepAlive">
           <router-view />
@@ -145,6 +146,11 @@ export default {
       // showChildMenu: true, // 显示所有文章的子菜单
       menu: [
         {
+          name: "首页",
+          icon: "fa fa-bell-o",
+          path: "/admin/newMsg"
+        },
+        {
           name: "已发表",
           icon: "fa fa-book",
           path: "/admin/allArticles"
@@ -163,11 +169,6 @@ export default {
           name: "文章评论",
           icon: "fa fa-commenting-o",
           path: "/admin/comments"
-        },
-        {
-          name: "新消息",
-          icon: "fa fa-bell-o",
-          path: "/admin/newMsg"
         },
         {
           name: "账户设置",
