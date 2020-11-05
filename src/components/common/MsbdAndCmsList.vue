@@ -39,6 +39,7 @@
           <li v-text="$options.filters.reviseTime(item.date)"></li>
           <!-- 操作 -->
           <li class="some-handle">
+            <!-- 查看 -->
             <button class="operation-btn" @click="reviewBoard(item)">
               <i
                 v-if="current.review.indexOf(item._id) === -1"
@@ -53,6 +54,7 @@
                 title="预览"
               ></i>
             </button>
+            <!-- 回复 -->
             <button class="operation-btn" @click="replyBoard(item)">
               <i
                 class="fa fa-commenting-o fa-lg"
@@ -60,7 +62,11 @@
                 title="回复"
               ></i>
             </button>
-            <button class="operation-btn" @click="deleteItem(item)">
+            <!-- 删除 -->
+            <button
+              class="operation-btn"
+              @click="deleteOrNot(1, item._id, index, -1, -1)"
+            >
               <i
                 class="fa fa-trash-o fa-lg"
                 aria-hidden="true"
@@ -120,7 +126,7 @@
                     <!-- 删除 -->
                     <button
                       class="reply-opration-btn"
-                      @click="sureDelete(item._id, rep._id, index, _index)"
+                      @click="deleteOrNot(2, item._id, index, rep._id, _index)"
                     >
                       <i class="fa fa-trash-o fa-lg"></i>
                     </button>
@@ -151,18 +157,14 @@
         </transition>
       </li>
     </ul>
-
-    <!-- 删除（multi）按钮 -->
+    <!-- 删除多个 按钮 -->
     <div class="remove-all" v-show="itemsToDel.length">
-      <!-- <button @click="sureDelete(-1)">删除选中项</button> -->
-      <button @click="deleteItems()">删除选中项</button>
+      <button @click="deleteOrNot(3)">删除选中项</button>
     </div>
-
     <!-- 分页 -->
     <transition name="fade" mode="out-in">
       <page v-show="pageArray.length > 1"></page>
     </transition>
-
     <!-- 确认删除 -->
     <transition name="fade">
       <div class="validate-mask" v-show="showDeleteDialog">
@@ -192,16 +194,16 @@ export default {
       itemsToDel: [], // 要删除的项目
       showDeleteDialog: false, // 二次确认框
       warningMsg: "", // 警告消息
-      deleteType: "single", // 单独删除还是批量删除
+      deleteType: 1, // 1删除评论或留言 2删除2级评论或留言 3批量删除评论或留言
+      // 要删除的信息
       deleteInfo: {
         oneLevelId: -1,
         twoLevelId: -1,
         oneIndex: -1,
         twoIndex: -1
-      }, // 要删除的信息
+      },
       current: { review: [], reply: -1 }, // 需要展示的留言
       aite: "", // 要@的人
-      sureInfo: { warning: "", type: "" }, // 确认删除
       replyContent: "", // 回复的内容
       emptyWarning: false // 回复内容为空发出警告
     }
@@ -338,55 +340,29 @@ export default {
       // }
     },
     // 是否删除
-    sureDelete(mainId, secondId, oneIndex, twoIndex) {
-      //选中删除操作
-      if (mainId === -1) {
-        let w = this.$route.name === "comments" ? "条评论么？" : "条留言么？"
-        this.sureInfo.type = "all"
-        this.sureInfo.warning = "确定删除选中的" + this.itemsToDel.length + w
+    deleteOrNot(flag, oneId, oneIndex, twoId, twoIndex) {
+      // 判断是评论还是留言
+      let msg = this.$route.name === "comments" ? "评论么？" : "留言么？"
+      // 判断是一条还是多条
+      if (flag === 3) {
+        msg = "确定删除选中的" + this.itemsToDel.length + "条" + msg
       } else {
-        let w = this.$route.name === "comments" ? "评论么？" : "留言么？"
-        let info = this.deleteInfo
-        this.sureInfo = {
-          type: "single",
-          warning: "确定删除此条" + w
-        }
+        msg = "确定删除此条" + msg
         this.deleteInfo = {
-          oneLevelId: mainId,
-          twoLevelId: secondId,
+          oneLevelId: oneId,
           oneIndex: oneIndex,
+          twoLevelId: twoId,
           twoIndex: twoIndex
         }
       }
-    },
-    // 删除某条
-    deleteItem(item) {
+      this.deleteType = flag
+      this.warningMsg = msg
       this.showDeleteDialog = true
-      this.deleteType = "single"
-      if (this.$route.name === "comments") {
-        this.warningMsg = "确定删除此条评论么？"
-      } else {
-        this.warningMsg = "确定删除此条条留言么？"
-      }
-      console.log(item)
-      console.log(this.deleteInfo)
-    },
-    // 批量删除
-    deleteItems() {
-      console.log("deleteItems")
-      this.showDeleteDialog = true
-      this.deleteType = "multi"
-      let itemNum = this.itemsToDel.length
-      if (this.$route.name === "comments") {
-        this.warningMsg = `确定删除${itemNum}条评论么？`
-      } else {
-        this.warningMsg = `确定删除${itemNum}条留言么？`
-      }
     },
     // 确认删除
     sureRemove() {
       console.log("确认删除")
-      if (this.deleteType === "single") {
+      if (this.deleteType !== 3) {
         console.log("单独删除")
         let ol = this.deleteInfo.oneLevelId
         let tl = this.deleteInfo.twoLevelId
@@ -429,47 +405,49 @@ export default {
           if (ol !== -1 && tl === -1) {
             console.log("删除一级评论")
             this.removeComments({ id: [ol] }).then((data) => {
-              console.log(data)
-              // if (data.deleteCode === 200) {
-              //   that.reduceArr({ name: "comments", oneIndex: oi, twoIndex: ti })
-              //   that.sureInfo.type = ""
-              // }
+              if (data.deleteCode === 200) {
+                this.reduceArr({ name: "comments", oneIndex: oi, twoIndex: ti })
+                this.deleteType = 1
+                this.showDeleteDialog = false
+              }
             })
           }
           // 删除二级评论
           if (ol !== -1 && tl !== -1) {
             console.log("删除二级评论")
-            this.reduceComments({ mainId: ol, secondId: tl }).then((data) => {
-              console.log(data)
-              // if (data.deleteCode === 200) {
-              //   that.reduceArr({ name: "comments", oneIndex: oi, twoIndex: ti })
-              //   that.sureInfo.type = ""
-              // }
-            })
+            // this.reduceComments({ mainId: ol, secondId: tl }).then((data) => {
+            //   console.log(data)
+            //   // if (data.deleteCode === 200) {
+            //   //   that.reduceArr({ name: "comments", oneIndex: oi, twoIndex: ti })
+            //   //   that.deleteType = 1
+            //   // }
+            // })
           }
         }
       } else {
         console.log("批量删除")
         let that = this
-        if (this.$route.name === "adminMsgBoard") {
-          this.removeLeavewords({ id: this.itemsToDel }).then((data) => {
-            if (data.deleteCode === 200) {
-              that.reduceArr_all({
-                name: "adminMsgBoard",
-                removeArr: that.itemsToDel
-              })
-              that.sureInfo.type = ""
-            }
-          })
-        }
+        // if (this.$route.name === "adminMsgBoard") {
+        //   this.removeLeavewords({ id: this.itemsToDel }).then((data) => {
+        //     if (data.deleteCode === 200) {
+        //       that.reduceArr_all({
+        //         name: "adminMsgBoard",
+        //         removeArr: that.itemsToDel
+        //       })
+        //       that.sureInfo.type = ""
+        //     }
+        //   })
+        // }
         if (this.$route.name === "comments") {
+          console.log("批量删除评论")
           this.removeComments({ id: this.itemsToDel }).then((data) => {
             if (data.deleteCode === 200) {
-              that.reduceArr_all({
+              this.reduceArr_all({
                 name: "comments",
                 removeArr: that.itemsToDel
               })
-              that.sureInfo.type = ""
+              this.deleteType = 1
+              this.showDeleteDialog = false
             }
           })
         }
