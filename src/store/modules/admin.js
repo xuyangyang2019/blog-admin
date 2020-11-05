@@ -297,12 +297,13 @@ const mutations = {
         state.msgBoard[payload.oneIndex].reply.splice(payload.twoIndex, 1)
       }
     }
+    // 删除评论
     if (payload.name === "comments") {
-      //删除一级留言
       if (payload.oneIndex !== -1 && payload.twoIndex === -1) {
+        //删除一级评论
         state.comments.splice(payload.oneIndex, 1)
-        //删除二级留言
       } else {
+        //删除二级评论
         state.comments[payload.oneIndex].reply.splice(payload.twoIndex, 1)
       }
     }
