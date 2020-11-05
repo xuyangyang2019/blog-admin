@@ -400,33 +400,28 @@ export default {
         }
         // 删除文章评论
         if (this.$route.name === "comments") {
-          console.log("删除文章评论")
           // 删除一级评论
           if (ol !== -1 && tl === -1) {
-            console.log("删除一级评论")
             this.removeComments({ id: [ol] }).then((data) => {
               if (data.deleteCode === 200) {
                 this.reduceArr({ name: "comments", oneIndex: oi, twoIndex: ti })
-                this.deleteType = 1
-                this.showDeleteDialog = false
               }
             })
           }
           // 删除二级评论
           if (ol !== -1 && tl !== -1) {
-            console.log("删除二级评论")
-            // this.reduceComments({ mainId: ol, secondId: tl }).then((data) => {
-            //   console.log(data)
-            //   // if (data.deleteCode === 200) {
-            //   //   that.reduceArr({ name: "comments", oneIndex: oi, twoIndex: ti })
-            //   //   that.deleteType = 1
-            //   // }
-            // })
+            this.reduceComments({ mainId: ol, secondId: tl }).then((data) => {
+              console.log(data)
+              if (data.deleteCode === 200) {
+                that.reduceArr({ name: "comments", oneIndex: oi, twoIndex: ti })
+              }
+            })
           }
         }
       } else {
         console.log("批量删除")
         let that = this
+        // 批量删除留言
         // if (this.$route.name === "adminMsgBoard") {
         //   this.removeLeavewords({ id: this.itemsToDel }).then((data) => {
         //     if (data.deleteCode === 200) {
@@ -438,20 +433,20 @@ export default {
         //     }
         //   })
         // }
+        // 批量删除评论
         if (this.$route.name === "comments") {
-          console.log("批量删除评论")
           this.removeComments({ id: this.itemsToDel }).then((data) => {
             if (data.deleteCode === 200) {
               this.reduceArr_all({
                 name: "comments",
                 removeArr: that.itemsToDel
               })
-              this.deleteType = 1
-              this.showDeleteDialog = false
             }
           })
         }
       }
+      this.deleteType = 1
+      this.showDeleteDialog = false
     }
   }
 }
