@@ -1,6 +1,8 @@
 <template>
   <div class="page">
-    <button @click="prePage" :disabled="preDisabled" class="changebtn"></button>
+    <button @click="prePage" :disabled="preDisabled" class="changebtn">
+      <i class="fa fa-angle-left"></i>
+    </button>
     <button
       v-for="(page, index) in pageArray"
       :key="index"
@@ -11,7 +13,7 @@
       {{ page }}
     </button>
     <button @click="nextPage" :disabled="nextDisabled" class="changebtn">
-      >
+      <i class="fa fa-angle-right"></i>
     </button>
   </div>
 </template>
