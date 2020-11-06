@@ -92,7 +92,7 @@
             <li class="msg-review-li">
               <span v-if="$route.name === 'adminMsgBoard'">留言：</span>
               <span v-else-if="$route.name === 'comments'">评论：</span>
-              <span v-text="item.content">{{ item.content }}</span>
+              <span v-html="item.content"></span>
             </li>
             <li class="msg-review-li">
               <span>时间：</span>
@@ -362,37 +362,36 @@ export default {
     sureRemove() {
       console.log("确认删除")
       if (this.deleteType !== 3) {
-        console.log("单独删除")
         let ol = this.deleteInfo.oneLevelId
         let tl = this.deleteInfo.twoLevelId
         let oi = this.deleteInfo.oneIndex
         let ti = this.deleteInfo.twoIndex
-        let that = this
         // 删除留言
         if (this.$route.name === "adminMsgBoard") {
-          //删除一级留言
+          // 删除一级留言
           if (ol !== -1 && tl == -1) {
             this.removeLeavewords({ id: [ol] }).then((data) => {
               if (data.deleteCode === 200) {
-                that.reduceArr({
+                this.reduceArr({
                   name: "adminMsgBoard",
                   oneIndex: oi,
                   twoIndex: ti
                 })
-                that.sureInfo.type = ""
+                this.deleteType = 1
               }
             })
           }
-          //删除二级留言
+          // 删除二级留言
           if (ol !== -1 && tl !== -1) {
+            console.log("删除二级留言")
             this.reduceLeavewords({ mainId: ol, secondId: tl }).then((data) => {
               if (data.deleteCode === 200) {
-                that.reduceArr({
+                this.reduceArr({
                   name: "adminMsgBoard",
                   oneIndex: oi,
                   twoIndex: ti
                 })
-                that.sureInfo.type = ""
+                this.deleteType = 1
               }
             })
           }
@@ -412,33 +411,33 @@ export default {
             this.reduceComments({ mainId: ol, secondId: tl }).then((data) => {
               console.log(data)
               if (data.deleteCode === 200) {
-                that.reduceArr({ name: "comments", oneIndex: oi, twoIndex: ti })
+                this.reduceArr({ name: "comments", oneIndex: oi, twoIndex: ti })
               }
             })
           }
         }
       } else {
         console.log("批量删除")
-        let that = this
         // 批量删除留言
-        // if (this.$route.name === "adminMsgBoard") {
-        //   this.removeLeavewords({ id: this.itemsToDel }).then((data) => {
-        //     if (data.deleteCode === 200) {
-        //       that.reduceArr_all({
-        //         name: "adminMsgBoard",
-        //         removeArr: that.itemsToDel
-        //       })
-        //       that.sureInfo.type = ""
-        //     }
-        //   })
-        // }
+        if (this.$route.name === "adminMsgBoard") {
+          console.log("批量删除留言")
+          this.removeLeavewords({ id: this.itemsToDel }).then((data) => {
+            if (data.deleteCode === 200) {
+              this.reduceArr_all({
+                name: "adminMsgBoard",
+                removeArr: this.itemsToDel
+              })
+              this.deleteType = 1
+            }
+          })
+        }
         // 批量删除评论
         if (this.$route.name === "comments") {
           this.removeComments({ id: this.itemsToDel }).then((data) => {
             if (data.deleteCode === 200) {
               this.reduceArr_all({
                 name: "comments",
-                removeArr: that.itemsToDel
+                removeArr: this.itemsToDel
               })
             }
           })
