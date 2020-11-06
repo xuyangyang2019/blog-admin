@@ -55,7 +55,10 @@
               ></i>
             </button>
             <!-- 回复 -->
-            <button class="operation-btn" @click="replyBoard(item)">
+            <button
+              class="operation-btn"
+              @click="replyBoard(item._id, item.name)"
+            >
               <i
                 class="fa fa-commenting-o fa-lg"
                 aria-hidden="true"
@@ -109,7 +112,7 @@
                     class="reply-from-to ellipsis"
                     v-text="rep.name + '@' + rep.aite"
                   ></div>
-                  <div class="reply-content" v-text="rep.content"></div>
+                  <div class="reply-content" v-html="rep.content"></div>
                   <div
                     class="reply-time"
                     v-text="$options.filters.reviseTime(rep.date)"
@@ -117,9 +120,10 @@
                   <div class="reply-opration-btns">
                     <!-- 回复 不能回复自己 -->
                     <button
-                      v-if="rep.name !== 'admin（管理员）'"
                       class="reply-opration-btn"
-                      @click="replyBoard(item, rep)"
+                      :disabled="rep.name === 'admin（管理员）'"
+                      :class="{ disabled: rep.name === 'admin（管理员）' }"
+                      @click="replyBoard(item._id, rep.name)"
                     >
                       <i class="fa fa-commenting-o fa-lg"></i>
                     </button>
@@ -282,24 +286,19 @@ export default {
       }
     },
     // 回复
-    replyBoard(item, rep) {
-      if (this.current.reply === item._id && !rep) {
-        this.current.reply = null
+    replyBoard(itemId, itemName) {
+      if (itemId === this.current.reply) {
+        // 隐藏回复框
+        this.current.reply = -1
+        this.aite = ""
       } else {
-        this.current.reply = item._id
-        if (rep) {
-          this.aite = rep.name
-        } else {
-          this.aite = item.name
-        }
+        // 展示
+        this.current.reply = itemId
+        this.aite = itemName
       }
     },
     // 提交回复
     postReply(id) {
-      console.log("提交回复")
-      console.log(id)
-      console.log(this.replyContent)
-      // let that = this
       if (!this.replyContent.length) {
         this.emptyWarning = true
         return
@@ -320,24 +319,24 @@ export default {
       //     }
       //   })
       // }
-      //评论回复
-      // if (this.$route.name === "comments") {
-      //   this.addCommentsReply({
-      //     _id: id,
-      //     name: "admin（管理员）",
-      //     aite: this.aite,
-      //     imgUrl: "/img/logo.png",
-      //     content: this.replyContent,
-      //     like: 0,
-      //     email: "",
-      //     date: new Date()
-      //   }).then(data => {
-      //     if (data._id) {
-      //       that.addLocalComment(data)
-      //       that.replyContent = ""
-      //     }
-      //   })
-      // }
+      // 评论回复
+      if (this.$route.name === "comments") {
+        this.addCommentsReply({
+          _id: id,
+          name: "admin（管理员）",
+          aite: this.aite,
+          imgUrl: "/img/logo.png",
+          content: this.replyContent,
+          like: 0,
+          email: "",
+          date: new Date()
+        }).then((data) => {
+          if (data._id) {
+            this.addLocalComment(data)
+            this.replyContent = ""
+          }
+        })
+      }
     },
     // 是否删除
     deleteOrNot(flag, oneId, oneIndex, twoId, twoIndex) {
@@ -555,6 +554,9 @@ export default {
               .reply-opration-btn {
                 @extend .base-btn;
                 margin-left: 10px;
+              }
+              .disabled {
+                cursor: not-allowed;
               }
             }
           }
