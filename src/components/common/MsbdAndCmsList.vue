@@ -189,7 +189,7 @@
 
 <script>
 import { mapMutations, mapActions, mapGetters } from "vuex"
-import page from "@/components/base/page"
+import page from "@/components/base/Page"
 
 export default {
   data() {

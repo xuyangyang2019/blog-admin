@@ -139,7 +139,7 @@
 <script>
 import { mapGetters } from "vuex"
 
-import page from "@/components/base/page"
+import page from "@/components/base/Page"
 
 export default {
   data() {
@@ -252,7 +252,7 @@ export default {
           tag: item.tag[0],
           articleId: item.articleId
         })
-        .then(data => {
+        .then((data) => {
           if (data.length) {
             this.updateInfo = { show: false, wait: false }
             // 如果当前是草稿箱 跳转到draftrevise
@@ -288,7 +288,7 @@ export default {
           .dispatch("admin/RemoveArticle", {
             articleId: [this.articleIdToDel.aid]
           })
-          .then(data => {
+          .then((data) => {
             // 如果删除成功 删除缓存中的数据
             if (data.deleteCode === 200) {
               this.$store.commit("admin/REDUCE_ARR", {
@@ -300,7 +300,7 @@ export default {
       } else {
         this.$store
           .dispatch("admin/RemoveArticle", { articleId: this.articlesChose })
-          .then(data => {
+          .then((data) => {
             if (data.deleteCode === 200) {
               this.$store.commit("admin/REDUCE_ARR_ALL", {
                 name: this.$route.name,
