@@ -303,22 +303,22 @@ export default {
         this.emptyWarning = true
         return
       }
-      // //留言回复
-      // if (this.$route.name === "adminMsgBoard") {
-      //   this.addBoardReply({
-      //     id: id,
-      //     name: "admin（管理员）",
-      //     aite: this.aite,
-      //     imgUrl: "/img/logo.png",
-      //     content: this.replyContent,
-      //     date: new Date()
-      //   }).then(data => {
-      //     if (data._id) {
-      //       that.addLocalWord(data)
-      //       that.replyContent = ""
-      //     }
-      //   })
-      // }
+      // 留言回复
+      if (this.$route.name === "adminMsgBoard") {
+        this.addBoardReply({
+          id: id,
+          name: "admin（管理员）",
+          aite: this.aite,
+          imgUrl: "/img/logo.png",
+          content: this.replyContent,
+          date: new Date()
+        }).then((data) => {
+          if (data._id) {
+            this.addLocalWord(data)
+            this.replyContent = ""
+          }
+        })
+      }
       // 评论回复
       if (this.$route.name === "comments") {
         this.addCommentsReply({
@@ -360,7 +360,6 @@ export default {
     },
     // 确认删除
     sureRemove() {
-      console.log("确认删除")
       if (this.deleteType !== 3) {
         let ol = this.deleteInfo.oneLevelId
         let tl = this.deleteInfo.twoLevelId
@@ -377,13 +376,11 @@ export default {
                   oneIndex: oi,
                   twoIndex: ti
                 })
-                this.deleteType = 1
               }
             })
           }
           // 删除二级留言
           if (ol !== -1 && tl !== -1) {
-            console.log("删除二级留言")
             this.reduceLeavewords({ mainId: ol, secondId: tl }).then((data) => {
               if (data.deleteCode === 200) {
                 this.reduceArr({
@@ -391,7 +388,6 @@ export default {
                   oneIndex: oi,
                   twoIndex: ti
                 })
-                this.deleteType = 1
               }
             })
           }
@@ -409,7 +405,6 @@ export default {
           // 删除二级评论
           if (ol !== -1 && tl !== -1) {
             this.reduceComments({ mainId: ol, secondId: tl }).then((data) => {
-              console.log(data)
               if (data.deleteCode === 200) {
                 this.reduceArr({ name: "comments", oneIndex: oi, twoIndex: ti })
               }
@@ -417,17 +412,14 @@ export default {
           }
         }
       } else {
-        console.log("批量删除")
         // 批量删除留言
         if (this.$route.name === "adminMsgBoard") {
-          console.log("批量删除留言")
           this.removeLeavewords({ id: this.itemsToDel }).then((data) => {
             if (data.deleteCode === 200) {
               this.reduceArr_all({
                 name: "adminMsgBoard",
                 removeArr: this.itemsToDel
               })
-              this.deleteType = 1
             }
           })
         }
