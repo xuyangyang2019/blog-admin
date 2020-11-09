@@ -72,6 +72,7 @@ export default {
     }
   },
   created() {
+    // 先鉴权
     this.$store.dispatch("admin/ConfirmToken")
   }
 }

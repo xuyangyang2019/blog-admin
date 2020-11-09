@@ -166,11 +166,10 @@
       <!-- 预览 -->
       <!-- <div class="preview">
         <div v-html="articleInfo.content"></div>
-      </div>-->
+      </div> -->
     </div>
 
     <!-- 对文章的一系列操作: 1.文章发表 2.存为草稿 3.已发表文章的更新 4.草稿的更新 5.草稿发表 -->
-    <!-- 操作 -->
     <div class="article-handle">
       <!-- 发布文章 发表文章按钮 | 存为草稿按钮 -->
       <div class="publish" v-if="this.$route.path === '/admin/publish'">
@@ -189,6 +188,7 @@
           {{ wating.info.sd }}
         </button>
       </div>
+
       <!-- 已发表的文章 更新按钮 -->
       <div class="publish" v-if="this.$route.path === '/admin/update'">
         <button
@@ -200,6 +200,7 @@
           {{ wating.info.su }}
         </button>
       </div>
+
       <!-- 草稿箱的按钮 更新按钮 | 发表文章按钮 -->
       <div class="publish" v-if="this.$route.path === '/admin/draftrevise'">
         <button
@@ -220,6 +221,7 @@
       </div>
     </div>
 
+    <!-- 二次确认 -->
     <transition name="publish">
       <div class="publish-mask" v-show="dialog.show">
         <div class="mask-box">
@@ -234,17 +236,12 @@
 <script>
 import { mapActions, mapGetters } from "vuex"
 
-// 高亮的css
-// import "@/../public/UE/prism.css"
-// 代码高亮的js
-// import Prism from "@/../public/UE/prism.js"
 import Prism from "prismjs"
 // ue相关的文件
 import "@/../public/UE/ueditor.config.js"
 import "@/../public/UE/ueditor.all.min.js"
 import "@/../public/UE/lang/zh-cn/zh-cn"
 // 下面注释的文件会报错
-// import "@/../public/UE/ueditor.parse.min.js"
 import "@/../public/UE/themes/default/css/ueditor.css"
 
 export default {
@@ -531,7 +528,6 @@ export default {
     // 表单验证验证
     validate() {
       if (this.articleInfo.title === "") {
-        // this.dialog = { show: true, info: "请填写文章标题" }
         this.$toast({
           message: "请填写文章标题",
           type: "warning",
@@ -540,7 +536,6 @@ export default {
         return false
       }
       if (this.articleInfo.tags.length === 0) {
-        // this.dialog = { show: true, info: "请填写文章标签" }
         this.$toast({
           message: "请填写文章标签",
           type: "warning",
@@ -549,7 +544,6 @@ export default {
         return false
       }
       if (this.articleInfo.abstract === "") {
-        // this.dialog = { show: true, info: "请填写文章前言" }
         this.$toast({
           message: "请填写文章前言",
           type: "warning",
@@ -558,7 +552,6 @@ export default {
         return false
       }
       if (this.articleInfo.content.length === 0) {
-        // this.dialog = { show: true, info: "内容不能为空" }
         this.$toast({
           message: "内容不能为空",
           type: "warning",
@@ -570,21 +563,28 @@ export default {
     },
     // 发表文章或存为草稿，通过设置isPublish来区别
     publishArticle(flag) {
+      console.log("发表文章或存为草稿", flag)
       // 如果验证通过
       if (this.validate()) {
+        // 发表
         let isPublish = flag ? true : false
+        // 原创
         let _original = this.articleInfo.original === "true" ? true : false
+        // 更改按钮文字
         if (flag) {
+          // 如果是发表文章
           this.wating = {
             disabled: true,
             info: { p: "发表中...", sd: "存为草稿", su: "更新" }
           }
         } else {
+          // 如果是草稿箱
           this.wating = {
             disabled: true,
             info: { p: "发表文章", sd: "保存中...", su: "更新" }
           }
         }
+        // 保存文章
         this.SaveArticle({
           articleId: 0,
           title: this.articleInfo.title,
@@ -596,12 +596,16 @@ export default {
           pv: 0,
           date: Date.now()
         }).then((data) => {
+          console.log(data)
           if (data.code === 200) {
-            this.editor.setContent("") //清空编辑器
+            //清空编辑器
+            this.editor.setContent("")
+            // 修改按钮文字
             this.wating = {
               disabled: false,
               info: { p: "发表文章", sd: "存为草稿", su: "更新" }
             }
+            // 重置表单
             this.articleInfo = {
               original: "true",
               title: "",
@@ -683,9 +687,8 @@ export default {
         // })
       }
     },
-    //
+    // 获取ue内容
     getUEContent() {
-      // 获取内容方法
       return this.editor.getContent()
     },
     // 转化内容
@@ -706,8 +709,10 @@ export default {
         let str = code.outerHTML
         el.innerHTML = str
       }
+      // 文章内容
       this.articleInfo.content = dom.innerHTML
-      this.$nextTick(function() {
+      // 重新渲染
+      this.$nextTick(() => {
         Prism.highlightAll()
       })
     },
@@ -715,14 +720,16 @@ export default {
     initUeditor() {
       // eslint-disable-next-line no-undef
       this.editor = UE.getEditor("editor", this.config) // 初始化UE
-      //editor内容变化监听事件
+      // editor内容变化监听事件
       this.editor.addListener("contentChange", () => {
+        console.log("ue contentChange")
         if (!this.showBtn) {
           this.showBtn = true
         }
         this.transformStr()
       })
       this.editor.addListener("ready", () => {
+        console.log("ue ready")
         if (this.articles.only.length) {
           this.editor.setContent(this.articles.only[0].content)
         }
@@ -730,48 +737,48 @@ export default {
     },
     // 初始化编辑器内容
     initUeditorContent() {
+      // 如果有文章
       if (this.articles.only.length) {
         let atc = this.articles.only[0]
         // 标题 | 标签 | 前言
         if (this.$route.path !== "/admin/publish") {
-          let _original = atc.original === true ? "true" : "false"
           this.articleInfo = {
-            original: _original,
+            original: atc.original === true ? "true" : "false",
             title: atc.title,
             tags: atc.tag,
             abstract: atc.abstract,
             content: atc.content
           }
         }
-        // 技术文章 | 生活感悟
-        if (this.articleInfo.tags[0] === "life") {
-          this.$refs.typeOfLife.checked = true
-        }
+        // // 技术文章 | 生活感悟
+        // if (this.articleInfo.tags[0] === "life") {
+        //   this.$refs.typeOfLife.checked = true
+        // }
       }
     }
   },
   mounted() {
     this.initUeditor()
     this.initUeditorContent()
+    //这句话的意思是点击其他区域关闭（也可以根据自己需求写触发事件）
     // document.addEventListener("click", (e) => {
     //   if (!this.$el.contains(e.target)) {
-    //     this.show = false //这句话的意思是点击其他区域关闭（也可以根据自己需求写触发事件）
+    //     this.show = false
     //   }
     // })
   },
   destroyed() {
-    console.log("离开页面，销毁")
-    console.log(this.editor)
+    // 离开页面，销毁
     if (this.editor !== null) {
       this.editor.destroy()
     }
-
     this.articleInfo = {
       title: "",
       tags: [],
       abstract: "",
       content: ""
     }
+    // 清除当前的文章
     this.$store.commit("admin/ClearOnly")
   }
 }
