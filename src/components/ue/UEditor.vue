@@ -626,65 +626,69 @@ export default {
     updateOrDraftPublish(flag) {
       // 如果通过表单验证
       if (this.validate()) {
-        let isPublish
-        let a = this.articles.only[0]
+        // 是否发表文章
+        let isPublish = false
+        // 文章
+        let article = this.articles.only[0]
+        // 是否原创
         let _original = this.articleInfo.original === "true" ? true : false
-        console.log(a)
-        // switch (flag) {
-        //   // 已发表文章的更新
-        //   case 1:
-        //     isPublish = false
-        //     this.wating = {
-        //       disabled: true,
-        //       info: { p: "发表文章", sd: "存为草稿", su: "更新中..." }
-        //     }
-        //     this.dialog.info = "更新成功！"
-        //     break
-        //   // 草稿的更新
-        //   case 2:
-        //     isPublish = true
-        //     this.wating = {
-        //       disabled: true,
-        //       info: { p: "发表文章", sd: "存为草稿", su: "更新中..." }
-        //     }
-        //     this.dialog.info = "更新成功！"
-        //     break
-        //   // 草稿文章的发表
-        //   case 3:
-        //     isPublish = true
-        //     this.wating = {
-        //       disabled: true,
-        //       info: { p: "发表中...", sd: "存为草稿", su: "更新" }
-        //     }
-        //     this.dialog.info = "发表成功！"
-        //     break
-        //   default:
-        //     break
-        // }
+        console.log(article)
+        switch (flag) {
+          // 已发表文章的更新
+          case 1:
+            isPublish = false
+            this.wating = {
+              disabled: true,
+              info: { p: "发表文章", sd: "存为草稿", su: "更新中..." }
+            }
+            this.dialog.info = "更新成功！"
+            break
+          // 草稿的更新
+          case 2:
+            isPublish = true
+            this.wating = {
+              disabled: true,
+              info: { p: "发表文章", sd: "存为草稿", su: "更新中..." }
+            }
+            this.dialog.info = "更新成功！"
+            break
+          // 草稿文章的发表
+          case 3:
+            isPublish = true
+            this.wating = {
+              disabled: true,
+              info: { p: "发表中...", sd: "存为草稿", su: "更新" }
+            }
+            this.dialog.info = "发表成功！"
+            break
+          default:
+            break
+        }
 
-        // this.UpdateArticle({
-        //   articleId: a.articleId,
-        //   original: _original,
-        //   title: this.articleInfo.title,
-        //   abstract: this.articleInfo.abstract,
-        //   content: this.articleInfo.content,
-        //   tag: this.articleInfo.tags,
-        //   publish: isPublish
-        // }).then((data) => {
-        //   this.editor.setContent("") //清空编辑器
-        //   this.articleInfo = {
-        //     original: "true",
-        //     title: "",
-        //     tags: [],
-        //     content: "",
-        //     abstract: ""
-        //   }
-        //   this.wating = {
-        //     disabled: false,
-        //     info: { p: "发表文章", sd: "存为草稿", su: "更新" }
-        //   }
-        //   this.dialog.show = true
-        // })
+        this.UpdateArticle({
+          articleId: article.articleId,
+          original: _original,
+          title: this.articleInfo.title,
+          abstract: this.articleInfo.abstract,
+          content: this.articleInfo.content,
+          tag: this.articleInfo.tags,
+          publish: isPublish
+        }).then((data) => {
+          //清空编辑器
+          this.editor.setContent("")
+          this.articleInfo = {
+            original: "true",
+            title: "",
+            tags: [],
+            content: "",
+            abstract: ""
+          }
+          this.wating = {
+            disabled: false,
+            info: { p: "发表文章", sd: "存为草稿", su: "更新" }
+          }
+          this.dialog.show = true
+        })
       }
     },
     // 获取ue内容
