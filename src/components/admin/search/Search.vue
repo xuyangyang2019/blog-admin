@@ -5,24 +5,24 @@
     <div class="search-empty" v-if="!articles.search.length">
       啊哦~~空空如也
     </div>
-    <!-- <list
+    <list
       :article_list="articles.search"
       v-if="articles.search && articles.search.length"
-    ></list> -->
+    ></list>
   </div>
 </template>
 
 <script>
 import { mapActions, mapState } from "vuex"
-// import list from "@/components/common/ArticleList"
+import list from "@/components/common/ArticleList"
 
 export default {
   components: {
-    // list
+    list
   },
   computed: {
-    ...mapState({
-      articles: "admin/articles"
+    ...mapState("admin", {
+      articles: "articles"
     })
   },
   methods: {
