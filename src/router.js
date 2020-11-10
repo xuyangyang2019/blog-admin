@@ -16,10 +16,7 @@ import Admin from "./views/Admin.vue"
 // const Login = resolve => { require.ensure([], () => { resolve(require('./views/Login.vue')) }, 'login') }
 
 //后台管理界面
-// const miss = (resolve) => require(["@/components/base/miss"], resolve)
 const eachTag = (resolve) => require(["@/components/article/eachTag"], resolve)
-// const review = resolve => require(["@/components/article/review"], resolve)
-// const search = (resolve) => require(["@/components/search/search"], resolve)
 
 Vue.use(Router)
 
@@ -149,7 +146,7 @@ const router = new Router({
           name: "search",
           component: () =>
             import(
-              /* webpackChunkName: "admin" */ "./components/admin/search/search.vue"
+              /* webpackChunkName: "admin" */ "./components/admin/search/Search.vue"
             ),
           meta: {
             requireAuth: true,

@@ -11,7 +11,7 @@ const state = {
 
 // getters
 const getters = {
-  toPath: state => state.toPath
+  toPath: (state) => state.toPath
 }
 
 // actions
