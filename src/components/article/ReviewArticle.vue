@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex"
+import { mapState } from "vuex"
 import Prism from "prismjs"
 
 export default {
@@ -55,8 +55,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters({
-      articles: "admin/articles"
+    ...mapState("admin", {
+      articles: "articles"
     })
   },
   methods: {

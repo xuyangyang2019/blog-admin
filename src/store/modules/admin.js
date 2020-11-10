@@ -21,14 +21,14 @@ const state = {
     like: [], // 点赞
     pv: [] // 点击
   },
-  // 文章
+  // 文章列表
   articles: {
     all: [], // 所有文章
     drafts: [], // 草稿箱
     tags: [], // 标签
     search: [], // 搜索结果
     only: [] // 要预览的文章
-  }, // 文章列表
+  },
   pageArray: [], // 已发表页码数组
   msgBoard: [], // 留言板
   comments: [] // 评论
@@ -36,12 +36,6 @@ const state = {
 
 // getters
 const getters = {
-  tagsObj: (state) => state.tagsObj,
-  redSup: (state) => state.redSup,
-  forLocation: (state) => state.forLocation,
-  news: (state) => state.news,
-  articles: (state) => state.articles,
-  pageArray: (state) => state.pageArray,
   msgBoard: (state) => state.msgBoard,
   comments: (state) => state.comments
 }
@@ -72,7 +66,6 @@ const actions = {
           //     item.tag = "生活"
           //   }
           // })
-          // state.tagsObj = data
           commit("SET_TAGS", data)
         }
         // return data
@@ -96,9 +89,16 @@ const actions = {
     })
   },
   // 获取对应模块的文章总数，为分页按钮个数提供支持
-  GetArticlesCount({ commit, state }, payload) {
+  GetArticlesCount({ commit }, payload) {
     return fetch.get("/api/getCount", payload).then((data) => {
       commit("PAGE_ARRAY", data)
+    })
+  },
+  // 搜索文章
+  SearchAdminArticles({ commit }, payload) {
+    fetch.get("/api/adminSearch", payload).then((data) => {
+      console.log(data)
+      commit("SET_ARTICLES_SEARCH", data)
     })
   },
   // 删除文章
@@ -256,8 +256,8 @@ const mutations = {
     state.pageArray = arr
   },
   // 设置标签
-  SET_TAGS(state, tagsObj) {
-    state.tagsObj = tagsObj
+  SET_TAGS(state, tags) {
+    state.tagsObj = tags
   },
   // 设置文章
   SET_ARTICLES(state, dataObj) {
@@ -274,6 +274,9 @@ const mutations = {
         state.articles.tags = data
       }
     }
+  },
+  SET_ARTICLES_SEARCH(state, data) {
+    state.articles.search = data
   },
   // 减少数据
   REDUCE_ARR(state, payload) {

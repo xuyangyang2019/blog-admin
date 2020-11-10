@@ -188,7 +188,7 @@
 </template>
 
 <script>
-import { mapMutations, mapActions, mapGetters } from "vuex"
+import { mapMutations, mapActions, mapGetters, mapState } from "vuex"
 import page from "@/components/base/Page"
 
 export default {
@@ -213,8 +213,10 @@ export default {
     }
   },
   computed: {
+    ...mapState("admin", {
+      pageArray: "pageArray"
+    }),
     ...mapGetters({
-      pageArray: "admin/pageArray",
       page: "admin/page"
     })
   },

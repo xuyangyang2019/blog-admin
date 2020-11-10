@@ -26,7 +26,6 @@
         </div>
       </div>
     </div>
-
     <!-- main -->
     <div class="admin-body">
       <!-- aside -->
@@ -92,7 +91,7 @@
                 type="text"
                 placeholder="请输入关键词"
                 v-model="searchKey"
-                @keyup.enter="search"
+                @keyup.enter="searchArticle"
               />
             </div>
             <div class="search-time" v-show="choseType === 'time'">
@@ -114,7 +113,7 @@
               <option value="key">关键字</option>
               <option value="time">时间</option>
             </select>
-            <button @click="search">查询</button>
+            <button @click="searchArticle">查询</button>
           </div>
         </div>
 
@@ -129,7 +128,7 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex"
+import { mapState } from "vuex"
 
 export default {
   data() {
@@ -179,10 +178,10 @@ export default {
     }
   },
   computed: {
-    ...mapGetters({
-      redSup: "admin/redSup", // 红点
-      tagsObj: "admin/tagsObj", // 标签信息
-      forLocation: "admin/forLocation"
+    ...mapState("admin", {
+      redSup: "redSup", // 红点
+      tagsObj: "tagsObj", // 标签信息
+      forLocation: "forLocation"
     }),
     // 问候语
     greet() {
@@ -204,9 +203,9 @@ export default {
   },
   watch: {
     forLocation() {
-      if (this.forLocation.length) {
-        this.location = this.forLocation
-      }
+      // if (this.forLocation.length) {
+      //   this.location = this.forLocation
+      // }
     }
   },
   methods: {
@@ -280,18 +279,19 @@ export default {
         func.apply(context, args)
       }, delay)
     },
-    listen: function() {
+    listen() {
       this.debounce(this.initHeight, 500)
     },
-    search: function() {
+    searchArticle() {
       if (this.choseType === "key") {
-        if (!this.searchKey.length) {
-          return
+        // 去除前后的空格
+        this.searchKey = this.searchKey.replace(/(^\s*)|(\s*$)/g, "")
+        if (this.searchKey.length) {
+          this.$router.push({
+            name: "search",
+            params: { base: this.searchKey }
+          })
         }
-        this.$router.push({
-          name: "search",
-          params: { base: this.searchKey }
-        })
       } else {
         if (!this.date.from) {
           this.err.from = true
@@ -304,7 +304,7 @@ export default {
         this.$router.push({ name: "search", params: { base: date } })
       }
     },
-    showListDelay: function() {
+    showListDelay() {
       setTimeout(() => {
         this.showList = !this.showList
       }, 350)
@@ -320,7 +320,7 @@ export default {
     // 添加监听事件
     window.addEventListener("resize", this.listen)
     // 初始话height
-    this.initHeight()
+    // this.initHeight()
   },
   // 导航守卫 更新之前
   // beforeRouteUpdate(to, from, next) {
@@ -329,7 +329,7 @@ export default {
   // },
   // 导航守卫 离开路由则解绑事件
   beforeRouteLeave(to, from, next) {
-    window.removeEventListener("resize", this.listen)
+    // window.removeEventListener("resize", this.listen)
     next()
   }
 }

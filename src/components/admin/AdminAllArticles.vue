@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex"
+import { mapActions, mapState } from "vuex"
 import list from "@/components/common/ArticleList"
 
 export default {
@@ -13,8 +13,8 @@ export default {
     list
   },
   computed: {
-    ...mapGetters({
-      articles: "admin/articles"
+    ...mapState("admin", {
+      articles: "articles"
     })
   },
   methods: {
@@ -22,7 +22,7 @@ export default {
       getArticles: "admin/GetArticles",
       getArticlesCount: "admin/GetArticlesCount"
     }),
-    allArticles_admin: function() {
+    allArticles_admin() {
       let payload = {
         publish: true,
         page: 1

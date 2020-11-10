@@ -137,7 +137,7 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex"
+import { mapState } from "vuex"
 
 import page from "@/components/base/Page"
 
@@ -167,8 +167,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters({
-      pageArray: "admin/pageArray"
+    ...mapState("admin", {
+      pageArray: "pageArray"
     })
   },
   props: {

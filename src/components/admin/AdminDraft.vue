@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex"
+import { mapActions, mapState } from "vuex"
 
 import list from "@/components/common/ArticleList"
 
@@ -14,8 +14,8 @@ export default {
     return {}
   },
   computed: {
-    ...mapGetters({
-      articles: "admin/articles"
+    ...mapState("admin", {
+      articles: "articles"
     })
   },
   methods: {
@@ -39,7 +39,7 @@ export default {
     this.allArticles_admin()
   },
   beforeRouteEnter(to, from, next) {
-    next(vm => {
+    next((vm) => {
       // vm.getArticlesCount({ publish: false })
       document.title = "后台管理 -草稿箱"
     })

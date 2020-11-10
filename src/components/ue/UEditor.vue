@@ -234,7 +234,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex"
+import { mapActions, mapState } from "vuex"
 
 import Prism from "prismjs"
 // ue相关的文件
@@ -370,8 +370,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters({
-      articles: "admin/articles"
+    ...mapState("admin", {
+      articles: "articles"
     }),
     // 所有标签集合
     filterArray() {

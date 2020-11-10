@@ -61,7 +61,9 @@
               </transition> -->
             </ul>
             <div class="clear-news" v-if="!!news.comment.length">
-              <button :disabled="dsabd.comment" @click="clearNews('comment')">{{ clearText.comment }}</button>
+              <button :disabled="dsabd.comment" @click="clearNews('comment')">
+                {{ clearText.comment }}
+              </button>
             </div>
           </div>
         </div>
@@ -135,19 +137,24 @@
 </template>
 
 <script>
-import { mapMutations, mapActions, mapGetters } from "vuex"
+import { mapMutations, mapActions, mapGetters, mapState } from "vuex"
 
 export default {
   data() {
     return {
       currentView: [],
       dsabd: { comment: false, msgboard: false, like: false, pv: false },
-      clearText: { comment: "设为已读", msgboard: "设为已读", like: "设为已读", pv: "设为已读" }
+      clearText: {
+        comment: "设为已读",
+        msgboard: "设为已读",
+        like: "设为已读",
+        pv: "设为已读"
+      }
     }
   },
   computed: {
-    ...mapGetters({
-      news: "admin/news"
+    ...mapState("admin", {
+      news: "news"
     })
   },
   methods: {
@@ -164,7 +171,7 @@ export default {
     clearNews(type) {
       let that = this
       this.clearText[type] = "设置中..."
-      this.removeNews({ type: type }).then(data => {
+      this.removeNews({ type: type }).then((data) => {
         if (data.deleteCode === 200) {
           that.clearText[type] = "设置已读成功"
           that.dsabd[type] = true
