@@ -24,7 +24,11 @@
           @focus="errMsg.oldPwd = ''"
         />
       </div>
-      <div class="error-msg" :class="{ 'error-msg-no': errMsg.oldPwd === '' }" v-text="errMsg.oldPwd"></div>
+      <div
+        class="error-msg"
+        :class="{ 'error-msg-no': errMsg.oldPwd === '' }"
+        v-text="errMsg.oldPwd"
+      ></div>
       <!-- 新密码 -->
       <div class="form-item">
         <label class="form-item-label" for="newPwd">新密码</label>
@@ -39,7 +43,11 @@
           @focus="errMsg.newPwd = ''"
         />
       </div>
-      <div class="error-msg" :class="{ 'error-msg-no': errMsg.newPwd === '' }" v-text="errMsg.newPwd"></div>
+      <div
+        class="error-msg"
+        :class="{ 'error-msg-no': errMsg.newPwd === '' }"
+        v-text="errMsg.newPwd"
+      ></div>
       <!-- 确认密码 -->
       <div class="form-item">
         <label class="form-item-label" for="surePwd">新密码</label>
@@ -54,21 +62,44 @@
           @focus="errMsg.surePwd = ''"
         />
       </div>
-      <div class="error-msg" :class="{ 'error-msg-no': errMsg.surePwd === '' }" v-text="errMsg.surePwd"></div>
+      <div
+        class="error-msg"
+        :class="{ 'error-msg-no': errMsg.surePwd === '' }"
+        v-text="errMsg.surePwd"
+      ></div>
       <!-- 提交 -->
       <div class="operation-btns">
-        <button class="operation-btn btn-submit" type="submit" form="adminSetForm">{{ waitInfo.revise }}</button>
-        <button class="operation-btn btn-reset" type="reset" form="adminSetForm">重置</button>
+        <button
+          class="operation-btn btn-submit"
+          type="submit"
+          form="adminSetForm"
+        >
+          {{ waitInfo.revise }}
+        </button>
+        <button
+          class="operation-btn btn-reset"
+          type="reset"
+          form="adminSetForm"
+        >
+          重置
+        </button>
       </div>
     </form>
+
     <!-- 数据库备份 -->
-    <!-- <div class="db-copy">
+    <div class="db-copy">
       <h3>数据库备份</h3>
-      <button class="db-copy-btn" @click="startCopy" :disabled="waitInfo.copy === '备份中...'">
+      <button
+        class="db-copy-btn"
+        @click="startCopy"
+        :disabled="waitInfo.copy === '备份中...'"
+      >
         {{ waitInfo.copy }}
       </button>
-      <button class="db-copy-btn" v-if="showDownload" :disabled="!showDownload" @click="download">下载到本地</button>
-    </div> -->
+      <button class="db-copy-btn" :disabled="!showDownload" @click="download">
+        下载到本地
+      </button>
+    </div>
 
     <!-- 提示框 -->
     <transition name="set-mask">
@@ -137,7 +168,7 @@ export default {
         this.reviseKey({
           oldKey: this.passwordForm.oldPwd,
           newKey: this.passwordForm.newPwd
-        }).then(data => {
+        }).then((data) => {
           if (data.code === 200) {
             // console.log("修改成功")
             this.waitInfo.revise = "确认修改"
@@ -158,8 +189,9 @@ export default {
     // 开始拷贝
     startCopy() {
       console.log("开始拷贝")
-      this.waitInfo.copy = "备份中..."
-      this.copyData().then(data => {
+      // this.waitInfo.copy = "备份中..."
+      this.copyData().then((data) => {
+        console.log(data)
         if (data.code === 200) {
           this.waitInfo.copy = "备份"
           this.adminSetMask = { show: true, info: "备份成功！" }
