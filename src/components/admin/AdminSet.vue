@@ -96,8 +96,9 @@
       >
         {{ waitInfo.copy }}
       </button>
-      <button class="db-copy-btn" :disabled="!showDownload" @click="download">
+      <button class="db-copy-btn" @click="download">
         下载到本地
+        <iframe name="downloadIframe" style="display: none" />
       </button>
     </div>
 
@@ -188,10 +189,8 @@ export default {
     },
     // 开始拷贝
     startCopy() {
-      console.log("开始拷贝")
-      // this.waitInfo.copy = "备份中..."
+      this.waitInfo.copy = "备份中..."
       this.copyData().then((data) => {
-        console.log(data)
         if (data.code === 200) {
           this.waitInfo.copy = "备份"
           this.adminSetMask = { show: true, info: "备份成功！" }
@@ -203,13 +202,30 @@ export default {
     },
     // 下载
     download() {
-      console.log("下载")
-      // this.downloadDb()
-      // let a = document.createElement("a")
-      // let token = localStorage.getItem("map_blog_token_info_item_name")
-      // a.href = "http://localhost: 8080/api/downloadDb?authToken=" + token
-      // a.href = "https://www.mapblog.cn/api/downloadDb?authToken=" + token
-      // a.click()
+      // this.downloadDb().then((res) => {
+      //   console.log(res)
+      //   const blob = new Blob([res.data], {
+      //     type: "application/octet-stream"
+      //   })
+      //   const url = window.URL.createObjectURL(blob)
+      //   const a = document.createElement("a")
+      //   a.href = url
+      //   a.download = "admin.zip"
+      //   document.body.appendChild(a)
+      //   a.click()
+      //   document.body.removeChild(a)
+      //   window.URL.revokeObjectURL(url)
+      // })
+
+      // window.open("http://192.168.0.111:8098/img/qq.png", "downloadIframe")
+
+      let a = document.createElement("a")
+      let token = localStorage.getItem("validateToken")
+      a.href = "http://192.168.0.111:8098/api/downloadDb?authToken=" + token
+      a.download = "admin.zip"
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
     }
   }
 }
