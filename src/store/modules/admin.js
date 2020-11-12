@@ -199,9 +199,9 @@ const actions = {
   CopyData() {
     return fetch.get("/api/copyData")
   },
-  // 下载数据库
+  // 下载数据库 用不到
   DownloadDb() {
-    return fetch.get("/api/downloadSingle")
+    return fetch.get("/api/downloadDb")
   },
   // 确认token
   ConfirmToken() {
