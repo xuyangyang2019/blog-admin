@@ -17,7 +17,7 @@ import { Toast } from "vant"
  * 提示函数
  * 禁止点击蒙层、显示一秒后关闭
  */
-const tip = msg => {
+const tip = (msg) => {
   Toast({
     message: msg,
     duration: 1000,
@@ -77,14 +77,15 @@ const httpInstance = axios.create({
 })
 
 // 设置post请求头
-httpInstance.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded; charset=UTF-8"
+httpInstance.defaults.headers.post["Content-Type"] =
+  "application/x-www-form-urlencoded; charset=UTF-8"
 
 /**
  * 请求拦截器
  * 每次请求前，如果存在token则在请求头中携带token
  */
 httpInstance.interceptors.request.use(
-  config => {
+  (config) => {
     console.log("步骤2:请求拦截器")
     // 在发送请求之前做些什么
     if (process.env.NODE_ENV === "development") {
@@ -100,7 +101,7 @@ httpInstance.interceptors.request.use(
     token && (config.headers.Authorization = token)
     return config
   },
-  error => {
+  (error) => {
     return Promise.reject(error)
   }
 )
@@ -108,7 +109,7 @@ httpInstance.interceptors.request.use(
 // 响应拦截器，后端验证token失败后跳转到登录界面
 httpInstance.interceptors.response.use(
   // 请求成功
-  res => {
+  (res) => {
     console.log("步骤3:响应拦截器-请求成功")
     console.log(res)
     if (res.status === 200) {
@@ -118,7 +119,7 @@ httpInstance.interceptors.response.use(
     }
   },
   // 请求失败
-  error => {
+  (error) => {
     console.log("步骤3:响应拦截器-请求失败")
     if (error) {
       // 请求已发出，但是不在2xx的范围
