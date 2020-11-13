@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex"
+import { mapActions, mapState } from "vuex"
 
 export default {
   data() {
@@ -52,16 +52,14 @@ export default {
     }
   },
   computed: {
-    // ...mapState(["toPath"])
-    ...mapGetters({
+    ...mapState({
       toPath: "toPath"
     })
   },
   methods: {
-    // ...mapActions(["admin/Login"]),
-    // ...mapActions({
-    //   login: "admin/Login"
-    // }),
+    ...mapActions({
+      login: "admin/Login"
+    }),
     // 表单验证
     validate: function(toPath) {
       let payload = {
@@ -78,8 +76,9 @@ export default {
         // 修改按钮显示的文字 不能再次点击
         this.btnInfo = { text: "登录中...", disabled: true }
         // admin 登陆
-        this.$api.admin.login(payload).then((data) => {
+        this.login(payload).then((data) => {
           this.btnInfo = { text: "登录", disabled: false }
+          console.log(data)
           if (data.code === 200) {
             localStorage.setItem("userName", data.name)
             localStorage.setItem("lastLogin", data.lastLogin)
