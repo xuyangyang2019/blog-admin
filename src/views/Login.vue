@@ -21,7 +21,7 @@
             type="password"
             id="p"
             v-model="password"
-            @keydown.enter="validate(toPath)"
+            @keydown.enter="validateAndLonin(toPath)"
             @focus="clearErr"
             placeholder="请输入密码"
           />
@@ -30,7 +30,7 @@
         </div>
       </div>
       <div class="submit">
-        <button :disabled="btnInfo.disabled" @click="validate(toPath)">
+        <button :disabled="btnInfo.disabled" @click="validateAndLonin(toPath)">
           {{ btnInfo.text }}
         </button>
       </div>
@@ -60,10 +60,10 @@ export default {
     ...mapActions({
       login: "admin/Login"
     }),
-    // 表单验证
-    validate: function(toPath) {
+    // 表单验证并登陆
+    validateAndLonin(toPath) {
       let payload = {
-        user: this.user,
+        username: this.user,
         password: this.password
       }
       if (!this.user) {
@@ -76,18 +76,18 @@ export default {
         // 修改按钮显示的文字 不能再次点击
         this.btnInfo = { text: "登录中...", disabled: true }
         // admin 登陆
-        this.login(payload).then((data) => {
+        this.login(payload).then((res) => {
           this.btnInfo = { text: "登录", disabled: false }
-          console.log(data)
-          if (data.code === 200) {
-            localStorage.setItem("userName", data.name)
-            localStorage.setItem("lastLogin", data.lastLogin)
-            localStorage.setItem("validateToken", data.token)
+          if (res.code === 200) {
+            let user = res.data.userInfo
+            localStorage.setItem("userName", user.username)
+            localStorage.setItem("lastLogin", user.last_login_time)
+            localStorage.setItem("validateToken", res.data.token)
             // 页面跳转
             this.$router.push({ path: toPath })
-          } else if (data.code === 401) {
+          } else if (res.code === -1) {
             // 错误提示
-            this.err.validate = "用户名或密码不正确"
+            this.err.validate = res.msg
           }
         })
         setTimeout(() => {
@@ -96,7 +96,7 @@ export default {
       }
     },
     // 清除错误信息
-    clearErr: function() {
+    clearErr() {
       this.err = { user: "", password: "", validate: "" }
     }
   }
