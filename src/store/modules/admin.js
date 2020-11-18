@@ -44,7 +44,7 @@ const getters = {
 const actions = {
   // 登陆
   Login({ commit }, payload) {
-    return fetch.post("/api/login", payload)
+    return fetch.post("/api/adminLogin", payload)
   },
   // 获取新消息
   GetNews({ commit }) {
