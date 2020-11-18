@@ -19,8 +19,8 @@ export default {
   },
   methods: {
     ...mapActions({
-      getArticles: "admin/GetArticles",
-      getArticlesCount: "admin/GetArticlesCount"
+      getArticles: "admin/GetArticles"
+      // getArticlesCount: "admin/GetArticlesCount"
     }),
     allArticles_admin() {
       let payload = {
@@ -36,7 +36,7 @@ export default {
   //组件缓存后，为了让每个模块显示正确的页码，故重新计算页码数
   beforeRouteEnter(to, from, next) {
     next((vm) => {
-      vm.getArticlesCount({ publish: true })
+      // vm.getArticlesCount({ publish: true })
       document.title = "后台管理 -已发表文章"
     })
   }

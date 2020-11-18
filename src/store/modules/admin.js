@@ -52,24 +52,15 @@ const actions = {
       if (data.newsArr && data.newsArr.length) {
         commit("HANDLE_NEWS", data)
       }
-      // return data
     })
   },
   // 获取技术文章的tag 生成导航
   GetTagsclass({ commit }, payload) {
-    return fetch
-      .get("/api/adminTags", { publish: payload.publish })
-      .then((data) => {
-        if (data.tags && data.tags.length) {
-          // data.tags.forEach((item, index, arr) => {
-          //   if (item.tag === "life") {
-          //     item.tag = "生活"
-          //   }
-          // })
-          commit("SET_TAGS", data)
-        }
-        // return data
-      })
+    fetch.get("/api/adminTags", { publish: payload.publish }).then((data) => {
+      if (data.tags && data.tags.length) {
+        commit("SET_TAGS", data)
+      }
+    })
   },
   // 获取文章
   GetArticles({ commit }, payload) {
@@ -82,10 +73,9 @@ const actions = {
     } else {
       params = payload
     }
-    return fetch.get("/api/getAdminArticles", params).then((data) => {
-      // console.log(data)
-      commit("SET_ARTICLES", { data: data, payload: payload })
-      // return data
+    return fetch.get("/api/getArticles", params).then((res) => {
+      commit("SET_ARTICLES", { data: res.data, payload: payload })
+      commit("PAGE_ARRAY", res.data.count)
     })
   },
   // 获取对应模块的文章总数，为分页按钮个数提供支持
@@ -94,6 +84,8 @@ const actions = {
       commit("PAGE_ARRAY", data)
     })
   },
+  // ==================================================================
+
   // 搜索文章
   SearchAdminArticles({ commit }, payload) {
     fetch.get("/api/adminSearch", payload).then((data) => {
@@ -150,7 +142,6 @@ const actions = {
     return fetch.get("/api/getMsgCount").then((data) => {
       commit("PAGE_ARRAY", data)
     })
-    // return data
   },
   // 获取评论
   GetAdminComments({ commit }, payload) {

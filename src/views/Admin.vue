@@ -12,7 +12,7 @@
       <div class="admin-info">
         <img
           src="/img/logo.png"
-          style="width: 20px;height: 20px;vertical-align: middle"
+          style="width: 20px; height: 20px; vertical-align: middle"
           alt="xyy"
         />
         <span>{{ greet }}好，{{ userName }}！上次登录是：{{ lastLogin }}</span>
@@ -180,7 +180,7 @@ export default {
   computed: {
     ...mapState("admin", {
       redSup: "redSup", // 红点
-      tagsObj: "tagsObj", // 标签信息
+      // tagsObj: "tagsObj", // 标签信息
       forLocation: "forLocation"
     }),
     // 问候语
@@ -312,9 +312,9 @@ export default {
   },
   created() {
     // 获取最新的标签
-    this.$store.dispatch("admin/GetTagsclass", { publish: true })
+    // this.$store.dispatch("admin/GetTagsclass", { publish: true })
     // 获取最新的留言评论
-    this.$store.dispatch("admin/GetNews")
+    // this.$store.dispatch("admin/GetNews")
   },
   mounted() {
     // 添加监听事件
