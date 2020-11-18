@@ -221,7 +221,8 @@ export default {
 
       let a = document.createElement("a")
       let token = localStorage.getItem("validateToken")
-      a.href = "http://192.168.0.111:8098/api/downloadDb?authToken=" + token
+      // a.href = "http://192.168.0.111:8098/api/downloadDb?authToken=" + token
+      a.href = "http://localhost:8098/api/downloadDb?authToken=" + token
       a.download = "admin.zip"
       document.body.appendChild(a)
       a.click()
