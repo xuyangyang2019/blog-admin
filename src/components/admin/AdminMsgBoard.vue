@@ -23,16 +23,16 @@ export default {
   },
   methods: {
     ...mapActions({
-      getMsgBoard: "admin/GetMsgBoard",
-      getMsgCount: "admin/GetMsgCount"
+      getMsgBoard: "admin/GetMsgBoard"
+      // getMsgCount: "admin/GetMsgCount"
     })
   },
   created() {
-    this.getMsgBoard({ page: 1 })
+    this.getMsgBoard({ pageNum: 1, pageSize: 10 })
   },
   beforeRouteEnter(to, from, next) {
     next((vm) => {
-      vm.getMsgCount()
+      // vm.getMsgCount()
       document.title = "后台管理 -留言管理"
     })
   }
