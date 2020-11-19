@@ -23,18 +23,18 @@ export default {
   },
   methods: {
     ...mapActions({
-      getAdminComments: "admin/GetAdminComments",
-      getCommentsCount: "admin/GetCommentsCount"
+      getAdminComments: "admin/GetAdminComments"
+      // getCommentsCount: "admin/GetCommentsCount"
     })
   },
   created() {
     // 获取评论
-    this.getAdminComments({ page: 1 })
+    this.getAdminComments({ pageNum: 1, pageSize: 10 })
   },
   beforeRouteEnter(to, from, next) {
     next((vm) => {
       // 获取评论数
-      vm.getCommentsCount()
+      // vm.getCommentsCount()
       document.title = "后台管理 -文章评论"
     })
   }
