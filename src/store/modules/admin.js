@@ -46,6 +46,61 @@ const actions = {
   Login({ commit }, payload) {
     return fetch.post("/api/adminLogin", payload)
   },
+  // 获取文章
+  GetArticles({ commit }, payload) {
+    let params = {}
+    if (!payload.tag) {
+      params = {
+        publish: payload.publish,
+        page: payload.page
+      }
+    } else {
+      params = payload
+    }
+    return fetch.get("/api/getArticles", params).then((res) => {
+      commit("SET_ARTICLES", { data: res.data.list, payload: payload })
+      commit("PAGE_ARRAY", res.data.count)
+    })
+  },
+  // 获取对应模块的文章总数，为分页按钮个数提供支持
+  // GetArticlesCount({ commit }, payload) {
+  //   return fetch.get("/api/getCount", payload).then((data) => {
+  //     commit("PAGE_ARRAY", data)
+  //   })
+  // },
+  // 获取留言
+  GetMsgBoard({ commit }, payload) {
+    fetch.get("/api/getMsgBoard", payload).then((res) => {
+      commit("SET_MSG_BOARD", res.data.list)
+      commit("PAGE_ARRAY", res.data.count)
+    })
+  },
+  // 获取留言数量
+  // GetMsgCount({ commit }) {
+  //   return fetch.get("/api/getMsgCount").then((res) => {
+  //     console.log(res)
+  //     // commit("PAGE_ARRAY", data)
+  //   })
+  // },
+  // 获取评论
+  GetAdminComments({ commit }, payload) {
+    fetch.get("/api/getAdminComments", payload).then((res) => {
+      console.log(res)
+      commit("SET_COMMENTS", res.data.list)
+      commit("PAGE_ARRAY", res.data.count)
+
+      // if (data.length) {
+      //   commit("SET_COMMENTS", data)
+      // }
+    })
+  },
+  // 获取评论数
+  // GetCommentsCount({ commit }) {
+  //   return fetch.get("/api/getCommentsCount").then((data) => {
+  //     commit("PAGE_ARRAY", data)
+  //   })
+  // },
+  // ==================================================================
   // 获取新消息
   GetNews({ commit }) {
     return fetch.get("/api/getNews").then((data) => {
@@ -62,29 +117,6 @@ const actions = {
       }
     })
   },
-  // 获取文章
-  GetArticles({ commit }, payload) {
-    let params = {}
-    if (!payload.tag) {
-      params = {
-        publish: payload.publish,
-        page: payload.page
-      }
-    } else {
-      params = payload
-    }
-    return fetch.get("/api/getArticles", params).then((res) => {
-      commit("SET_ARTICLES", { data: res.data, payload: payload })
-      commit("PAGE_ARRAY", res.data.count)
-    })
-  },
-  // 获取对应模块的文章总数，为分页按钮个数提供支持
-  GetArticlesCount({ commit }, payload) {
-    return fetch.get("/api/getCount", payload).then((data) => {
-      commit("PAGE_ARRAY", data)
-    })
-  },
-  // ==================================================================
 
   // 搜索文章
   SearchAdminArticles({ commit }, payload) {
@@ -129,35 +161,7 @@ const actions = {
       return data
     })
   },
-  // 获取留言
-  GetMsgBoard({ commit }, payload) {
-    fetch.get("/api/getAdminBoard", payload).then((data) => {
-      if (data.length) {
-        commit("SET_MSG_BOARD", data)
-      }
-    })
-  },
-  // 获取留言数量
-  GetMsgCount({ commit }) {
-    return fetch.get("/api/getMsgCount").then((data) => {
-      commit("PAGE_ARRAY", data)
-    })
-  },
-  // 获取评论
-  GetAdminComments({ commit }, payload) {
-    fetch.get("/api/getAdminComments", payload).then((data) => {
-      console.log(data)
-      if (data.length) {
-        commit("SET_COMMENTS", data)
-      }
-    })
-  },
-  // 获取评论数
-  GetCommentsCount({ commit }) {
-    return fetch.get("/api/getCommentsCount").then((data) => {
-      commit("PAGE_ARRAY", data)
-    })
-  },
+
   // 添加回复
   AddBoardReply({ commit }, payload) {
     return fetch.patch("/api/addReply", payload)
