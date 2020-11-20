@@ -30,7 +30,7 @@
               @click="singleChecked()"
               v-model="itemsToDel"
             />
-            <span style="visibility:hidden;">单选</span>
+            <span style="visibility: hidden">单选</span>
           </li>
           <li v-text="index + 1"></li>
           <li v-if="item.title" :title="item.title" v-text="item.title"></li>
@@ -371,8 +371,8 @@ export default {
         if (this.$route.name === "adminMsgBoard") {
           // 删除一级留言
           if (ol !== -1 && tl == -1) {
-            this.removeLeavewords({ id: [ol] }).then((data) => {
-              if (data.deleteCode === 200) {
+            this.removeLeavewords({ id: [ol] }).then((res) => {
+              if (res.code === 200) {
                 this.reduceArr({
                   name: "adminMsgBoard",
                   oneIndex: oi,
