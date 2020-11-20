@@ -23,8 +23,8 @@ export default {
   },
   methods: {
     ...mapActions({
-      getMsgBoard: "admin/GetMsgBoard"
-      // getMsgCount: "admin/GetMsgCount"
+      getMsgBoard: "admin/GetMsgBoard",
+      getMsgCount: "admin/GetMsgCount"
     })
   },
   created() {
@@ -32,7 +32,7 @@ export default {
   },
   beforeRouteEnter(to, from, next) {
     next((vm) => {
-      // vm.getMsgCount()
+      vm.getMsgCount()
       document.title = "后台管理 -留言管理"
     })
   }
