@@ -99,7 +99,7 @@ export default {
           })
           break
         case "adminMsgBoard":
-          this.getMsgBoard({ page: page })
+          this.getMsgBoard({ pageNum: page })
           break
         case "comments":
           this.getAdminComments({ page: page })
