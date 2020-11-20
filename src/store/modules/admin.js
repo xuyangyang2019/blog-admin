@@ -72,16 +72,15 @@ const actions = {
   GetMsgBoard({ commit }, payload) {
     fetch.get("/api/getMsgBoard", payload).then((res) => {
       commit("SET_MSG_BOARD", res.data.list)
-      commit("PAGE_ARRAY", res.data.count)
+      // commit("PAGE_ARRAY", res.data.count)
     })
   },
   // 获取留言数量
-  // GetMsgCount({ commit }) {
-  //   return fetch.get("/api/getMsgCount").then((res) => {
-  //     console.log(res)
-  //     // commit("PAGE_ARRAY", data)
-  //   })
-  // },
+  GetMsgCount({ commit }) {
+    return fetch.get("/api/getMsgCount").then((res) => {
+      commit("PAGE_ARRAY", res.data.count || 0)
+    })
+  },
   // 获取评论
   GetAdminComments({ commit }, payload) {
     fetch.get("/api/getAdminComments", payload).then((res) => {
