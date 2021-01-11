@@ -6,9 +6,16 @@ import store from './store'
 // 导入api接口
 // import api from "./api"
 
+// 全局的过滤器
 import filters from './filters'
+
 // 自定义的toast
 import Toast from './components/toast/index'
+
+// 引入整个 Element
+import ElementUI from 'element-ui'
+import 'element-ui/lib/theme-chalk/index.css'
+
 // 导入icon-font的js
 import '@/assets/iconfont/iconfont.js'
 
@@ -19,6 +26,7 @@ Vue.config.productionTip = false
 
 Vue.use(Toast)
 // Vue.prototype.$toast = Toast
+Vue.use(ElementUI)
 
 // 全局过滤器
 Object.keys(filters).forEach((filterName) => {
