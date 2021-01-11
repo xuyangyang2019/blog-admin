@@ -4,13 +4,7 @@
       <div class="input">
         <label for="i">用户名 ：</label>
         <div class="input-box">
-          <input
-            type="text"
-            id="i"
-            v-model="user"
-            @focus="clearErr"
-            placeholder="请输入用户名"
-          />
+          <input id="i" v-model="user" type="text" placeholder="请输入用户名" @focus="clearErr" />
           <span class="err">{{ err.user }}</span>
         </div>
       </div>
@@ -18,12 +12,12 @@
         <label for="p">密码 ：</label>
         <div class="input-box">
           <input
-            type="password"
             id="p"
             v-model="password"
+            type="password"
+            placeholder="请输入密码"
             @keydown.enter="validateAndLonin(toPath)"
             @focus="clearErr"
-            placeholder="请输入密码"
           />
           <span class="err">{{ err.password }}</span>
           <span class="err">{{ err.validate }}</span>
@@ -40,49 +34,49 @@
 </template>
 
 <script>
-import { mapActions, mapState } from "vuex"
+import { mapActions, mapState } from 'vuex'
 
 export default {
   data() {
     return {
-      user: "", // 用户名
-      password: "", // 密码
-      err: { user: "", password: "", validate: "" }, // 错误信息
-      btnInfo: { text: "登录", disabled: false } // 登录按钮的状态
+      user: '', // 用户名
+      password: '', // 密码
+      err: { user: '', password: '', validate: '' }, // 错误信息
+      btnInfo: { text: '登录', disabled: false } // 登录按钮的状态
     }
   },
   computed: {
     ...mapState({
-      toPath: "toPath"
+      toPath: 'toPath'
     })
   },
   methods: {
     ...mapActions({
-      login: "admin/Login"
+      login: 'admin/Login'
     }),
     // 表单验证并登陆
     validateAndLonin(toPath) {
-      let payload = {
+      const payload = {
         username: this.user,
         password: this.password
       }
       if (!this.user) {
-        this.err.user = "请填写用户名"
+        this.err.user = '请填写用户名'
       }
       if (!this.password) {
-        this.err.password = "请填写密码"
+        this.err.password = '请填写密码'
       }
       if (!!this.password && !!this.user) {
         // 修改按钮显示的文字 不能再次点击
-        this.btnInfo = { text: "登录中...", disabled: true }
+        this.btnInfo = { text: '登录中...', disabled: true }
         // admin 登陆
         this.login(payload).then((res) => {
-          this.btnInfo = { text: "登录", disabled: false }
+          this.btnInfo = { text: '登录', disabled: false }
           if (res.code === 200) {
-            let user = res.data.userInfo
-            localStorage.setItem("userName", user.username)
-            localStorage.setItem("lastLogin", user.last_login_time)
-            localStorage.setItem("validateToken", res.data.token)
+            const user = res.data.userInfo
+            localStorage.setItem('userName', user.username)
+            localStorage.setItem('lastLogin', user.last_login_time)
+            localStorage.setItem('validateToken', res.data.token)
             // 页面跳转
             this.$router.push({ path: toPath })
           } else if (res.code === -1) {
@@ -91,13 +85,13 @@ export default {
           }
         })
         setTimeout(() => {
-          this.btnInfo = { text: "登录", disabled: false }
+          this.btnInfo = { text: '登录', disabled: false }
         }, 5000)
       }
     },
     // 清除错误信息
     clearErr() {
-      this.err = { user: "", password: "", validate: "" }
+      this.err = { user: '', password: '', validate: '' }
     }
   }
 }
@@ -110,7 +104,7 @@ export default {
   align-items: center;
   height: 100%;
   overflow: hidden;
-  background: url("/img/login-bg.jpeg") 0 0 no-repeat;
+  background: url('/img/login-bg.jpeg') 0 0 no-repeat;
   background-size: 100% 100%;
   color: #ffffff;
 }

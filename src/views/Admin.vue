@@ -10,11 +10,7 @@
       <span class="phone-greet">{{ greet }}好，{{ userName }}！</span>
       <!-- 管理员的信息 -->
       <div class="admin-info">
-        <img
-          src="/img/logo.png"
-          style="width: 20px; height: 20px; vertical-align: middle"
-          alt="xyy"
-        />
+        <img src="/img/logo.png" style="width: 20px; height: 20px; vertical-align: middle" alt="xyy" />
         <span>{{ greet }}好，{{ userName }}！上次登录是：{{ lastLogin }}</span>
       </div>
       <!-- 面包屑导航 -->
@@ -29,44 +25,29 @@
     <!-- main -->
     <div class="admin-body">
       <!-- aside -->
-      <div class="admin-aside" ref="list">
+      <div ref="list" class="admin-aside">
         <ul class="aside-menu" @click="showListDelay">
           <!-- 发布文章 -->
           <li class="aside-item" @click="showPublishNav = !showPublishNav">
             <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
             <span class="item-name">发布文章</span>
-            <i
-              class="fa fa-angle-right more-nav"
-              :class="{ 'fa-angle-down': showPublishNav }"
-              aria-hidden="true"
-            ></i>
+            <i class="fa fa-angle-right more-nav" :class="{ 'fa-angle-down': showPublishNav }" aria-hidden="true"></i>
           </li>
-          <ul class="child-navs" v-if="showPublishNav">
-            <li class="child-navs-item" @click="publishArticle('ue')">
-              UEditor
-            </li>
-            <li class="child-navs-item" @click="publishArticle('md')">
-              MarkDown
-            </li>
-            <li class="child-navs-item" @click="publishArticle('qe')">
-              QuillEditor
-            </li>
+          <ul v-if="showPublishNav" class="child-navs">
+            <li class="child-navs-item" @click="publishArticle('ue')">UEditor</li>
+            <li class="child-navs-item" @click="publishArticle('md')">MarkDown</li>
+            <li class="child-navs-item" @click="publishArticle('qe')">QuillEditor</li>
           </ul>
           <!-- menu -->
           <li
-            class="aside-item"
-            :class="{ 'current-item': $route.path === item.path }"
             v-for="(item, index) in menu"
             :key="index"
+            class="aside-item"
+            :class="{ 'current-item': $route.path === item.path }"
             @click="showPath(item)"
           >
             <i :class="item.icon" aria-hidden="true"></i>
-            <sup
-              class="red-sup"
-              v-if="
-                index === 3 && (redSup.c || redSup.m || redSup.l || redSup.p)
-              "
-            ></sup>
+            <sup v-if="index === 3 && (redSup.c || redSup.m || redSup.l || redSup.p)" class="red-sup"></sup>
             <span class="item-name" v-text="item.name"></span>
           </li>
           <!-- 退出 -->
@@ -78,38 +59,20 @@
       </div>
 
       <!-- content -->
-      <div class="admin-content" ref="content">
+      <div ref="content" class="admin-content">
         <!-- 搜索 -->
-        <div
-          class="location-search"
-          v-if="$route.name === 'allArticles' || $route.name === 'draft'"
-        >
+        <div v-if="$route.name === 'allArticles' || $route.name === 'draft'" class="location-search">
           <!-- 搜索框 -->
           <div class="search">
-            <div class="search-key" v-show="choseType === 'key'">
-              <input
-                type="text"
-                placeholder="请输入关键词"
-                v-model="searchKey"
-                @keyup.enter="searchArticle"
-              />
+            <div v-show="choseType === 'key'" class="search-key">
+              <input v-model="searchKey" type="text" placeholder="请输入关键词" @keyup.enter="searchArticle" />
             </div>
-            <div class="search-time" v-show="choseType === 'time'">
-              <input
-                type="date"
-                @focus="err.from = false"
-                v-model="date.from"
-                :class="{ 'err-border': err.from }"
-              />
+            <div v-show="choseType === 'time'" class="search-time">
+              <input v-model="date.from" type="date" :class="{ 'err-border': err.from }" @focus="err.from = false" />
               至
-              <input
-                @focus="err.to = false"
-                type="date"
-                v-model="date.to"
-                :class="{ 'err-border': err.to }"
-              />
+              <input v-model="date.to" type="date" :class="{ 'err-border': err.to }" @focus="err.to = false" />
             </div>
-            <select name id v-model="choseType">
+            <select id v-model="choseType" name>
               <option value="key">关键字</option>
               <option value="time">时间</option>
             </select>
@@ -128,76 +91,76 @@
 </template>
 
 <script>
-import { mapState } from "vuex"
+import { mapState } from 'vuex'
 
 export default {
   data() {
     return {
-      lastLogin: localStorage.getItem("lastLogin") || "My Lord", // 最近一次的登陆时间
-      userName: localStorage.getItem("userName") || "", // 用户名
+      lastLogin: localStorage.getItem('lastLogin') || 'My Lord', // 最近一次的登陆时间
+      userName: localStorage.getItem('userName') || '', // 用户名
       // location: [], // 当前位置
-      choseType: "key", // 搜索类型
-      searchKey: "", // 关键词
-      date: { from: "", to: "" }, // 搜索时间
+      choseType: 'key', // 搜索类型
+      searchKey: '', // 关键词
+      date: { from: '', to: '' }, // 搜索时间
       err: { from: false, to: false }, // 错误信息
       showList: false, // 面包屑导航
       showPublishNav: false, // 显示发表文章的子菜单
       // showChildMenu: true, // 显示所有文章的子菜单
       menu: [
         {
-          name: "首页",
-          icon: "fa fa-bell-o",
-          path: "/admin/newMsg"
+          name: '首页',
+          icon: 'fa fa-bell-o',
+          path: '/admin/newMsg'
         },
         {
-          name: "已发表",
-          icon: "fa fa-book",
-          path: "/admin/allArticles"
+          name: '已发表',
+          icon: 'fa fa-book',
+          path: '/admin/allArticles'
         },
         {
-          name: "草稿箱",
-          icon: "fa fa-dashboard",
-          path: "/admin/draft"
+          name: '草稿箱',
+          icon: 'fa fa-dashboard',
+          path: '/admin/draft'
         },
         {
-          name: "留言板",
-          icon: "fa fa-comments-o",
-          path: "/admin/msgBoard"
+          name: '留言板',
+          icon: 'fa fa-comments-o',
+          path: '/admin/msgBoard'
         },
         {
-          name: "文章评论",
-          icon: "fa fa-commenting-o",
-          path: "/admin/comments"
+          name: '文章评论',
+          icon: 'fa fa-commenting-o',
+          path: '/admin/comments'
         },
         {
-          name: "账户设置",
-          icon: "fa fa-user",
-          path: "/admin/adminSet"
+          name: '账户设置',
+          icon: 'fa fa-user',
+          path: '/admin/adminSet'
         }
       ]
     }
   },
   computed: {
-    ...mapState("admin", {
-      redSup: "redSup", // 红点
+    ...mapState('admin', {
+      redSup: 'redSup', // 红点
       // tagsObj: "tagsObj", // 标签信息
-      forLocation: "forLocation"
+      forLocation: 'forLocation'
     }),
     // 问候语
     greet() {
-      let hour = new Date().getHours()
+      const hour = new Date().getHours()
       if (hour >= 0 && hour < 6) {
-        return "凌晨"
+        return '凌晨'
       } else if (hour >= 6 && hour < 11) {
-        return "上午"
+        return '上午'
       } else if (hour >= 11 && hour < 14) {
-        return "中午"
+        return '中午'
       } else if (hour >= 14 && hour < 18) {
-        return "下午"
+        return '下午'
       } else if (hour >= 18 && hour < 24) {
-        return "晚上"
+        return '晚上'
       } else {
-        return ""
+        return ''
       }
     }
   },
@@ -208,22 +171,34 @@ export default {
       // }
     }
   },
+  created() {
+    // 获取最新的标签
+    // this.$store.dispatch("admin/GetTagsclass", { publish: true })
+    // 获取最新的留言评论
+    // this.$store.dispatch("admin/GetNews")
+  },
+  mounted() {
+    // 添加监听事件
+    window.addEventListener('resize', this.listen)
+    // 初始话height
+    // this.initHeight()
+  },
   methods: {
     // 退出登录
     exit() {
       // 删除本地保存的数据
-      localStorage.removeItem("validateToken")
-      localStorage.removeItem("userName")
-      localStorage.removeItem("lastLogin")
+      localStorage.removeItem('validateToken')
+      localStorage.removeItem('userName')
+      localStorage.removeItem('lastLogin')
       // 跳转到登陆页面
-      this.$router.push({ name: "login" })
+      this.$router.push({ name: 'login' })
     },
     // 路由跳转
     showPath(item) {
       // console.log(this.$route.path)
       if (this.$route.path === item.path) return
-      if (item.path === "/admin/publish") {
-        window.open(item.path, "_blank")
+      if (item.path === '/admin/publish') {
+        window.open(item.path, '_blank')
       } else {
         this.$router.push({ path: item.path })
       }
@@ -231,51 +206,50 @@ export default {
     // 发布文章路由 默认是富文本
     publishArticle(pModel) {
       switch (pModel) {
-        case "md":
+        case 'md':
           this.$toast({
-            message: "敬请期待！",
-            type: "warning",
+            message: '敬请期待！',
+            type: 'warning',
             duration: 2000
           })
           break
-        case "qe":
+        case 'qe':
           this.$toast({
-            message: "qeqeqeqeqe",
-            type: "info",
+            message: 'qeqeqeqeqe',
+            type: 'info',
             duration: 2000
           })
-          this.$router.push({ path: "/admin/qe" })
+          this.$router.push({ path: '/admin/qe' })
           // window.open(item.path, "_blank")
           break
         default:
-          this.$router.push({ path: "/admin/publish" })
+          this.$router.push({ path: '/admin/publish' })
           break
       }
     },
-    //不管什么情况下都把list高度设为首屏高度
-    initHeight: function() {
-      if (this.$route.name === "publish") {
+    // 不管什么情况下都把list高度设为首屏高度
+    initHeight: function () {
+      if (this.$route.name === 'publish') {
         return
       } else {
         if (document.body.clientWidth > 767) {
-          this.$refs.list.style.minHeight =
-            document.body.clientHeight - 55 + "px"
+          this.$refs.list.style.minHeight = document.body.clientHeight - 55 + 'px'
         } else {
-          this.$refs.list.style = ""
+          this.$refs.list.style = ''
         }
       }
     },
-    //函数去抖，避免频繁触发拖垮浏览器
-    debounce: function(func, delay) {
-      let context = this,
-        args = arguments
+    // 函数去抖，避免频繁触发拖垮浏览器
+    debounce: function (func, delay) {
+      const context = this
+      const args = arguments
       if (document.body.clientWidth < 768) {
-        this.$refs.list.style = ""
+        this.$refs.list.style = ''
       }
       if (this.timer) {
         clearTimeout(this.timer)
       }
-      this.timer = setTimeout(function() {
+      this.timer = setTimeout(function () {
         func.apply(context, args)
       }, delay)
     },
@@ -283,12 +257,12 @@ export default {
       this.debounce(this.initHeight, 500)
     },
     searchArticle() {
-      if (this.choseType === "key") {
+      if (this.choseType === 'key') {
         // 去除前后的空格
-        this.searchKey = this.searchKey.replace(/(^\s*)|(\s*$)/g, "")
+        this.searchKey = this.searchKey.replace(/(^\s*)|(\s*$)/g, '')
         if (this.searchKey.length) {
           this.$router.push({
-            name: "search",
+            name: 'search',
             params: { base: this.searchKey }
           })
         }
@@ -300,8 +274,8 @@ export default {
           this.err.to = true
           return
         }
-        let date = this.date.from + "to" + this.date.to
-        this.$router.push({ name: "search", params: { base: date } })
+        const date = this.date.from + 'to' + this.date.to
+        this.$router.push({ name: 'search', params: { base: date } })
       }
     },
     showListDelay() {
@@ -309,18 +283,6 @@ export default {
         this.showList = !this.showList
       }, 350)
     }
-  },
-  created() {
-    // 获取最新的标签
-    // this.$store.dispatch("admin/GetTagsclass", { publish: true })
-    // 获取最新的留言评论
-    // this.$store.dispatch("admin/GetNews")
-  },
-  mounted() {
-    // 添加监听事件
-    window.addEventListener("resize", this.listen)
-    // 初始话height
-    // this.initHeight()
   },
   // 导航守卫 更新之前
   // beforeRouteUpdate(to, from, next) {

@@ -1,16 +1,16 @@
-import Vue from "vue"
-import App from "./App.vue"
-import router from "./router"
-import store from "./store"
+import Vue from 'vue'
+import App from './App.vue'
+import router from './router'
+import store from './store'
 
 // 导入api接口
 // import api from "./api"
 
-import filters from "./filters"
+import filters from './filters'
 // 自定义的toast
-import Toast from "./components/toast/index"
+import Toast from './components/toast/index'
 // 导入icon-font
-import "@/assets/font/iconfont.js"
+import '@/assets/font/iconfont.js'
 
 Vue.config.productionTip = false
 
@@ -33,4 +33,4 @@ new Vue({
   router,
   store,
   render: (h) => h(App)
-}).$mount("#app")
+}).$mount('#app')

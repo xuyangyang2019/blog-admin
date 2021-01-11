@@ -1,10 +1,9 @@
 // vue.config.js
-const path = require("path")
-const webpack = require("webpack") //导入 webpack 模块
+const path = require('path')
+const webpack = require('webpack') // 导入 webpack 模块
 
 // 包体积分析
-const BundleAnalyzerPlugin = require("webpack-bundle-analyzer")
-  .BundleAnalyzerPlugin
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 
 function resolve(dir) {
   return path.join(__dirname, dir)
@@ -17,14 +16,14 @@ module.exports = {
   // 例如，如果你的应用被部署在 https://www.my-app.com/my-app/，则设置 baseUrl 为 /my-app/。
   // baseUrl 从 Vue CLI 3.3 起已弃用，请使用publicPath
   // baseUrl: process.env.NODE_ENV === "production" ? "./" : "/",
-  publicPath: process.env.NODE_ENV === "production" ? "./" : "/",
+  publicPath: process.env.NODE_ENV === 'production' ? './' : '/',
 
   // outputDir: 在npm run build 或 yarn build 时 ，生成文件的目录名称（要和baseUrl的生产环境路径一致）
-  outputDir: "dist-admin", //打包后的目录名称
+  outputDir: 'dist-admin', // 打包后的目录名称
   // outputDir: process.env.outputDir, //打包后的目录名称
 
   // 用于放置生成的静态资源 (js、css、img、fonts) 的；（项目打包之后，静态资源会放在这个文件夹下）
-  assetsDir: "static", // 静态资源目录名称
+  assetsDir: 'static', // 静态资源目录名称
   // 指定生成的 index.html 的输出路径  (打包之后，改变系统默认的index.html的文件名)
   // indexPath: "index.html",
   // 默认情况下，生成的静态资源在它们的文件名中包含了 hash 以便更好的控制缓存。
@@ -50,15 +49,15 @@ module.exports = {
 
   // 它支持webPack-dev-server的所有选项
   devServer: {
-    host: "localhost",
+    host: 'localhost',
     port: 8081, // 端口号
     https: false, // https:{type:Boolean}
-    open: true, //配置自动启动浏览器
+    open: true, // 配置自动启动浏览器
     // proxy: 'http://localhost:6180' // 配置跨域处理,只有一个代理
     // 配置多个代理
     proxy: {
-      "/api": {
-        target: "http://192.168.0.111:8098", // 要访问的接口域名
+      '/api': {
+        target: 'http://192.168.0.111:8098', // 要访问的接口域名
         ws: true, // 是否启用websockets
         // 开启代理：在本地会创建一个虚拟服务端，然后发送请求的数据，并同时接收请求的数据，
         // 这样服务端和服务端进行数据的交互就不会有跨域问题
@@ -66,21 +65,21 @@ module.exports = {
         pathRewrite: {
           // 这里理解成用'/api'代替target里面的地址,比如我要调用'http://40.00.100.100:3002/user/add'，
           // 直接写'/api/user/add'即可
-          "^/api": "/api"
+          '^/api': '/api'
         }
       },
-      "/ueditor": {
-        target: "http://192.168.0.111:8098",
+      '/ueditor': {
+        target: 'http://192.168.0.111:8098',
         changeOrigin: true,
         pathRewrite: {
-          "^/ueditor": "/ueditor"
+          '^/ueditor': '/ueditor'
         }
       },
-      "/img": {
-        target: "http://192.168.0.111:8098",
+      '/img': {
+        target: 'http://192.168.0.111:8098',
         changeOrigin: true,
         pathRewrite: {
-          "^/img": "/img"
+          '^/img': '/img'
         }
       }
     }
@@ -88,25 +87,25 @@ module.exports = {
 
   chainWebpack: (config) => {
     config.resolve.alias
-      .set("@", resolve("src"))
-      .set("assets", resolve("src/assets"))
-      .set("components", resolve("src/components"))
+      .set('@', resolve('src'))
+      .set('assets', resolve('src/assets'))
+      .set('components', resolve('src/components'))
     // quill-image-resize-module的配置
-    config.plugin("provide").use(webpack.ProvidePlugin, [
+    config.plugin('provide').use(webpack.ProvidePlugin, [
       {
-        "window.Quill": "quill"
+        'window.Quill': 'quill'
       }
     ])
   },
 
   configureWebpack: (config) => {
     // 生产环境打包分析体积
-    if (process.env.NODE_ENV === "production") {
+    if (process.env.NODE_ENV === 'production') {
       return {
         plugins: [new BundleAnalyzerPlugin()]
       }
     } else {
-      config.devtool = "eval-source-map"
+      config.devtool = 'eval-source-map'
     }
   },
 

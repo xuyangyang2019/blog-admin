@@ -1,12 +1,12 @@
 module.exports = {
-  presets: ["@vue/app"],
+  presets: ['@vue/app'],
   plugins: [
     [
-      "prismjs",
+      'prismjs',
       {
-        languages: ["javascript", "css", "markup", "java", "html"],
-        plugins: ["line-numbers", "highlight-keywords"],
-        theme: "okaidia",
+        languages: ['javascript', 'css', 'markup', 'java', 'html'],
+        plugins: ['line-numbers', 'highlight-keywords'],
+        theme: 'okaidia',
         css: true
       }
     ]

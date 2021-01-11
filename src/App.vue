@@ -12,9 +12,9 @@
 </template>
 
 <script>
-import Layout from "@/layouts"
+import Layout from '@/layouts'
 export default {
-  name: "App",
+  name: 'App',
   components: {
     Layout
   }
@@ -22,14 +22,14 @@ export default {
 </script>
 
 <style lang="scss">
-@import "./styles/reset.scss";
-@import "./styles/common.scss";
-@import "./styles/normalize.css";
-@import "~@/assets/font-awesome/css/font-awesome.css";
+@import './styles/reset.scss';
+@import './styles/common.scss';
+@import './styles/normalize.css';
+@import '~@/assets/font-awesome/css/font-awesome.css';
 // @import "~@/assets/iconfont/iconfont.css";
 
 #app {
-  font-family: "Avenir", Helvetica, Arial, sans-serif;
+  font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
