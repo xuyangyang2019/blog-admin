@@ -1,7 +1,7 @@
 <template>
   <div class="toast">
     <transition-group tag="div" name="toastShow">
-      <div class="toastMsg" v-for="toast in toasts" :key="toast.id">
+      <div v-for="toast in toasts" :key="toast.id" class="toastMsg">
         <svg class="icon" aria-hidden="true">
           <use :xlink:href="iconMap[toast.type]" />
         </svg>
@@ -17,10 +17,10 @@ export default {
     return {
       toasts: [],
       iconMap: {
-        success: "#icon-success",
-        warning: "#icon-warning",
-        info: "#icon-info",
-        error: "#icon-error"
+        success: '#icon-success',
+        warning: '#icon-warning',
+        info: '#icon-info',
+        error: '#icon-error'
       }
     }
   },

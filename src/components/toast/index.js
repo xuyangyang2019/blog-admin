@@ -9,7 +9,7 @@
  * https://cn.vuejs.org/v2/api/#vm-mount
  */
 
-import ToastComponent from "./Toast"
+import ToastComponent from './Toast'
 
 const Toast = {}
 let id = 0
@@ -38,7 +38,7 @@ Toast.install = (Vue) => {
       ...globalOptions,
       ...options,
       onRemove: () => {
-        let i = instance.$data.toasts.findIndex((item) => {
+        const i = instance.$data.toasts.findIndex((item) => {
           return item.id === options.id
         })
         // 隐藏toast
@@ -61,7 +61,7 @@ Toast.install = (Vue) => {
         options.onRemove()
       }, options.duration)
     } else if (options.duration === 0) {
-      console.log("不自动隐藏")
+      console.log('不自动隐藏')
     }
   }
 }

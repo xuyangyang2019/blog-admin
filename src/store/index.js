@@ -1,35 +1,17 @@
-import Vue from "vue"
-import Vuex from "vuex"
-import modules from "./modules"
-
-// import { uploadFile } from "@/api/upload";
+import Vue from 'vue'
+import Vuex from 'vuex'
+import modules from './modules'
 
 // state
 const state = {
-  toPath: "/admin"
+  toPath: '/admin'
 }
 
 // getters
-const getters = {
-  // toPath: (state) => state.toPath
-}
+const getters = {}
 
 // actions
-const actions = {
-  // 文件上传
-  // UploadFile({ commit }, formData) {
-  //   return new Promise((resolve, reject) => {
-  //     uploadFile(formData)
-  //       .then(response => {
-  //         let data = response.data.data;
-  //         resolve(data);
-  //       })
-  //       .catch(error => {
-  //         reject(error);
-  //       });
-  //   });
-  // }
-}
+const actions = {}
 
 // mutations
 const mutations = {
@@ -47,5 +29,5 @@ export default new Vuex.Store({
   getters,
   mutations,
   actions,
-  strict: process.env.NODE_ENV !== "production"
+  strict: process.env.NODE_ENV !== 'production'
 })
