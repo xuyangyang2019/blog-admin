@@ -9,8 +9,8 @@ import store from './store'
 import filters from './filters'
 // 自定义的toast
 import Toast from './components/toast/index'
-// 导入icon-font
-import '@/assets/font/iconfont.js'
+// 导入icon-font的js
+import '@/assets/iconfont/iconfont.js'
 
 Vue.config.productionTip = false
 
