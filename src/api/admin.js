@@ -1,26 +1,22 @@
 /**
- * article模块接口列表
+ * http后端接口
+ * xuyangyang
+ * 2021-1
  */
 
-import qs from "qs" // 根据需求是否导入qs模块
-import axios from "@/utils/http" // 导入http中创建的axios实例
-// import base from "./base" // 导入接口域名列表
+import fetch from '@/utils/fetch'
+// import { generateTaskId } from '@/utils/util'
 
-const article = {
-  // 新闻列表
-  articleList() {
-    // return axios.get(`${base.sq}/topics`)
-  },
-  // 新闻详情,演示
-  articleDetail(id, params) {
-    // return axios.get(`${base.sq}/topic/${id}`, {
-    //   params: params
-    // })
-  },
-  // 登陆
-  login(params) {
-    return axios.post(`/api/login`, qs.stringify(params))
-  }
+/* Common */
+// export const queryUsers = data => Request.get('/api/products', data)
+
+/**
+ * 管理员登陆
+ * @param {string} username 用户名
+ * @param {string} password 密码
+ */
+function adminLogin(username, password) {
+  return fetch.post('/api/adminLogin', { username: username, password: password })
 }
 
-export default article
+export { adminLogin }
