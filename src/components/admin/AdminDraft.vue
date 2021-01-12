@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapMutations } from 'vuex'
 import { getArticleList } from '../../api/admin'
 
 import list from '@/components/common/ArticleList'
@@ -24,16 +24,19 @@ export default {
   },
   created() {
     // 查询未发表的文章
-    this.queryDraftsArticles()
+    // this.queryDraftsArticles()
   },
   methods: {
+    ...mapMutations({
+      SET_DRAFTS_ARTICLES: 'admin/SET_DRAFTS_ARTICLES',
+      SET_PAGE_ARRAY: 'admin/SET_PAGE_ARRAY'
+    }),
     // 分页查询未发表的文章
     queryDraftsArticles() {
       getArticleList(1, 10, 0, '').then((res) => {
-        console.log(res)
         if (res.code === 200) {
-          this.SET_DRAFTS_ARTICLES = res.data.list
-          this.PAGE_ARRAY = res.data.count
+          this.SET_DRAFTS_ARTICLES(res.data.list)
+          this.SET_PAGE_ARRAY(res.data.count)
         }
       })
     }

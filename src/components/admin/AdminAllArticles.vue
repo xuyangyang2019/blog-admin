@@ -21,19 +21,19 @@ export default {
   },
   created() {
     // 分页获取文章
-    this.queryArticles()
+    // this.queryArticles()
   },
   methods: {
     ...mapMutations({
       SET_ALL_ARTICLES: 'admin/SET_ALL_ARTICLES',
-      PAGE_ARRAY: 'admin/PAGE_ARRAY'
+      SET_PAGE_ARRAY: 'admin/SET_PAGE_ARRAY'
     }),
     // 查询已发表的文章列表
     queryArticles() {
       getArticleList(1, 10, 1, '').then((res) => {
         if (res.code === 200) {
-          this.SET_ALL_ARTICLES = res.data.list
-          this.PAGE_ARRAY = res.data.count
+          this.SET_ALL_ARTICLES(res.data.list)
+          this.SET_PAGE_ARRAY(res.data.count)
         }
       })
     }
