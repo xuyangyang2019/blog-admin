@@ -87,13 +87,14 @@ const errorHandle = (status, errData) => {
 axios.defaults.timeout = 10000 // 请求超时时间
 
 // 环境的切换
-if (process.env.NODE_ENV === 'development') {
-  axios.defaults.baseURL = 'http://localhost:8080'
-} else if (process.env.NODE_ENV === 'debug') {
-  axios.defaults.baseURL = ''
-} else if (process.env.NODE_ENV === 'production') {
-  axios.defaults.baseURL = 'http://localhost:8080'
-}
+// if (process.env.NODE_ENV === 'development') {
+//   axios.defaults.baseURL = 'http://localhost:8080'
+// } else if (process.env.NODE_ENV === 'debug') {
+//   axios.defaults.baseURL = ''
+// } else if (process.env.NODE_ENV === 'production') {
+//   axios.defaults.baseURL = 'http://localhost:8080'
+// }
+
 // post请求头
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded; charset=UTF-8'
 
@@ -194,7 +195,7 @@ function apiAxios(method, url, params) {
       data: method !== 'GET' && method !== 'DELETE' ? qs.stringify(params) : null
     })
       .then((res) => {
-        resolve(res)
+        resolve(res.data)
       })
       .catch((err) => {
         reject(err)
