@@ -7,7 +7,8 @@ const state = {
   allArticles: [], // 所有的文章
   draftsArticles: [], // 草稿箱
   pageArray: [], // 已发表页码数组
-
+  msgBoard: [], // 留言板
+  comments: [], // 评论
   // =============================================
   tagsObj: {}, // 标签
   // 红点提示
@@ -33,57 +34,14 @@ const state = {
     tags: [], // 标签
     search: [], // 搜索结果
     only: [] // 要预览的文章
-  },
-  msgBoard: [], // 留言板
-  comments: [] // 评论
+  }
 }
 
 // getters
-const getters = {
-  msgBoard: (state) => state.msgBoard,
-  comments: (state) => state.comments
-}
+const getters = {}
 
 // actions
 const actions = {
-  // 获取对应模块的文章总数，为分页按钮个数提供支持
-  // GetArticlesCount({ commit }, payload) {
-  //   return fetch.get("/api/getCount", payload).then((data) => {
-  //     commit("PAGE_ARRAY", data)
-  //   })
-  // },
-  // 获取留言
-  GetMsgBoard({ commit }, payload) {
-    fetch.get('/api/getMsgBoard', payload).then((res) => {
-      commit('SET_MSG_BOARD', res.data.list)
-      // commit("PAGE_ARRAY", res.data.count)
-    })
-  },
-  // 获取留言数量
-  GetMsgCount({ commit }) {
-    return fetch.get('/api/getMsgCount').then((res) => {
-      commit('PAGE_ARRAY', res.data.count || 0)
-    })
-  },
-  // 获取评论
-  GetAdminComments({ commit }, payload) {
-    fetch.get('/api/getAdminComments', payload).then((res) => {
-      console.log(res)
-      commit('SET_COMMENTS', res.data.list)
-      commit('PAGE_ARRAY', res.data.count)
-
-      // if (data.length) {
-      //   commit("SET_COMMENTS", data)
-      // }
-    })
-  },
-  // 获取评论数
-  // GetCommentsCount({ commit }) {
-  //   return fetch.get("/api/getCommentsCount").then((data) => {
-  //     commit("PAGE_ARRAY", data)
-  //   })
-  // },
-  // ==================================================================
   // 获取新消息
   GetNews({ commit }) {
     return fetch.get('/api/getNews').then((data) => {
@@ -205,8 +163,16 @@ const mutations = {
   SET_DRAFTS_ARTICLES(state, data) {
     state.draftsArticles = data
   },
+  // 设置留言版信息
+  SET_MSG_BOARD(state, msgBoardData) {
+    state.msgBoard = msgBoardData
+  },
+  // 设置评论
+  SET_COMMENTS(state, commentsData) {
+    state.comments = commentsData
+  },
   // 分页
-  PAGE_ARRAY(state, payload) {
+  SET_PAGE_ARRAY(state, payload) {
     // 默认size为10
     const count = Math.ceil(payload / 10)
     const arr = []
@@ -327,14 +293,7 @@ const mutations = {
       })
     }
   },
-  // 设置留言版信息
-  SET_MSG_BOARD(state, msgBoardData) {
-    state.msgBoard = msgBoardData
-  },
-  // 设置评论
-  SET_COMMENTS(state, commentsData) {
-    state.comments = commentsData
-  },
+
   ADD_LOCAL_WORD(state, add) {
     state.msgBoard.forEach((item, index, arr) => {
       if (item._id === add._id) {
