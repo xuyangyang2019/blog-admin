@@ -19,4 +19,15 @@ function adminLogin(username, password) {
   return fetch.post('/api/login', { username: username, password: password })
 }
 
-export { adminLogin }
+/**
+ * 分页获取文章列表
+ * @param {number} pageNum 第几页
+ * @param {number} pageSize 每页的文章数量
+ * @param {number} publish 是否发表 1发表 0未发表
+ * @param {string} tag 文章标签
+ */
+function getArticleList(pageNum, pageSize, publish, tag) {
+  return fetch.get('/api/getArticleList', { pageNum: pageNum, pageSize: pageSize, publish: publish, tag: tag })
+}
+
+export { adminLogin, getArticleList }
