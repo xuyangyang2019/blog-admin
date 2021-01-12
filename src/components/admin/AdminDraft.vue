@@ -1,47 +1,47 @@
 <template>
   <div class="draft">
-    <list :article_list="articles.drafts"></list>
+    <list :articleList="draftsArticles"></list>
   </div>
 </template>
 
 <script>
-import { mapActions, mapState } from "vuex"
+import { mapState } from 'vuex'
+import { getArticleList } from '../../api/admin'
 
-import list from "@/components/common/ArticleList"
+import list from '@/components/common/ArticleList'
 
 export default {
+  components: {
+    list
+  },
   data() {
     return {}
   },
   computed: {
-    ...mapState("admin", {
-      articles: "articles"
+    ...mapState('admin', {
+      draftsArticles: 'draftsArticles'
     })
-  },
-  methods: {
-    ...mapActions({
-      getArticles: "admin/GetArticles"
-    }),
-    // 分页查询未发表的文章
-    allArticles_admin: function() {
-      let payload = {
-        publish: false,
-        page: 1
-      }
-      this.getArticles(payload)
-    }
-  },
-  components: {
-    list
   },
   created() {
     // 查询未发表的文章
-    this.allArticles_admin()
+    this.queryDraftsArticles()
+  },
+  methods: {
+    // 分页查询未发表的文章
+    queryDraftsArticles() {
+      getArticleList(1, 10, 0, '').then((res) => {
+        console.log(res)
+        if (res.code === 200) {
+          this.SET_DRAFTS_ARTICLES = res.data.list
+          this.PAGE_ARRAY = res.data.count
+        }
+      })
+    }
   },
   beforeRouteEnter(to, from, next) {
     next((vm) => {
-      // vm.getArticlesCount({ publish: false })
-      document.title = "后台管理 -草稿箱"
+      vm.queryDraftsArticles({ publish: false })
+      document.title = '后台管理 -草稿箱'
     })
   }
 }

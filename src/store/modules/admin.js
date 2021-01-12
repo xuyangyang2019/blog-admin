@@ -5,6 +5,7 @@ import Vue from 'vue'
 // initial state
 const state = {
   allArticles: [], // 所有的文章
+  draftsArticles: [], // 草稿箱
   pageArray: [], // 已发表页码数组
 
   // =============================================
@@ -45,22 +46,6 @@ const getters = {
 
 // actions
 const actions = {
-  // 获取文章
-  // GetArticles({ commit }, payload) {
-  //   let params = {}
-  //   if (!payload.tag) {
-  //     params = {
-  //       publish: payload.publish,
-  //       page: payload.page
-  //     }
-  //   } else {
-  //     params = payload
-  //   }
-  //   return fetch.get('/api/getArticles', params).then((res) => {
-  //     commit('SET_ARTICLES', { data: res.data.list, payload: payload })
-  //     commit('PAGE_ARRAY', res.data.count)
-  //   })
-  // },
   // 获取对应模块的文章总数，为分页按钮个数提供支持
   // GetArticlesCount({ commit }, payload) {
   //   return fetch.get("/api/getCount", payload).then((data) => {
@@ -215,6 +200,10 @@ const mutations = {
   // 设置所有的文章列表
   SET_ALL_ARTICLES(state, data) {
     state.allArticles = data
+  },
+  // 设置草稿箱
+  SET_DRAFTS_ARTICLES(state, data) {
+    state.draftsArticles = data
   },
   // 分页
   PAGE_ARRAY(state, payload) {
