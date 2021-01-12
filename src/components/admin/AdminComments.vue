@@ -3,39 +3,50 @@
 </template>
 
 <script>
-import { mapState, mapActions, mapGetters } from "vuex"
+import { mapState, mapMutations } from 'vuex'
+import { getCommentsList } from '../../api/admin'
 
-import msbdAndCmsList from "@/components/common/MsbdAndCmsList"
+import msbdAndCmsList from '@/components/common/MsbdAndCmsList'
 
 export default {
-  data() {
-    return {
-      tableTitle: { th: ["序号", "文章标题", "昵称", "评论", "时间"] }
-    }
-  },
   components: {
     msbdAndCmsList
   },
-  computed: {
-    ...mapGetters({
-      comments: "admin/comments"
-    })
+  data() {
+    return {
+      tableTitle: { th: ['序号', '文章标题', '昵称', '评论', '时间'] }
+    }
   },
-  methods: {
-    ...mapActions({
-      getAdminComments: "admin/GetAdminComments"
-      // getCommentsCount: "admin/GetCommentsCount"
+  computed: {
+    ...mapState('admin', {
+      comments: 'comments'
     })
   },
   created() {
     // 获取评论
-    this.getAdminComments({ pageNum: 1, pageSize: 10 })
+    // this.queryCommentsList()
   },
+  methods: {
+    ...mapMutations({
+      SET_COMMENTS: 'admin/SET_COMMENTS',
+      SET_PAGE_ARRAY: 'admin/SET_PAGE_ARRAY'
+    }),
+    queryCommentsList() {
+      getCommentsList(1, 10).then((res) => {
+        console.log(res)
+        if (res.code === 200) {
+          this.SET_COMMENTS(res.data.list)
+          this.SET_PAGE_ARRAY(res.data.count)
+        }
+      })
+    }
+  },
+
   beforeRouteEnter(to, from, next) {
     next((vm) => {
       // 获取评论数
-      // vm.getCommentsCount()
-      document.title = "后台管理 -文章评论"
+      vm.queryCommentsList()
+      document.title = '后台管理 -文章评论'
     })
   }
 }
