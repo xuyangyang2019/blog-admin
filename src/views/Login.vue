@@ -34,7 +34,8 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex'
+import { mapState } from 'vuex'
+import { adminLogin } from '../api/admin'
 
 export default {
   data() {
@@ -51,26 +52,22 @@ export default {
     })
   },
   methods: {
-    ...mapActions({
-      login: 'admin/Login'
-    }),
     // 表单验证并登陆
     validateAndLonin(toPath) {
-      const payload = {
-        username: this.user,
-        password: this.password
-      }
       if (!this.user) {
         this.err.user = '请填写用户名'
       }
       if (!this.password) {
         this.err.password = '请填写密码'
       }
+      // “!!” ——两个叹号表示把目标值转化为布尔值，相当于使用Boolean()方法
+      // 在if语句中,表达式的结果将被强制为布尔值，通过双重否定（!!）或强制转换为布尔值Boolean是不必要的
       if (!!this.password && !!this.user) {
         // 修改按钮显示的文字 不能再次点击
         this.btnInfo = { text: '登录中...', disabled: true }
         // admin 登陆
-        this.login(payload).then((res) => {
+        adminLogin(this.user, this.password).then((res) => {
+          console.log('登陆结果', res)
           this.btnInfo = { text: '登录', disabled: false }
           if (res.code === 200) {
             const user = res.data.userInfo
