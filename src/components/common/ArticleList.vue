@@ -21,7 +21,7 @@
       <!-- 表格主题 -->
       <tbody class="tbody-list">
         <tr
-          v-for="(item, index) in article_list"
+          v-for="(item, index) in articleList"
           :key="index"
           :class="{ bg: articlesChose.indexOf(item.articleId) !== -1 }"
         >
@@ -36,7 +36,7 @@
           <td :title="item.title">{{ item.title }}</td>
           <!-- 标签 -->
           <td>
-            <span v-for="(tag, index) in item.tag" :key="'tag' + index" ref="listTag" class="tbody-list-tag">
+            <span v-for="(tag, index2) in item.tag" :key="'tag' + index2" ref="listTag" class="tbody-list-tag">
               {{ tag | changeLife }}
             </span>
           </td>
@@ -111,6 +111,28 @@ import { mapState } from 'vuex'
 import page from '@/components/base/Page'
 
 export default {
+  components: {
+    page
+  },
+  // 定义过滤器，将life标签替换为“生活”
+  filters: {
+    changeLife: function (value) {
+      if (value === 'life') {
+        value = '生活'
+        return value
+      } else {
+        return value
+      }
+    }
+  },
+  props: {
+    articleList: {
+      type: Array,
+      default: function () {
+        return []
+      }
+    }
+  },
   data() {
     return {
       allChecked: false, // 全选
@@ -140,38 +162,19 @@ export default {
       pageArray: 'pageArray'
     })
   },
-  components: {
-    page
-  },
-  // 定义过滤器，将life标签替换为“生活”
-  filters: {
-    changeLife: function (value) {
-      if (value === 'life') {
-        value = '生活'
-        return value
-      } else {
-        return value
-      }
-    }
-  },
-  props: {
-    articleList: {
-      type: Array
-    }
-  },
   watch: {
-    article_list: function () {
+    articleList() {
       this.allChecked = false
       this.articlesChose = []
       this.$nextTick(() => {
-        if (this.article_list.length) {
+        if (this.articleList.length) {
           this.initBackground()
         }
       })
     }
   },
   mounted() {
-    if (this.article_list.length) {
+    if (this.articleList.length) {
       this.$nextTick(() => {
         this.initBackground()
       })
@@ -194,7 +197,7 @@ export default {
       // 加定时器是因为先触发click事件，此时articleItem
       // 还没有被推入新的值，因此将此事件推入事件队列，先让articleItem插值完成
       setTimeout(() => {
-        if (this.articlesChose.length === this.article_list.length) {
+        if (this.articlesChose.length === this.articleList.length) {
           this.allChecked = true
         } else {
           this.allChecked = false
@@ -203,9 +206,9 @@ export default {
     },
     // 全选 ok
     allChoose() {
-      if (this.articlesChose.length !== this.article_list.length) {
+      if (this.articlesChose.length !== this.articleList.length) {
         const _arr = []
-        this.article_list.forEach((item, index, arr) => {
+        this.articleList.forEach((item, index, arr) => {
           _arr.push(item.articleId)
         })
         this.articlesChose = _arr

@@ -282,16 +282,52 @@ export default {
       setTimeout(() => {
         this.showList = !this.showList
       }, 350)
+    },
+    analysisRoute: function (to, from) {
+      const first = { pathName: 'allArticles', showName: '已发表文章' }
+      switch (to.name) {
+        case 'allArticles':
+          this.location = [first]
+          break
+        case 'eachTag':
+          let tag = to.params.tag
+          if (tag === 'life') {
+            tag = '生活'
+          }
+          this.location = [first, { pathName: 'eachTag', showName: tag, params: { tag: tag } }]
+          break
+        case 'review':
+          this.location = this.forLocation
+
+          break
+        case 'draft':
+          this.location = [{ pathName: 'draft', showName: '草稿箱' }]
+          break
+        case 'adminMsgBoard':
+          this.location = [{ pathName: 'adminMsgBoard', showName: '留言板' }]
+          break
+        case 'comments':
+          this.location = [{ pathName: 'comments', showName: '文章评论' }]
+          break
+        case 'newMsg':
+          this.location = [{ pathName: 'newMsg', showName: '新消息' }]
+          break
+        case 'adminSet':
+          this.location = [{ pathName: 'adminSet', showName: '账户设置' }]
+          break
+        case 'search':
+          this.location = [{ pathName: 'search', showName: '搜索' }]
+      }
     }
   },
   // 导航守卫 更新之前
-  // beforeRouteUpdate(to, from, next) {
-  //   this.analysisRoute(to)
-  //   next()
-  // },
+  beforeRouteUpdate(to, from, next) {
+    this.analysisRoute(to)
+    next()
+  },
   // 导航守卫 离开路由则解绑事件
   beforeRouteLeave(to, from, next) {
-    // window.removeEventListener("resize", this.listen)
+    window.removeEventListener('resize', this.listen)
     next()
   }
 }
@@ -427,13 +463,10 @@ export default {
         align-items: center;
         justify-content: space-between;
         padding: 5px 0;
-        // border: solid red 1px;
         .location {
-          // border: solid red 1px;
           display: flex;
         }
         .search {
-          // border: solid red 1px;
           display: flex;
         }
       }

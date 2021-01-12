@@ -4,6 +4,10 @@ import Vue from 'vue'
 
 // initial state
 const state = {
+  allArticles: [], // 所有的文章
+  pageArray: [], // 已发表页码数组
+
+  // =============================================
   tagsObj: {}, // 标签
   // 红点提示
   redSup: {
@@ -29,7 +33,6 @@ const state = {
     search: [], // 搜索结果
     only: [] // 要预览的文章
   },
-  pageArray: [], // 已发表页码数组
   msgBoard: [], // 留言板
   comments: [] // 评论
 }
@@ -43,21 +46,21 @@ const getters = {
 // actions
 const actions = {
   // 获取文章
-  GetArticles({ commit }, payload) {
-    let params = {}
-    if (!payload.tag) {
-      params = {
-        publish: payload.publish,
-        page: payload.page
-      }
-    } else {
-      params = payload
-    }
-    return fetch.get('/api/getArticles', params).then((res) => {
-      commit('SET_ARTICLES', { data: res.data.list, payload: payload })
-      commit('PAGE_ARRAY', res.data.count)
-    })
-  },
+  // GetArticles({ commit }, payload) {
+  //   let params = {}
+  //   if (!payload.tag) {
+  //     params = {
+  //       publish: payload.publish,
+  //       page: payload.page
+  //     }
+  //   } else {
+  //     params = payload
+  //   }
+  //   return fetch.get('/api/getArticles', params).then((res) => {
+  //     commit('SET_ARTICLES', { data: res.data.list, payload: payload })
+  //     commit('PAGE_ARRAY', res.data.count)
+  //   })
+  // },
   // 获取对应模块的文章总数，为分页按钮个数提供支持
   // GetArticlesCount({ commit }, payload) {
   //   return fetch.get("/api/getCount", payload).then((data) => {
@@ -209,6 +212,21 @@ const actions = {
 
 // mutations
 const mutations = {
+  // 设置所有的文章列表
+  SET_ALL_ARTICLES(state, data) {
+    state.allArticles = data
+  },
+  // 分页
+  PAGE_ARRAY(state, payload) {
+    // 默认size为10
+    const count = Math.ceil(payload / 10)
+    const arr = []
+    for (let i = 1; i < count + 1; i++) {
+      arr.push(i)
+    }
+    state.pageArray = arr
+  },
+  // =======================================
   // 处理新消息
   HANDLE_NEWS(state, data) {
     // 从编辑器回退到管理主页，清除先前获取到的数据
@@ -234,16 +252,6 @@ const mutations = {
           break
       }
     })
-  },
-  // 分页
-  PAGE_ARRAY(state, payload) {
-    // 默认size为10
-    const count = Math.ceil(payload / 10)
-    const arr = []
-    for (let i = 1; i < count + 1; i++) {
-      arr.push(i)
-    }
-    state.pageArray = arr
   },
   // 设置标签
   SET_TAGS(state, tags) {
