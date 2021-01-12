@@ -3,37 +3,47 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex"
+import { mapState, mapMutations } from 'vuex'
+import { getMsgBoard } from '../../api/admin'
 
-import msbdAndCmsList from "@/components/common/MsbdAndCmsList.vue"
+import msbdAndCmsList from '@/components/common/MsbdAndCmsList.vue'
 
 export default {
-  data() {
-    return {
-      tableTitle: { th: ["序号", "用户名", "留言", "时间"] }
-    }
-  },
   components: {
     msbdAndCmsList
   },
-  computed: {
-    ...mapGetters({
-      msgBoard: "admin/msgBoard"
-    })
+  data() {
+    return {
+      tableTitle: { th: ['序号', '用户名', '留言', '时间'] }
+    }
   },
-  methods: {
-    ...mapActions({
-      getMsgBoard: "admin/GetMsgBoard",
-      getMsgCount: "admin/GetMsgCount"
+  computed: {
+    ...mapState('admin', {
+      msgBoard: 'msgBoard'
     })
   },
   created() {
-    this.getMsgBoard({ pageNum: 1, pageSize: 10 })
+    // this.queryMsgBoard()
+  },
+  methods: {
+    ...mapMutations({
+      SET_MSG_BOARD: 'admin/SET_MSG_BOARD',
+      SET_PAGE_ARRAY: 'admin/SET_PAGE_ARRAY'
+    }),
+    queryMsgBoard() {
+      getMsgBoard(1, 10).then((res) => {
+        console.log(res)
+        if (res.code === 200) {
+          this.SET_MSG_BOARD(res.data.list)
+          this.SET_PAGE_ARRAY(res.data.count)
+        }
+      })
+    }
   },
   beforeRouteEnter(to, from, next) {
     next((vm) => {
-      vm.getMsgCount()
-      document.title = "后台管理 -留言管理"
+      vm.queryMsgBoard()
+      document.title = '后台管理 -留言管理'
     })
   }
 }
