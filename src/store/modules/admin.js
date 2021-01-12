@@ -127,18 +127,6 @@ const actions = {
   ReduceComments({ commit }, payload) {
     return fetch.patch('/api/reduceComments', payload)
   },
-  // 重置密码
-  ReviseKey({ commit }, payload) {
-    return fetch.patch('/api/reviseKey', payload)
-  },
-  // 拷贝数据
-  CopyData() {
-    return fetch.get('/api/copyData')
-  },
-  // 下载数据库 用不到
-  DownloadDb() {
-    return fetch.get('/api/downloadDb')
-  },
   // 确认token
   ConfirmToken() {
     return fetch.get('/api/confirmToken')

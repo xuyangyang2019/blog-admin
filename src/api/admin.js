@@ -66,4 +66,24 @@ function getCommentsList(pageNum, pageSize) {
 //   })
 // },
 
-export { adminLogin, getArticleList, getMsgBoard, getCommentsList }
+// =============================================================
+
+/**
+ * 修改密码
+ * @param {string} oldKey 老的密码
+ * @param {string} newKey 新的密码
+ */
+function reviseKey(oldKey, newKey) {
+  return fetch.patch('/api/reviseKey', { oldKey: oldKey, newKey: newKey })
+}
+
+// // 拷贝数据
+// CopyData() {
+//   return fetch.get('/api/copyData')
+// },
+// // 下载数据库 用不到
+// DownloadDb() {
+//   return fetch.get('/api/downloadDb')
+// },
+
+export { adminLogin, getArticleList, getMsgBoard, getCommentsList, reviseKey }
