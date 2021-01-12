@@ -15,85 +15,59 @@
         <label class="form-item-label" for="oldPwd">原密码</label>
         <input
           id="oldPwd"
+          v-model.trim.lazy="passwordForm.oldPwd"
           type="password"
           autocomplete="false"
           maxlength="20"
           class="form-item-input"
           placeholder="请输入原密码"
-          v-model.trim.lazy="passwordForm.oldPwd"
           @focus="errMsg.oldPwd = ''"
         />
       </div>
-      <div
-        class="error-msg"
-        :class="{ 'error-msg-no': errMsg.oldPwd === '' }"
-        v-text="errMsg.oldPwd"
-      ></div>
+      <div class="error-msg" :class="{ 'error-msg-no': errMsg.oldPwd === '' }" v-text="errMsg.oldPwd"></div>
       <!-- 新密码 -->
       <div class="form-item">
         <label class="form-item-label" for="newPwd">新密码</label>
         <input
           id="newPwd"
+          v-model.trim.lazy="passwordForm.newPwd"
           type="password"
           autocomplete="false"
           maxlength="20"
           class="form-item-input"
           placeholder="请输入新密码"
-          v-model.trim.lazy="passwordForm.newPwd"
           @focus="errMsg.newPwd = ''"
         />
       </div>
-      <div
-        class="error-msg"
-        :class="{ 'error-msg-no': errMsg.newPwd === '' }"
-        v-text="errMsg.newPwd"
-      ></div>
+      <div class="error-msg" :class="{ 'error-msg-no': errMsg.newPwd === '' }" v-text="errMsg.newPwd"></div>
       <!-- 确认密码 -->
       <div class="form-item">
         <label class="form-item-label" for="surePwd">新密码</label>
         <input
           id="surePwd"
+          v-model.trim.lazy="passwordForm.surePwd"
           type="password"
           autocomplete="false"
           maxlength="20"
           class="form-item-input"
           placeholder="请再次输入新密码"
-          v-model.trim.lazy="passwordForm.surePwd"
           @focus="errMsg.surePwd = ''"
         />
       </div>
-      <div
-        class="error-msg"
-        :class="{ 'error-msg-no': errMsg.surePwd === '' }"
-        v-text="errMsg.surePwd"
-      ></div>
+      <div class="error-msg" :class="{ 'error-msg-no': errMsg.surePwd === '' }" v-text="errMsg.surePwd"></div>
       <!-- 提交 -->
       <div class="operation-btns">
-        <button
-          class="operation-btn btn-submit"
-          type="submit"
-          form="adminSetForm"
-        >
+        <button class="operation-btn btn-submit" type="submit" form="adminSetForm">
           {{ waitInfo.revise }}
         </button>
-        <button
-          class="operation-btn btn-reset"
-          type="reset"
-          form="adminSetForm"
-        >
-          重置
-        </button>
+        <button class="operation-btn btn-reset" type="reset" form="adminSetForm">重置</button>
       </div>
     </form>
 
     <!-- 数据库备份 -->
     <div class="db-copy">
       <h3>数据库备份</h3>
-      <button
-        class="db-copy-btn"
-        @click="startCopy"
-        :disabled="waitInfo.copy === '备份中...'"
-      >
+      <button class="db-copy-btn" :disabled="waitInfo.copy === '备份中...'" @click="startCopy">
         {{ waitInfo.copy }}
       </button>
       <button class="db-copy-btn" @click="download">
@@ -104,10 +78,10 @@
 
     <!-- 提示框 -->
     <transition name="set-mask">
-      <div class="adminset-mask" v-show="adminSetMask.show">
+      <div v-show="adminSetMask.show" class="adminset-mask">
         <div class="adminset-mask-box">
           <h3>{{ adminSetMask.info }}</h3>
-          <button @click="adminSetMask.show = false">确认</button>
+          <button @click="exit">确认</button>
         </div>
       </div>
     </transition>
@@ -115,24 +89,25 @@
 </template>
 
 <script>
-import { mapActions } from "vuex"
+import { mapActions } from 'vuex'
+import { reviseKey } from '../../api/admin'
 
 export default {
   data() {
     return {
       passwordForm: {
-        oldPwd: "",
-        newPwd: "",
-        surePwd: ""
+        oldPwd: '',
+        newPwd: '',
+        surePwd: ''
       }, // 表单用到的数据
-      errMsg: { oldPwd: "", newPwd: "", surePwd: "" }, // 错误信息
-      waitInfo: { revise: "确认修改", copy: "备份" }, // 状态信息
-      adminSetMask: { show: false, info: "" }, // 显示提示框和信息
+      errMsg: { oldPwd: '', newPwd: '', surePwd: '' }, // 错误信息
+      waitInfo: { revise: '确认修改', copy: '备份' }, // 状态信息
+      adminSetMask: { show: false, info: '' }, // 显示提示框和信息
       showDownload: false // 显示download
     }
   },
   beforeRouteEnter(to, from, next) {
-    document.title = "后台管理 -账户设置"
+    document.title = '后台管理 -账户设置'
     next()
   },
   // watch: {
@@ -145,58 +120,64 @@ export default {
   // },
   methods: {
     ...mapActions({
-      reviseKey: "admin/ReviseKey",
-      copyData: "admin/CopyData",
-      downloadDb: "admin/DownloadDb"
+      copyData: 'admin/CopyData',
+      downloadDb: 'admin/DownloadDb'
     }),
     // 提交表单
     handleSubmit() {
-      this.errMsg = { oldPwd: "", newPwd: "", surePwd: "" }
+      this.errMsg = { oldPwd: '', newPwd: '', surePwd: '' }
       if (this.passwordForm.oldPwd.length === 0) {
-        this.errMsg.oldPwd = "请填写旧密码"
+        this.errMsg.oldPwd = '请填写旧密码'
         return
       } else if (this.passwordForm.newPwd.length === 0) {
-        this.errMsg.newPwd = "请填写新密码"
+        this.errMsg.newPwd = '请填写新密码'
         return
       } else if (this.passwordForm.surePwd.length === 0) {
-        this.errMsg.surePwd = "请再次输入新密码"
+        this.errMsg.surePwd = '请再次输入新密码'
         return
       } else if (this.passwordForm.surePwd !== this.passwordForm.newPwd) {
-        this.errMsg.surePwd = "两次输入的密码不一致"
+        this.errMsg.surePwd = '两次输入的密码不一致'
         return
       } else {
-        this.waitInfo.revise = "修改中..."
-        this.reviseKey({
-          oldKey: this.passwordForm.oldPwd,
-          newKey: this.passwordForm.newPwd
-        }).then((data) => {
-          if (data.code === 200) {
-            // console.log("修改成功")
-            this.waitInfo.revise = "确认修改"
-            this.passwordForm = { oldPwd: "", newPwd: "", surePwd: "" }
-            this.adminSetMask = { show: true, info: "修改成功！" }
-          } else if (data.code === "oldkey-401") {
-            this.errMsg.oldPwd = "原密码不正确"
-            this.waitInfo.revise = "确认修改"
+        this.waitInfo.revise = '修改中...'
+        reviseKey(this.passwordForm.oldPwd, this.passwordForm.newPwd).then((res) => {
+          console.log(res)
+          if (res.code === 200) {
+            this.waitInfo.revise = '确认修改'
+            this.passwordForm = { oldPwd: '', newPwd: '', surePwd: '' }
+            this.adminSetMask = { show: true, info: '修改成功,请重新登陆！' }
+          } else {
+            this.errMsg.oldPwd = '原密码不正确'
+            this.waitInfo.revise = '确认修改'
           }
         })
       }
     },
+    // 重新登陆
+    exit() {
+      this.adminSetMask.show = false
+      // 删除本地保存的数据
+      localStorage.removeItem('validateToken')
+      localStorage.removeItem('userName')
+      localStorage.removeItem('lastLogin')
+      // 跳转到登陆页面
+      this.$router.push({ name: 'login' })
+    },
     // 重置表单
     handleReset() {
-      this.passwordForm = { oldPwd: "", newPwd: "", surePwd: "" }
-      this.errMsg = { oldPwd: "", newPwd: "", surePwd: "" }
+      this.passwordForm = { oldPwd: '', newPwd: '', surePwd: '' }
+      this.errMsg = { oldPwd: '', newPwd: '', surePwd: '' }
     },
     // 开始拷贝
     startCopy() {
-      this.waitInfo.copy = "备份中..."
+      this.waitInfo.copy = '备份中...'
       this.copyData().then((data) => {
         if (data.code === 200) {
-          this.waitInfo.copy = "备份"
-          this.adminSetMask = { show: true, info: "备份成功！" }
+          this.waitInfo.copy = '备份'
+          this.adminSetMask = { show: true, info: '备份成功！' }
           this.showDownload = true
         } else {
-          this.adminSetMask = { show: true, info: "备份失败！" }
+          this.adminSetMask = { show: true, info: '备份失败！' }
         }
       })
     },
@@ -219,11 +200,11 @@ export default {
 
       // window.open("http://192.168.0.111:8098/img/qq.png", "downloadIframe")
 
-      let a = document.createElement("a")
-      let token = localStorage.getItem("validateToken")
+      const a = document.createElement('a')
+      const token = localStorage.getItem('validateToken')
       // a.href = "http://192.168.0.111:8098/api/downloadDb?authToken=" + token
-      a.href = "http://localhost:8098/api/downloadDb?authToken=" + token
-      a.download = "admin.zip"
+      a.href = 'http://localhost:8098/api/downloadDb?authToken=' + token
+      a.download = 'admin.zip'
       document.body.appendChild(a)
       a.click()
       document.body.removeChild(a)
