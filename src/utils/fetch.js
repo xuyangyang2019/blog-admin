@@ -146,16 +146,17 @@ httpInstance.interceptors.response.use(
   (response) => {
     // 如果返回的状态码为200，说明接口请求成功，可以正常拿到数据
     // 否则的话抛出错误
-    // if (response.status === 200) {
-    //   return Promise.resolve(response)
-    // } else {
-    //   return Promise.reject(response)
-    // }
-    if (response.status && response.status === 200 && response.data.status === 'error') {
-      Message.error({ message: response.data.msg })
-      return
+    if (response.status && response.status === 200) {
+      return Promise.resolve(response)
+    } else {
+      return Promise.reject(response)
     }
-    return response
+    // 如果需要统一处理错误msg
+    // if (response.status && response.status === 200 && response.data.code === -1) {
+    //   Message.error({ message: response.data.msg })
+    //   // return
+    // }
+    // return response
   },
   (error) => {
     // 服务器状态码不是2开头的的情况
