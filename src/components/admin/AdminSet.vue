@@ -1,8 +1,51 @@
 <template>
   <div class="admin-set">
     <h3>修改密码</h3>
+    <el-form ref="ruleForm" :model="ruleForm" :rules="rules">
+      <el-form-item label="原密码" :label-width="formLabelWidth" prop="oldPassword">
+        <el-input
+          v-model="ruleForm.oldPassword"
+          type="password"
+          placeholder="请输入原密码"
+          clearable
+          show-password
+          maxlength="20"
+          autocomplete="off"
+        ></el-input>
+      </el-form-item>
+      <el-form-item label="新密码" :label-width="formLabelWidth" prop="newPassword">
+        <el-input
+          v-model="ruleForm.newPassword"
+          type="password"
+          placeholder="请输入新密码"
+          clearable
+          show-password
+          maxlength="20"
+          autocomplete="off"
+        ></el-input>
+      </el-form-item>
+      <el-form-item label="确认密码" :label-width="formLabelWidth" prop="checkNewPassword">
+        <el-input
+          v-model="ruleForm.checkNewPassword"
+          type="password"
+          placeholder="请再次输入新密码"
+          clearable
+          show-password
+          maxlength="20"
+          autocomplete="off"
+        ></el-input>
+      </el-form-item>
+      <el-form-item>
+        <el-button :disabled="submitted" :loading="submitted" type="primary" @click="submitForm('ruleForm')">
+          提交
+        </el-button>
+        <el-button @click="resetForm('ruleForm')">重置</el-button>
+      </el-form-item>
+    </el-form>
+
     <!-- 表单 -->
     <form
+      v-show="false"
       id="adminSetForm"
       class="admin-set-form"
       action="/"
@@ -89,12 +132,64 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
-import { reviseKey } from '../../api/admin'
+import { reviseKey, copyData } from '../../api/admin'
 
 export default {
   data() {
+    // 表单验证旧密码
+    const validateOldPwd = (rule, value, callback) => {
+      const reg = /^[0-9a-z]{6,16}$/gi
+      if (reg.test(value)) {
+        callback()
+      } else {
+        callback(new Error('密码6-16位是数字或字母!'))
+      }
+    }
+    // 表单验证新密码
+    const validateNewPwd = (rule, value, callback) => {
+      const reg = /^[0-9a-z]{6,16}$/gi
+      if (reg.test(value)) {
+        if (this.ruleForm.checkNewPassword !== '') {
+          this.$refs.ruleForm.validateField('validateCheckPwd')
+        }
+        callback()
+      } else {
+        callback(new Error('密码6-16位是数字或字母!'))
+      }
+    }
+    // 表单验证确认密码
+    const validateCheckPwd = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请再次输入密码'))
+      } else if (value !== this.ruleForm.newPassword) {
+        callback(new Error('两次输入密码不一致!'))
+      } else {
+        callback()
+      }
+    }
     return {
+      formLabelWidth: '120px', // label宽度
+      ruleForm: {
+        oldPassword: '', // 账号名称
+        newPassword: '', //  密码
+        checkNewPassword: '' // 确认密码
+      }, // 表单
+      rules: {
+        oldPassword: [
+          { required: true, message: '请输入原密码', trigger: 'blur' },
+          { validator: validateOldPwd, trigger: 'blur' }
+        ],
+        newPassword: [
+          { required: true, message: '请输入新密码', trigger: 'blur' },
+          { validator: validateNewPwd, trigger: 'blur' }
+        ],
+        checkNewPassword: [
+          { required: true, message: '请再次输入新密码', trigger: 'blur' },
+          { validator: validateCheckPwd, trigger: 'blur' }
+        ]
+      }, // 表单验证规则
+      submitted: false,
+      // ================================================================
       passwordForm: {
         oldPwd: '',
         newPwd: '',
@@ -119,10 +214,76 @@ export default {
   //   }
   // },
   methods: {
-    ...mapActions({
-      copyData: 'admin/CopyData',
-      downloadDb: 'admin/DownloadDb'
-    }),
+    // 提交表单
+    submitForm(formName) {
+      this.$refs[formName].validate((valid) => {
+        // 验证通过
+        if (valid) {
+          this.submitted = true
+          const { oldPassword, newPassword } = this.ruleForm
+          reviseKey(oldPassword, newPassword).then((res) => {
+            console.log(res)
+            if (res.code === 200) {
+              this.$alert('密码修改成功，请重新登陆！', '提示', {
+                confirmButtonText: '确定',
+                callback: () => {
+                  this.exit()
+                }
+              })
+            } else {
+              this.$alert(res.msg, '提示', {
+                type: 'warning',
+                confirmButtonText: '确定'
+              })
+            }
+            this.submitted = false
+          })
+          setTimeout(() => {
+            this.submitted = false
+          }, 3000)
+        } else {
+          return false
+        }
+      })
+    },
+    // 重置表单
+    resetForm(formName) {
+      this.$refs[formName].resetFields()
+    },
+    // 重新登陆
+    exit() {
+      this.adminSetMask.show = false
+      // 删除本地保存的数据
+      localStorage.removeItem('validateToken')
+      localStorage.removeItem('userName')
+      localStorage.removeItem('lastLogin')
+      // 跳转到登陆页面
+      this.$router.push({ name: 'login' })
+    },
+    // 开始拷贝
+    startCopy() {
+      this.waitInfo.copy = '备份中...'
+      copyData().then((res) => {
+        if (res.code === 200) {
+          this.waitInfo.copy = '备份'
+          this.adminSetMask = { show: true, info: '备份成功！' }
+          this.showDownload = true
+        } else {
+          this.adminSetMask = { show: true, info: '备份失败！' }
+        }
+      })
+    },
+    // 下载
+    download() {
+      const a = document.createElement('a')
+      const token = localStorage.getItem('validateToken')
+      a.href = 'http://localhost:8098/api/downloadDb?authToken=' + token
+      a.download = 'admin.zip'
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+    },
+    // ===========================================
     // 提交表单
     handleSubmit() {
       this.errMsg = { oldPwd: '', newPwd: '', surePwd: '' }
@@ -141,7 +302,6 @@ export default {
       } else {
         this.waitInfo.revise = '修改中...'
         reviseKey(this.passwordForm.oldPwd, this.passwordForm.newPwd).then((res) => {
-          console.log(res)
           if (res.code === 200) {
             this.waitInfo.revise = '确认修改'
             this.passwordForm = { oldPwd: '', newPwd: '', surePwd: '' }
@@ -153,61 +313,10 @@ export default {
         })
       }
     },
-    // 重新登陆
-    exit() {
-      this.adminSetMask.show = false
-      // 删除本地保存的数据
-      localStorage.removeItem('validateToken')
-      localStorage.removeItem('userName')
-      localStorage.removeItem('lastLogin')
-      // 跳转到登陆页面
-      this.$router.push({ name: 'login' })
-    },
     // 重置表单
     handleReset() {
       this.passwordForm = { oldPwd: '', newPwd: '', surePwd: '' }
       this.errMsg = { oldPwd: '', newPwd: '', surePwd: '' }
-    },
-    // 开始拷贝
-    startCopy() {
-      this.waitInfo.copy = '备份中...'
-      this.copyData().then((data) => {
-        if (data.code === 200) {
-          this.waitInfo.copy = '备份'
-          this.adminSetMask = { show: true, info: '备份成功！' }
-          this.showDownload = true
-        } else {
-          this.adminSetMask = { show: true, info: '备份失败！' }
-        }
-      })
-    },
-    // 下载
-    download() {
-      // this.downloadDb().then((res) => {
-      //   console.log(res)
-      //   const blob = new Blob([res.data], {
-      //     type: "application/octet-stream"
-      //   })
-      //   const url = window.URL.createObjectURL(blob)
-      //   const a = document.createElement("a")
-      //   a.href = url
-      //   a.download = "admin.zip"
-      //   document.body.appendChild(a)
-      //   a.click()
-      //   document.body.removeChild(a)
-      //   window.URL.revokeObjectURL(url)
-      // })
-
-      // window.open("http://192.168.0.111:8098/img/qq.png", "downloadIframe")
-
-      const a = document.createElement('a')
-      const token = localStorage.getItem('validateToken')
-      // a.href = "http://192.168.0.111:8098/api/downloadDb?authToken=" + token
-      a.href = 'http://localhost:8098/api/downloadDb?authToken=' + token
-      a.download = 'admin.zip'
-      document.body.appendChild(a)
-      a.click()
-      document.body.removeChild(a)
     }
   }
 }
