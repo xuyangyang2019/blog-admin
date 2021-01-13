@@ -77,13 +77,18 @@ function reviseKey(oldKey, newKey) {
   return fetch.patch('/api/reviseKey', { oldKey: oldKey, newKey: newKey })
 }
 
-// // 拷贝数据
-// CopyData() {
-//   return fetch.get('/api/copyData')
-// },
-// // 下载数据库 用不到
-// DownloadDb() {
-//   return fetch.get('/api/downloadDb')
-// },
+/**
+ * 拷贝数据
+ */
+function copyData() {
+  return fetch.get('/api/copyData')
+}
 
-export { adminLogin, getArticleList, getMsgBoard, getCommentsList, reviseKey }
+/**
+ * 下载数据库 用不到的接口
+ */
+function downloadDb() {
+  return fetch.get('/api/downloadDb')
+}
+
+export { adminLogin, getArticleList, getMsgBoard, getCommentsList, reviseKey, copyData, downloadDb }
