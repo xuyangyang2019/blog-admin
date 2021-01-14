@@ -187,11 +187,24 @@ export default {
     // 退出登录
     exit() {
       // 删除本地保存的数据
-      localStorage.removeItem('validateToken')
-      localStorage.removeItem('userName')
-      localStorage.removeItem('lastLogin')
-      // 跳转到登陆页面
-      this.$router.push({ name: 'login' })
+      this.$confirm('即将退出登陆?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          localStorage.removeItem('validateToken')
+          localStorage.removeItem('userName')
+          localStorage.removeItem('lastLogin')
+          // 跳转到登陆页面
+          this.$router.push({ name: 'login' })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消'
+          })
+        })
     },
     // 路由跳转
     showPath(item) {
