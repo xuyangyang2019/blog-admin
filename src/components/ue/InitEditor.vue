@@ -1,11 +1,13 @@
 <template>
   <div class="ue-box">
-    <UE :config="config" ref="ue"></UE>
+    <UE ref="ue" :config="config"></UE>
   </div>
 </template>
 
 <script>
-import UE from "./UEditor"
+import UE from './UEditor'
+import { confirmToken } from '../../api/admin'
+
 export default {
   components: {
     UE
@@ -18,54 +20,54 @@ export default {
         // ue工具栏
         toolbars: [
           [
-            "source",
-            "|",
-            "undo",
-            "redo",
-            "|",
-            "bold",
-            "italic",
-            "underline",
-            "strikethrough",
-            "superscript",
-            "subscript",
-            "|",
-            "forecolor",
-            "backcolor",
-            "selectall",
-            "removeformat",
-            "|",
-            "justifyleft",
-            "justifycenter",
-            "justifyright",
-            "justifyjustify",
-            "|",
-            "lineheight",
-            "insertorderedlist",
-            "insertunorderedlist",
-            "imagenone",
-            "imageleft",
-            "imageright",
-            "imagecenter",
-            "|",
-            "simpleupload",
-            "insertimage",
-            "emotion",
-            "customstyle",
-            "paragraph",
-            "fontfamily",
-            "fontsize",
-            "|",
-            "link",
-            "anchor",
-            "|",
-            "attachment",
-            "insertcode",
-            "horizontal",
-            "spechars",
-            "|",
-            "searchreplace",
-            "drafts"
+            'source',
+            '|',
+            'undo',
+            'redo',
+            '|',
+            'bold',
+            'italic',
+            'underline',
+            'strikethrough',
+            'superscript',
+            'subscript',
+            '|',
+            'forecolor',
+            'backcolor',
+            'selectall',
+            'removeformat',
+            '|',
+            'justifyleft',
+            'justifycenter',
+            'justifyright',
+            'justifyjustify',
+            '|',
+            'lineheight',
+            'insertorderedlist',
+            'insertunorderedlist',
+            'imagenone',
+            'imageleft',
+            'imageright',
+            'imagecenter',
+            '|',
+            'simpleupload',
+            'insertimage',
+            'emotion',
+            'customstyle',
+            'paragraph',
+            'fontfamily',
+            'fontsize',
+            '|',
+            'link',
+            'anchor',
+            '|',
+            'attachment',
+            'insertcode',
+            'horizontal',
+            'spechars',
+            '|',
+            'searchreplace',
+            'drafts'
           ]
         ]
       }
@@ -73,7 +75,7 @@ export default {
   },
   created() {
     // 先鉴权
-    this.$store.dispatch("admin/ConfirmToken")
+    confirmToken()
   }
 }
 </script>
