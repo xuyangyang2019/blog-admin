@@ -11,8 +11,8 @@ import fetch from '@/utils/fetch'
 
 /**
  * 管理员登陆
- * @param {string} username 用户名
- * @param {string} password 密码
+ * @param {String} username 用户名
+ * @param {String} password 密码
  */
 function adminLogin(username, password) {
   return fetch.post('/api/login', { username: username, password: password })
@@ -20,8 +20,8 @@ function adminLogin(username, password) {
 
 /**
  * 修改密码
- * @param {string} oldKey 老的密码
- * @param {string} newKey 新的密码
+ * @param {String} oldKey 老的密码
+ * @param {String} newKey 新的密码
  */
 function reviseKey(oldKey, newKey) {
   return fetch.patch('/api/reviseKey', { oldKey: oldKey, newKey: newKey })
@@ -45,10 +45,10 @@ function downloadDb() {
 
 /**
  * 分页获取文章列表
- * @param {number} pageNum 第几页
- * @param {number} pageSize 每页的文章数量
- * @param {number} publish 是否发表 1发表 0未发表
- * @param {string} tag 文章标签
+ * @param {Number} pageNum 第几页
+ * @param {Number} pageSize 每页的文章数量
+ * @param {Number} publish 是否发表 1发表 0未发表
+ * @param {String} tag 文章标签
  */
 function getArticleList(pageNum, pageSize, publish, tag) {
   return fetch.get('/api/getArticleList', { pageNum: pageNum, pageSize: pageSize, publish: publish, tag: tag })
@@ -128,8 +128,8 @@ function confirmToken() {
 
 /**
  * 获取留言
- * @param {number} pageNum 第几页
- * @param {number} pageSize 每页的文章数量
+ * @param {Number} pageNum 第几页
+ * @param {Number} pageSize 每页的文章数量
  */
 function getMsgBoard(pageNum, pageSize) {
   return fetch.get('/api/getMsgBoard', { pageNum: pageNum, pageSize: pageSize })
@@ -144,12 +144,12 @@ function getMsgBoard(pageNum, pageSize) {
 
 /**
  * 回复留言
- * @param {*} id 留言id
- * @param {string} name 管理员名称
- * @param {string} aite 要@的人
- * @param {string} imgUrl 头像
- * @param {string} content 回复内容
- * @param {date} data 日期
+ * @param {String} id 留言id
+ * @param {String} name 管理员名称
+ * @param {String} aite 要@的人
+ * @param {String} imgUrl 头像
+ * @param {String} content 回复内容
+ * @param {Date} data 日期
  */
 function replyMsgBoard(id, name, aite, imgUrl, content, date) {
   return fetch.patch('/api/replyMsgBoard', {
@@ -166,21 +166,25 @@ function replyMsgBoard(id, name, aite, imgUrl, content, date) {
  * 删除留言
  * @param {Array} ids 要删除的留言的id的集合
  */
-function deleteLeavewords(ids) {
-  return fetch.delete('/api/deleteLeavewords', { ids: ids })
+function deleteMsgBoards(ids) {
+  return fetch.delete('/api/deleteMsgBoards', { ids: ids })
 }
 
-// // 更新留言
-// ReduceLeavewords({ commit }, payload) {
-//   return fetch.patch('/api/reduceLeavewords', payload)
-// },
+/**
+ * 删除二级留言
+ * @param {String} msgId 留言的id
+ * @param {String} replyId 要删除的reply的id
+ */
+function updateMsgBoard(msgId, replyId) {
+  return fetch.patch('/api/updateMsgBoard', { msgId: msgId, replyId: replyId })
+}
 
 // ========================== 评论相关===================================
 
 /**
  * 获取评论列表
- * @param {number} pageNum 第几页
- * @param {number} pageSize 每页的文章数量
+ * @param {Number} pageNum 第几页
+ * @param {Number} pageSize 每页的文章数量
  */
 function getCommentsList(pageNum, pageSize) {
   return fetch.get('/api/getCommentsList', { pageNum: pageNum, pageSize: pageSize })
@@ -236,7 +240,8 @@ export {
   getArticleList,
   getMsgBoard,
   replyMsgBoard,
-  deleteLeavewords,
+  deleteMsgBoards,
+  updateMsgBoard,
   getCommentsList,
   confirmToken
 }
