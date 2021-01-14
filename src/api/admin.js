@@ -152,19 +152,25 @@ function getMsgBoard(pageNum, pageSize) {
  * @param {date} data 日期
  */
 function replyMsgBoard(id, name, aite, imgUrl, content, date) {
-  return fetch.patch('/api/replyMsgBoard', { id: id, name: name, aite: aite, imgUrl: imgUrl, content: content, date: date })
+  return fetch.patch('/api/replyMsgBoard', {
+    id: id,
+    name: name,
+    aite: aite,
+    imgUrl: imgUrl,
+    content: content,
+    date: date
+  })
 }
 
-function removeLeavewords(pageNum, pageSize) {
-  return fetch.get('/api/removeLeavewords', { pageNum: pageNum, pageSize: pageSize })
+/**
+ * 删除留言
+ * @param {Array} ids 要删除的留言的id的集合
+ */
+function deleteLeavewords(ids) {
+  return fetch.delete('/api/deleteLeavewords', { ids: ids })
 }
 
-// // 移除留言
-// RemoveLeavewords({ commit }, payload) {
-//   return fetch.delete('/api/removeLeavewords', payload)
-// },
-
-// // 减少留言
+// // 更新留言
 // ReduceLeavewords({ commit }, payload) {
 //   return fetch.patch('/api/reduceLeavewords', payload)
 // },
@@ -224,13 +230,13 @@ function getCommentsList(pageNum, pageSize) {
 
 export {
   adminLogin,
-  getArticleList,
-  getMsgBoard,
-  getCommentsList,
   reviseKey,
   copyData,
   downloadDb,
+  getArticleList,
+  getMsgBoard,
   replyMsgBoard,
-  removeLeavewords,
+  deleteLeavewords,
+  getCommentsList,
   confirmToken
 }

@@ -147,7 +147,7 @@
 
 <script>
 import { mapMutations, mapActions, mapGetters, mapState } from 'vuex'
-import { replyMsgBoard } from '../../api/admin'
+import { replyMsgBoard, deleteLeavewords } from '../../api/admin'
 
 import page from '@/components/base/Page'
 
@@ -329,16 +329,17 @@ export default {
         if (this.$route.name === 'adminMsgBoard') {
           // 删除一级留言
           if (ol !== -1 && tl === -1) {
-            console.log('删除一级留言')
-            // this.removeLeavewords({ id: [ol] }).then((res) => {
-            //   if (res.code === 200) {
-            //     this.reduceArr({
-            //       name: 'adminMsgBoard',
-            //       oneIndex: oi,
-            //       twoIndex: ti
-            //     })
-            //   }
-            // })
+            // console.log('删除一级留言')
+            deleteLeavewords([ol]).then((res) => {
+              // console.log(res)
+              if (res.code === 200) {
+                this.reduceArr({
+                  name: 'adminMsgBoard',
+                  oneIndex: oi,
+                  twoIndex: ti
+                })
+              }
+            })
           }
           // 删除二级留言
           if (ol !== -1 && tl !== -1) {
