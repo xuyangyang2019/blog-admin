@@ -10,20 +10,20 @@
  * | wechat  |   √   |
  *
  */
-let sniff = {
+const sniff = {
   browsers: {},
   info: {}
 } // 结果
 
-let ua = navigator.userAgent,
-  platform = navigator.platform,
-  android = ua.match(/(Android);?[\s\/]+([\d.]+)?/), // 匹配 android
-  ipad = ua.match(/(iPad).*OS\s([\d_]+)/), // 匹配 ipad
-  ipod = ua.match(/(iPod)(.*OS\s([\d_]+))?/), // 匹配 ipod
-  iphone = ua.match(/(iPhone\sOS)\s([\d_]+)/), // 匹配 iphone
-  webApp = ua.indexOf("Safari") === -1 // 匹配 桌面 webApp
+const ua = navigator.userAgent
+const platform = navigator.platform
+const android = ua.match(/(Android);?[\s\/]+([\d.]+)?/) // 匹配 android
+const ipad = ua.match(/(iPad).*OS\s([\d_]+)/) // 匹配 ipad
+const ipod = ua.match(/(iPod)(.*OS\s([\d_]+))?/) // 匹配 ipod
+const iphone = ua.match(/(iPhone\sOS)\s([\d_]+)/) // 匹配 iphone
+let webApp = ua.indexOf('Safari') === -1 // 匹配 桌面 webApp
 
-let browsers = {
+const browsers = {
   wechat: ua.match(/(MicroMessenger)\/([\d\.]+)/), // 匹配 weChat
   alipay: ua.match(/(AlipayClient)\/([\d\.]+)/), // 匹配 支付宝
   qq: ua.match(/(MQQBrowser)\/([\d\.]+)/), // 匹配 QQ 浏览器
@@ -33,28 +33,28 @@ let browsers = {
 }
 
 // iphone model
-let model = ua.match(/(iPhone\sOS).*m\/(\d+\.\d+)/)
+const model = ua.match(/(iPhone\sOS).*m\/(\d+\.\d+)/)
 
 // iphoneX model
-let iphoneXModel = ["10.3", "10.6"]
+const iphoneXModel = ['10.3', '10.6']
 
 // 系统
 
 sniff.ios = sniff.android = sniff.iphone = sniff.ipad = sniff.ipod = false
 
 if (android) {
-  sniff.os = "android"
+  sniff.os = 'android'
   sniff.osVersion = android[2]
   sniff.android = true
 }
 
 if (ipad || iphone || ipod) {
-  sniff.os = "ios"
+  sniff.os = 'ios'
   sniff.ios = true
 }
 
 if (iphone) {
-  sniff.osVersion = iphone[2].replace(/_/g, ".")
+  sniff.osVersion = iphone[2].replace(/_/g, '.')
   sniff.iphone = true
   sniff.imobile = true
   sniff.model = model && model[2]
@@ -70,28 +70,28 @@ if (iphone) {
 }
 
 if (ipad) {
-  sniff.osVersion = ipad[2].replace(/_/g, ".")
+  sniff.osVersion = ipad[2].replace(/_/g, '.')
   sniff.ipad = true
 }
 
 if (ipod) {
-  sniff.osVersion = ipod[3] ? ipod[3].replace(/_/g, ".") : null
+  sniff.osVersion = ipod[3] ? ipod[3].replace(/_/g, '.') : null
   sniff.ipod = true
   sniff.imobile = true
 }
 
 // iOS 8+ changed UA
-if (sniff.ios && sniff.osVersion && ua.indexOf("Version/") >= 0) {
-  if (sniff.osVersion.split(".")[0] === "10") {
+if (sniff.ios && sniff.osVersion && ua.indexOf('Version/') >= 0) {
+  if (sniff.osVersion.split('.')[0] === '10') {
     sniff.osVersion = ua
       .toLowerCase()
-      .split("version/")[1]
-      .split(" ")[0]
+      .split('version/')[1]
+      .split(' ')[0]
   }
 }
 
 if (sniff.osVersion) {
-  sniff.osVersionN = parseInt(sniff.osVersion.match(/\d+\.?\d*/)[0])
+  sniff.osVersionN = parseInt(sniff.osVersion.match(/\d+\.?\d*/)[0], 10)
 }
 
 // 配置
@@ -101,7 +101,7 @@ sniff.pixelRatio = window.devicePixelRatio || 1
 sniff.retina = sniff.pixelRatio >= 2
 
 // 浏览器
-for (let key in browsers) {
+for (const key in browsers) {
   if (browsers[key]) {
     webApp = false
     sniff.browsers[key] = browsers[key][2]
@@ -110,11 +110,11 @@ for (let key in browsers) {
   }
 }
 
-sniff.webApp = sniff.os === "ios" && webApp
+sniff.webApp = sniff.os === 'ios' && webApp
 
 // 其他信息
-ua.split(" ").forEach((item) => {
-  var kv = item.split("/")
+ua.split(' ').forEach((item) => {
+  const kv = item.split('/')
   if (kv.length === 2) {
     sniff.info[kv[0]] = kv[1]
   }
@@ -122,9 +122,7 @@ ua.split(" ").forEach((item) => {
 
 // PC
 sniff.pc =
-  platform.indexOf("Mac") === 0 ||
-  platform.indexOf("Win") === 0 ||
-  (platform.indexOf("linux") === 0 && !sniff.android)
+  platform.indexOf('Mac') === 0 || platform.indexOf('Win') === 0 || (platform.indexOf('linux') === 0 && !sniff.android)
 
 window.sniff = sniff
 

@@ -253,7 +253,8 @@ export default {
       }
     },
     // 函数去抖，避免频繁触发拖垮浏览器
-    debounce: function (func, delay) {
+    debounce(func, delay) {
+      // eslint-disable-next-line consistent-this
       const context = this
       const args = arguments
       if (document.body.clientWidth < 768) {
@@ -296,14 +297,15 @@ export default {
         this.showList = !this.showList
       }, 350)
     },
+    // eslint-disable-next-line no-unused-vars
     analysisRoute: function (to, from) {
       const first = { pathName: 'allArticles', showName: '已发表文章' }
+      let tag = to.params.tag
       switch (to.name) {
         case 'allArticles':
           this.location = [first]
           break
         case 'eachTag':
-          let tag = to.params.tag
           if (tag === 'life') {
             tag = '生活'
           }
