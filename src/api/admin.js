@@ -151,8 +151,8 @@ function getMsgBoard(pageNum, pageSize) {
  * @param {string} content 回复内容
  * @param {date} data 日期
  */
-function replyMsgBoard(id, name, aite, imgUrl, content, data) {
-  return fetch.get('/api/addReply', { id: id, name: name, aite: aite, imgUrl: imgUrl, content: content, data: data })
+function replyMsgBoard(id, name, aite, imgUrl, content, date) {
+  return fetch.patch('/api/replyMsgBoard', { id: id, name: name, aite: aite, imgUrl: imgUrl, content: content, date: date })
 }
 
 function removeLeavewords(pageNum, pageSize) {
