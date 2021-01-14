@@ -147,7 +147,7 @@
 
 <script>
 import { mapMutations, mapActions, mapGetters, mapState } from 'vuex'
-import { replyMsgBoard, deleteLeavewords } from '../../api/admin'
+import { replyMsgBoard, deleteMsgBoards, updateMsgBoard } from '../../api/admin'
 
 import page from '@/components/base/Page'
 
@@ -208,9 +208,7 @@ export default {
     }),
     ...mapActions({
       addCommentsReply: 'admin/AddCommentsReply',
-      removeLeavewords: 'admin/RemoveLeavewords',
       removeComments: 'admin/RemoveComments',
-      reduceLeavewords: 'admin/ReduceLeavewords',
       reduceComments: 'admin/ReduceComments'
     }),
     // 单选
@@ -330,7 +328,7 @@ export default {
           // 删除一级留言
           if (ol !== -1 && tl === -1) {
             // console.log('删除一级留言')
-            deleteLeavewords([ol]).then((res) => {
+            deleteMsgBoards([ol]).then((res) => {
               // console.log(res)
               if (res.code === 200) {
                 this.reduceArr({
@@ -343,16 +341,16 @@ export default {
           }
           // 删除二级留言
           if (ol !== -1 && tl !== -1) {
-            console.log('删除二级留言')
-            // this.reduceLeavewords({ mainId: ol, secondId: tl }).then((data) => {
-            //   if (data.deleteCode === 200) {
-            //     this.reduceArr({
-            //       name: 'adminMsgBoard',
-            //       oneIndex: oi,
-            //       twoIndex: ti
-            //     })
-            //   }
-            // })
+            updateMsgBoard(ol, tl).then((res) => {
+              // console.log(res)
+              if (res.code === 200) {
+                this.reduceArr({
+                  name: 'adminMsgBoard',
+                  oneIndex: oi,
+                  twoIndex: ti
+                })
+              }
+            })
           }
         }
         // 删除文章评论
@@ -377,8 +375,8 @@ export default {
       } else {
         // 批量删除留言
         if (this.$route.name === 'adminMsgBoard') {
-          this.removeLeavewords({ id: this.itemsToDel }).then((data) => {
-            if (data.deleteCode === 200) {
+          deleteMsgBoards(this.itemsToDel).then((data) => {
+            if (data.code === 200) {
               this.reduceArr_all({
                 name: 'adminMsgBoard',
                 removeArr: this.itemsToDel
