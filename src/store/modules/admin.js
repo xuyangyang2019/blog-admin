@@ -1,5 +1,3 @@
-// import Vue from "vue";
-import fetch from '@/utils/fetch'
 import Vue from 'vue'
 
 // initial state
@@ -41,105 +39,7 @@ const state = {
 const getters = {}
 
 // actions
-const actions = {
-  // 获取新消息
-  GetNews({ commit }) {
-    return fetch.get('/api/getNews').then((data) => {
-      if (data.newsArr && data.newsArr.length) {
-        commit('HANDLE_NEWS', data)
-      }
-    })
-  },
-  // 获取技术文章的tag 生成导航
-  GetTagsclass({ commit }, payload) {
-    fetch.get('/api/adminTags', { publish: payload.publish }).then((data) => {
-      if (data.tags && data.tags.length) {
-        commit('SET_TAGS', data)
-      }
-    })
-  },
-
-  // 搜索文章
-  SearchAdminArticles({ commit }, payload) {
-    fetch.get('/api/adminSearch', payload).then((data) => {
-      console.log(data)
-      commit('SET_ARTICLES_SEARCH', data)
-    })
-  },
-  // 删除文章
-  RemoveArticle({ commit }, payload) {
-    return fetch.delete('/api/deleteArticle', payload)
-  },
-  // 精准获取文章
-  GetArticle({ commit }, payload) {
-    return fetch.get('/api/getAdminArticle', payload).then((data) => {
-      if (data.length) {
-        commit('SET_ARTICLES_ONLY', data)
-        const _tag = data[0].tag[0]
-        let forLocation = []
-        if (data[0].publish) {
-          forLocation = [
-            { pathName: 'allArticles', showName: '已发表文章' },
-            { pathName: 'eachTag', showName: _tag, params: { tag: _tag } },
-            {
-              pathName: 'review',
-              showName: data[0].title,
-              params: { eTag: _tag, articleId: data[0].articleId }
-            }
-          ]
-        } else {
-          forLocation = [
-            { pathName: 'draft', showName: '草稿' },
-            {
-              pathName: 'review',
-              showName: data[0].title,
-              params: { eTag: _tag, articleId: data[0].articleId }
-            }
-          ]
-        }
-        commit('SET_FOR_LOCATION', forLocation)
-      }
-      return data
-    })
-  },
-
-  // 添加回复
-  AddBoardReply({ commit }, payload) {
-    return fetch.patch('/api/addReply', payload)
-  },
-  // 添加评论
-  AddCommentsReply({ commit }, payload) {
-    return fetch.patch('/api/addComment', payload)
-  },
-  // 移除留言
-  RemoveLeavewords({ commit }, payload) {
-    return fetch.delete('/api/removeLeavewords', payload)
-  },
-  // 移除评论
-  RemoveComments({ commit }, payload) {
-    return fetch.delete('/api/removeComments', payload)
-  },
-  // 减少留言
-  ReduceLeavewords({ commit }, payload) {
-    return fetch.patch('/api/reduceLeavewords', payload)
-  },
-  // 减少评论
-  ReduceComments({ commit }, payload) {
-    return fetch.patch('/api/reduceComments', payload)
-  },
-  // 确认token
-  ConfirmToken() {
-    return fetch.get('/api/confirmToken')
-  },
-  // 发表或保存文章
-  SaveArticle({ commit }, payload) {
-    return fetch.post('/api/saveArticle', payload)
-  },
-  // 更新文章
-  UpdateArticle({ commit }, payload) {
-    return fetch.patch('/api/updata', payload)
-  }
-}
+const actions = {}
 
 // mutations
 const mutations = {
@@ -175,7 +75,7 @@ const mutations = {
     // 从编辑器回退到管理主页，清除先前获取到的数据
     state.news = { pvNum: 0, comment: [], msgboard: [], like: [], pv: [] }
     state.news.pvNum = data.pvNum
-    data.newsArr.forEach((item, index, arr) => {
+    data.newsArr.forEach((item) => {
       switch (item.type) {
         case 'comment':
           state.news.comment.push(item)
@@ -256,34 +156,33 @@ const mutations = {
   REDUCE_ARR_ALL(state, payload) {
     // 删除多篇文章
     if (payload.name === 'allArticles') {
-      state.articles.all = state.articles.all.filter((item, index, arr) => {
+      state.articles.all = state.articles.all.filter((item) => {
         return payload.removeArr.indexOf(item.articleId) < 0
       })
     }
     if (payload.name === 'eachTag') {
-      state.articles.tags = state.articles.tags.filter((item, index, arr) => {
+      state.articles.tags = state.articles.tags.filter((item) => {
         return payload.removeArr.indexOf(item.articleId) < 0
       })
     }
     if (payload.name === 'draft') {
-      state.articles.drafts = state.articles.drafts.filter((item, index, arr) => {
+      state.articles.drafts = state.articles.drafts.filter((item) => {
         return payload.removeArr.indexOf(item.articleId) < 0
       })
     }
     if (payload.name === 'adminMsgBoard') {
-      state.msgBoard = state.msgBoard.filter((item, index, arr) => {
+      state.msgBoard = state.msgBoard.filter((item) => {
         return payload.removeArr.indexOf(item._id) < 0
       })
     }
     if (payload.name === 'comments') {
-      state.comments = state.comments.filter((item, index, arr) => {
+      state.comments = state.comments.filter((item) => {
         return payload.removeArr.indexOf(item._id) < 0
       })
     }
   },
-
   ADD_LOCAL_WORD(state, add) {
-    state.msgBoard.forEach((item, index, arr) => {
+    state.msgBoard.forEach((item, index) => {
       if (item._id === add._id) {
         state.msgBoard.splice(index, 1, add)
         return
@@ -291,7 +190,7 @@ const mutations = {
     })
   },
   ADD_LOCAL_COMMENT(state, add) {
-    state.comments.forEach((item, index, arr) => {
+    state.comments.forEach((item, index) => {
       if (item._id === add._id) {
         state.comments.splice(index, 1, add)
         return
