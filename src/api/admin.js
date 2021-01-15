@@ -214,23 +214,20 @@ function getCommentsList(pageNum, pageSize) {
 
 // ========================== 消息相关===================================
 
-//  // 获取新消息
-//  GetNews({ commit }) {
-//   return fetch.get('/api/getNews').then((data) => {
-//     if (data.newsArr && data.newsArr.length) {
-//       commit('HANDLE_NEWS', data)
-//     }
-//   })
-// },
+/**
+ * 获取新消息
+ */
+function getNews() {
+  return fetch.get('/api/getNews')
+}
 
-// // 获取技术文章的tag 生成导航
-// GetTagsclass({ commit }, payload) {
-//   fetch.get('/api/adminTags', { publish: payload.publish }).then((data) => {
-//     if (data.tags && data.tags.length) {
-//       commit('SET_TAGS', data)
-//     }
-//   })
-// },
+/**
+ * 获取技术文章的tag 生成导航
+ * @param {Boolean} publish 已发布的文章标签
+ */
+function getTags(publish) {
+  fetch.get('/api/adminTags', { publish: publish })
+}
 
 export {
   adminLogin,
@@ -243,5 +240,7 @@ export {
   deleteMsgBoards,
   updateMsgBoard,
   getCommentsList,
-  confirmToken
+  confirmToken,
+  getNews,
+  getTags
 }
