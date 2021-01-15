@@ -226,7 +226,7 @@ function getNews() {
  * @param {Boolean} publish 已发布的文章标签
  */
 function getTags(publish) {
-  fetch.get('/api/adminTags', { publish: publish })
+  return fetch.get('/api/tags', { publish: publish })
 }
 
 export {
