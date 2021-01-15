@@ -60,7 +60,7 @@
                 </li>
               </transition> -->
             </ul>
-            <div class="clear-news" v-if="!!news.comment.length">
+            <div v-if="!!news.comment.length" class="clear-news">
               <button :disabled="dsabd.comment" @click="clearNews('comment')">
                 {{ clearText.comment }}
               </button>
@@ -68,23 +68,23 @@
           </div>
         </div>
       </div>
-      <!-- <div class="newmessage-content">
+      <div class="newmessage-content">
         <div class="newmessage-border">
           <h3>新留言一览</h3>
           <div class="news-item">
-            <ul>
+            <!-- <ul>
               <div v-if="!news.msgboard.length">暂无</div>
               <li v-for="(item, index) in news.msgboard" :key="index">
                 <span>{{ index + 1 }}.</span>
                 <span class="news-info-box" :title="item.content">{{ item.content }}</span>
                 <span
-                  @click="newsView(item._id)"
                   :class="{ 'icon-rotate': currentView.indexOf(item._id) > -1 }"
                   class="icon-keyboard_arrow_right"
+                  @click="newsView(item._id)"
                 ></span>
               </li>
               <transition name="fade">
-                <li class="news-msgboard-review" v-if="currentView.indexOf(item._id) > -1">
+                <li v-if="currentView.indexOf(item._id) > -1" class="news-msgboard-review">
                   <div>
                     <span>{{ item.name }}:</span>
                     <span v-html="item.say">{{ item.say }}</span>
@@ -92,13 +92,13 @@
                 </li>
               </transition>
             </ul>
-            <div class="clear-news" v-if="!!news.msgboard.length">
+            <div v-if="!!news.msgboard.length" class="clear-news">
               <button :disabled="dsabd.msgboard" @click="clearNews('msgboard')">{{ clearText.msgboard }}</button>
-            </div>
+            </div> -->
           </div>
         </div>
-      </div> -->
-      <!-- <div class="newmessage-content">
+      </div>
+      <div class="newmessage-content">
         <div class="newmessage-border">
           <h3>新收到的赞一览</h3>
           <div class="news-item">
@@ -109,13 +109,13 @@
                 <span class="news-info-box" :title="item.content">{{ item.content }}</span>
               </li>
             </ul>
-            <div class="clear-news" v-if="!!news.like.length">
+            <div v-if="!!news.like.length" class="clear-news">
               <button :disabled="dsabd.like" @click="clearNews('like')">{{ clearText.like }}</button>
             </div>
           </div>
         </div>
-      </div> -->
-      <!-- <div class="newmessage-content">
+      </div>
+      <div class="newmessage-content">
         <div class="newmessage-border">
           <h3>新增浏览（仅显示最近15条）</h3>
           <div class="news-item">
@@ -126,18 +126,19 @@
                 <span class="news-info-box" :title="item.content">{{ item.content }}</span>
               </li>
             </ul>
-            <div class="clear-news" v-if="!!news.pv.length">
+            <div v-if="!!news.pv.length" class="clear-news">
               <button :disabled="dsabd.pv" @click="clearNews('pv')">{{ clearText.pv }}</button>
             </div>
           </div>
         </div>
-      </div> -->
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import { mapMutations, mapActions, mapGetters, mapState } from "vuex"
+import { mapMutations, mapActions, mapState } from 'vuex'
+import { getNews } from '../../api/admin'
 
 export default {
   data() {
@@ -145,23 +146,23 @@ export default {
       currentView: [],
       dsabd: { comment: false, msgboard: false, like: false, pv: false },
       clearText: {
-        comment: "设为已读",
-        msgboard: "设为已读",
-        like: "设为已读",
-        pv: "设为已读"
+        comment: '设为已读',
+        msgboard: '设为已读',
+        like: '设为已读',
+        pv: '设为已读'
       }
     }
   },
   computed: {
-    ...mapState("admin", {
-      news: "news"
+    ...mapState('admin', {
+      news: 'news'
     })
   },
   methods: {
-    ...mapActions(["removeNews"]),
-    ...mapMutations(["changeRedSup"]),
+    ...mapActions(['removeNews']),
+    ...mapMutations(['changeRedSup']),
     newsView(_id) {
-      let cr = this.currentView
+      const cr = this.currentView
       if (cr.indexOf(_id) > -1) {
         this.currentView.splice(cr.indexOf(_id), 1)
       } else {
@@ -169,23 +170,35 @@ export default {
       }
     },
     clearNews(type) {
-      let that = this
-      this.clearText[type] = "设置中..."
+      const that = this
+      this.clearText[type] = '设置中...'
       this.removeNews({ type: type }).then((data) => {
         if (data.deleteCode === 200) {
-          that.clearText[type] = "设置已读成功"
+          that.clearText[type] = '设置已读成功'
           that.dsabd[type] = true
           that.changeRedSup(type)
         }
       })
+    },
+    queryNews() {
+      // 获取最新的留言评论
+      getNews().then((res) => {
+        console.log(res)
+        // if (data.newsArr && data.newsArr.length) {
+        //   commit('HANDLE_NEWS', data)
+        // }
+      })
     }
   },
   beforeRouteEnter(to, from, next) {
-    document.title = "后台管理 -新消息"
-    next()
+    next((vm) => {
+      vm.queryNews()
+      document.title = '后台管理 -新消息'
+    })
   }
 }
 </script>
+
 <style lang="scss" scoped>
 .newmessage {
   margin-top: 15px;
