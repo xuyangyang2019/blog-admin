@@ -58,6 +58,68 @@ const mutations = {
   SET_COMMENTS(state, commentsData) {
     state.comments = commentsData
   },
+  // 减少数据
+  REDUCE_ARR(state, payload) {
+    // 删除指定index的文章
+    if (payload.name === 'allArticles') {
+      state.allArticles.splice(payload.index, 1)
+    }
+    if (payload.name === 'draft') {
+      state.draftsArticles.splice(payload.index, 1)
+    }
+    if (payload.name === 'eachTag') {
+      state.articles.tags.splice(payload.index, 1)
+    }
+    // 删除留言
+    if (payload.name === 'adminMsgBoard') {
+      // 删除一级留言
+      if (payload.oneIndex !== -1 && payload.twoIndex === -1) {
+        state.msgBoard.splice(payload.oneIndex, 1)
+        // 删除二级留言
+      } else {
+        state.msgBoard[payload.oneIndex].reply.splice(payload.twoIndex, 1)
+      }
+    }
+    // 删除评论
+    if (payload.name === 'comments') {
+      if (payload.oneIndex !== -1 && payload.twoIndex === -1) {
+        // 删除一级评论
+        state.comments.splice(payload.oneIndex, 1)
+      } else {
+        // 删除二级评论
+        state.comments[payload.oneIndex].reply.splice(payload.twoIndex, 1)
+      }
+    }
+  },
+  // 减少数据 all
+  REDUCE_ARR_ALL(state, payload) {
+    // 删除多篇文章
+    if (payload.name === 'allArticles') {
+      state.allArticles = state.allArticles.filter((item) => {
+        return payload.removeArr.indexOf(item._id) < 0
+      })
+    }
+    if (payload.name === 'draft') {
+      state.draftsArticles = state.draftsArticles.filter((item) => {
+        return payload.removeArr.indexOf(item._id) < 0
+      })
+    }
+    if (payload.name === 'eachTag') {
+      state.articles.tags = state.articles.tags.filter((item) => {
+        return payload.removeArr.indexOf(item._id) < 0
+      })
+    }
+    if (payload.name === 'adminMsgBoard') {
+      state.msgBoard = state.msgBoard.filter((item) => {
+        return payload.removeArr.indexOf(item._id) < 0
+      })
+    }
+    if (payload.name === 'comments') {
+      state.comments = state.comments.filter((item) => {
+        return payload.removeArr.indexOf(item._id) < 0
+      })
+    }
+  },
   // 分页
   SET_PAGE_ARRAY(state, payload) {
     // 默认size为10
@@ -118,68 +180,7 @@ const mutations = {
   SET_ARTICLES_SEARCH(state, data) {
     state.articles.search = data
   },
-  // 减少数据
-  REDUCE_ARR(state, payload) {
-    // 删除指定index的文章
-    if (payload.name === 'allArticles') {
-      state.articles.all.splice(payload.index, 1)
-    }
-    if (payload.name === 'eachTag') {
-      state.articles.tags.splice(payload.index, 1)
-    }
-    if (payload.name === 'draft') {
-      state.articles.drafts.splice(payload.index, 1)
-    }
-    // 删除留言
-    if (payload.name === 'adminMsgBoard') {
-      // 删除一级留言
-      if (payload.oneIndex !== -1 && payload.twoIndex === -1) {
-        state.msgBoard.splice(payload.oneIndex, 1)
-        // 删除二级留言
-      } else {
-        state.msgBoard[payload.oneIndex].reply.splice(payload.twoIndex, 1)
-      }
-    }
-    // 删除评论
-    if (payload.name === 'comments') {
-      if (payload.oneIndex !== -1 && payload.twoIndex === -1) {
-        // 删除一级评论
-        state.comments.splice(payload.oneIndex, 1)
-      } else {
-        // 删除二级评论
-        state.comments[payload.oneIndex].reply.splice(payload.twoIndex, 1)
-      }
-    }
-  },
-  // 减少数据 all
-  REDUCE_ARR_ALL(state, payload) {
-    // 删除多篇文章
-    if (payload.name === 'allArticles') {
-      state.articles.all = state.articles.all.filter((item) => {
-        return payload.removeArr.indexOf(item.articleId) < 0
-      })
-    }
-    if (payload.name === 'eachTag') {
-      state.articles.tags = state.articles.tags.filter((item) => {
-        return payload.removeArr.indexOf(item.articleId) < 0
-      })
-    }
-    if (payload.name === 'draft') {
-      state.articles.drafts = state.articles.drafts.filter((item) => {
-        return payload.removeArr.indexOf(item.articleId) < 0
-      })
-    }
-    if (payload.name === 'adminMsgBoard') {
-      state.msgBoard = state.msgBoard.filter((item) => {
-        return payload.removeArr.indexOf(item._id) < 0
-      })
-    }
-    if (payload.name === 'comments') {
-      state.comments = state.comments.filter((item) => {
-        return payload.removeArr.indexOf(item._id) < 0
-      })
-    }
-  },
+
   ADD_LOCAL_WORD(state, add) {
     state.msgBoard.forEach((item, index) => {
       if (item._id === add._id) {
