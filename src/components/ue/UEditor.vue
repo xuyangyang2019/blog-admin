@@ -2,20 +2,10 @@
   <div class="my-ue">
     <!-- 返回|退出 -->
     <div class="back">
-      <i
-        class="fa fa-home fa-2x"
-        aria-hidden="true"
-        @click="backHome"
-        title="回到管理首页"
-      ></i>
+      <i class="fa fa-home fa-2x" aria-hidden="true" title="回到管理首页" @click="backHome"></i>
       <span class="client-greet">{{ greet }}好，admin！</span>
       <span class="phone-greet">{{ greet }}好，admin！</span>
-      <i
-        class="fa fa-sign-out"
-        aria-hidden="true"
-        title="退出管理界面"
-        @click="exit"
-      ></i>
+      <i class="fa fa-sign-out" aria-hidden="true" title="退出管理界面" @click="exit"></i>
     </div>
 
     <!-- 类型|标题|标签|前言 -->
@@ -24,22 +14,10 @@
       <div class="article-details-type">
         <div class="item-title">类 型 ：</div>
         <div class="item-content">
-          <input
-            id="original"
-            type="radio"
-            name="original"
-            value="true"
-            v-model="articleInfo.original"
-          />
+          <input id="original" v-model="articleInfo.original" type="radio" name="original" value="true" />
           <label class="itme-label" for="original">原创</label>
 
-          <input
-            id="reprint"
-            type="radio"
-            name="original"
-            value="false"
-            v-model="articleInfo.original"
-          />
+          <input id="reprint" v-model="articleInfo.original" type="radio" name="original" value="false" />
           <label class="itme-label" for="reprint">转载</label>
           <!-- <input
           type="radio"
@@ -55,29 +33,16 @@
       <div class="article-details-item">
         <div class="item-title">标 题 ：</div>
         <div class="item-content">
-          <input
-            type="text"
-            class="item-input"
-            placeholder="请输入文章标题"
-            v-model="articleInfo.title"
-          />
+          <input v-model="articleInfo.title" type="text" class="item-input" placeholder="请输入文章标题" />
         </div>
       </div>
       <!-- 标签 -->
       <div class="article-details-tags">
         <div class="item-title">标 签 ：</div>
-        <div
-          class="item-content"
-          @mousedown="canHide = false"
-          @click="getFocus"
-        >
+        <div class="item-content" @mousedown="canHide = false" @click="getFocus">
           <!-- 已经选择的标签 -->
           <div class="has-chosed">
-            <span
-              class="first-floor-span"
-              v-for="(tag, index) in articleInfo.tags"
-              :key="'tag' + index"
-            >
+            <span v-for="(tag, index) in articleInfo.tags" :key="'tag' + index" class="first-floor-span">
               {{ tag }}
               <span class="remove" @click="removeTag(tag, index)">x</span>
             </span>
@@ -86,23 +51,23 @@
           <!-- 推荐标签 -->
           <div class="input-box-move">
             <input
+              ref="ipt"
+              v-model="createTag"
               type="text"
               class="item-input"
               placeholder="请输入标签(最多四个)"
-              v-model="createTag"
               @keyup="tagIndex($event)"
               @compositionstart="start"
               @compositionend="end"
               @focus="getFocus"
               @blur="blurChange"
-              ref="ipt"
             />
             <!--  componsitionstart和componsitionend为中文输入法下，在input框中预输入的英文字符触发的事件，
             ..start在预输入的第一个字符时触发一次，输入完成时（回车输入中文字符或者删除全部字符），
             ..end事件触发，然后触发input绑定的keyup事件-->
             <!-- 增加@focus事件解决页面切换回来导致标签索引不显示-->
 
-            <div class="tag-chart" v-show="tagFlag.recommend" ref="tagChart">
+            <div v-show="tagFlag.recommend" ref="tagChart" class="tag-chart">
               <!-- 推荐的标签的nav -->
               <div class="tag-nav">
                 <span
@@ -124,17 +89,11 @@
               </div>
             </div>
             <!-- 筛选|创建 标签 -->
-            <div class="diy-tag" ref="recommend" v-show="tagFlag.filter">
-              <li
-                v-for="(recom, index) in screenTags"
-                :key="'recom' + index"
-                @click="choseOrCreateTag(recom)"
-              >
+            <div v-show="tagFlag.filter" ref="recommend" class="diy-tag">
+              <li v-for="(recom, index) in screenTags" :key="'recom' + index" @click="choseOrCreateTag(recom)">
                 {{ recom }}
               </li>
-              <li @click="choseOrCreateTag(createTag)">
-                创建标签 {{ createTag }}
-              </li>
+              <li @click="choseOrCreateTag(createTag)">创建标签 {{ createTag }}</li>
             </div>
           </div>
         </div>
@@ -143,12 +102,7 @@
       <div class="article-details-item">
         <div class="item-title">前 言 ：</div>
         <div class="item-content">
-          <input
-            type="text"
-            class="item-input"
-            placeholder="请输入文章前言"
-            v-model="articleInfo.abstract"
-          />
+          <input v-model="articleInfo.abstract" type="text" class="item-input" placeholder="请输入文章前言" />
         </div>
       </div>
     </div>
@@ -157,11 +111,7 @@
     <div class="editor-container">
       <!-- 百度富文本编辑器 -->
       <div class="editor-write">
-        <div
-          id="editor"
-          type="text/plain"
-          style="width:100%;height:350px;"
-        ></div>
+        <div id="editor" type="text/plain" style="width: 100%; height: 350px"></div>
       </div>
       <!-- 预览 -->
       <!-- <div class="preview">
@@ -172,50 +122,28 @@
     <!-- 对文章的一系列操作: 1.文章发表 2.存为草稿 3.已发表文章的更新 4.草稿的更新 5.草稿发表 -->
     <div class="article-handle">
       <!-- 发布文章 发表文章按钮 | 存为草稿按钮 -->
-      <div class="publish" v-if="this.$route.path === '/admin/publish'">
-        <button
-          :disabled="wating.disabled"
-          class="true-publish"
-          @click="publishArticle(1)"
-        >
+      <div v-if="this.$route.path === '/admin/publish'" class="publish">
+        <button :disabled="wating.disabled" class="true-publish" @click="publishArticle(1)">
           {{ wating.info.p }}
         </button>
-        <button
-          :disabled="wating.disabled"
-          class="false-publish"
-          @click="publishArticle(0)"
-        >
+        <button :disabled="wating.disabled" class="false-publish" @click="publishArticle(0)">
           {{ wating.info.sd }}
         </button>
       </div>
 
       <!-- 已发表的文章 更新按钮 -->
-      <div class="publish" v-if="this.$route.path === '/admin/update'">
-        <button
-          v-show="showBtn"
-          :disabled="wating.disabled"
-          class="published-update"
-          @click="updateOrDraftPublish(1)"
-        >
+      <div v-if="this.$route.path === '/admin/update'" class="publish">
+        <button v-show="showBtn" :disabled="wating.disabled" class="published-update" @click="updateOrDraftPublish(1)">
           {{ wating.info.su }}
         </button>
       </div>
 
       <!-- 草稿箱的按钮 更新按钮 | 发表文章按钮 -->
-      <div class="publish" v-if="this.$route.path === '/admin/draftrevise'">
-        <button
-          v-show="showBtn"
-          :disabled="wating.disabled"
-          class="draft-update"
-          @click="updateOrDraftPublish(2)"
-        >
+      <div v-if="this.$route.path === '/admin/draftrevise'" class="publish">
+        <button v-show="showBtn" :disabled="wating.disabled" class="draft-update" @click="updateOrDraftPublish(2)">
           {{ wating.info.su }}
         </button>
-        <button
-          :disabled="wating.disabled"
-          class="draft-publish"
-          @click="updateOrDraftPublish(3)"
-        >
+        <button :disabled="wating.disabled" class="draft-publish" @click="updateOrDraftPublish(3)">
           {{ wating.info.p }}
         </button>
       </div>
@@ -223,7 +151,7 @@
 
     <!-- 二次确认 -->
     <transition name="publish">
-      <div class="publish-mask" v-show="dialog.show">
+      <div v-show="dialog.show" class="publish-mask">
         <div class="mask-box">
           <h3>{{ dialog.info }}</h3>
           <button @click="dialog = { show: false, info: '' }">确认</button>
@@ -234,15 +162,15 @@
 </template>
 
 <script>
-import { mapActions, mapState } from "vuex"
+import { mapActions, mapState } from 'vuex'
 
-import Prism from "prismjs"
+import Prism from 'prismjs'
 // ue相关的文件
-import "@/../public/UE/ueditor.config.js"
-import "@/../public/UE/ueditor.all.min.js"
-import "@/../public/UE/lang/zh-cn/zh-cn"
+import '@/../public/UE/ueditor.config.js'
+import '@/../public/UE/ueditor.all.min.js'
+import '@/../public/UE/lang/zh-cn/zh-cn'
 // 下面注释的文件会报错
-import "@/../public/UE/themes/default/css/ueditor.css"
+import '@/../public/UE/themes/default/css/ueditor.css'
 
 export default {
   props: {
@@ -255,104 +183,74 @@ export default {
       editor: null, // ueditor
       // 文章信息
       articleInfo: {
-        original: "true", // 原创
-        title: "", // 标题
+        original: 'true', // 原创
+        title: '', // 标题
         tags: [], // 标签
-        abstract: "", // 前言
-        content: "" // 内容
+        abstract: '', // 前言
+        content: '' // 内容
       },
-      currentTagNav: "languages", // 当前的标签nav
+      currentTagNav: 'languages', // 当前的标签nav
       // 标签库
       recommendTags: {
         languages: {
-          name: "开发语言",
+          name: '开发语言',
           data: [
-            "html",
-            "css",
-            "javascript",
-            "nodejs",
-            "less",
-            "sass",
-            "php",
-            "pythen",
-            "typescript",
-            "ruby",
-            "objective-c",
-            "asp.net",
-            "perl",
-            "java",
-            "c",
-            "c++"
+            'html',
+            'css',
+            'javascript',
+            'nodejs',
+            'less',
+            'sass',
+            'php',
+            'pythen',
+            'typescript',
+            'ruby',
+            'objective-c',
+            'asp.net',
+            'perl',
+            'java',
+            'c',
+            'c++'
           ]
         },
         plants: {
-          name: "平台框架",
+          name: '平台框架',
           data: [
-            "vue",
-            "angular",
-            "react",
-            "express",
-            "jQuery",
-            "axios",
-            "Dojo",
-            "prototype",
-            "Yui-ext",
-            "laravel",
-            "spring",
-            "koa",
-            "ruby-on-rails",
-            "struts"
+            'vue',
+            'angular',
+            'react',
+            'express',
+            'jQuery',
+            'axios',
+            'Dojo',
+            'prototype',
+            'Yui-ext',
+            'laravel',
+            'spring',
+            'koa',
+            'ruby-on-rails',
+            'struts'
           ]
         },
         servers: {
-          name: "服务器",
-          data: [
-            "nginx",
-            "apache",
-            "tomcat",
-            "linux",
-            "windows",
-            "ubuntu",
-            "centos",
-            "unix",
-            "docker"
-          ]
+          name: '服务器',
+          data: ['nginx', 'apache', 'tomcat', 'linux', 'windows', 'ubuntu', 'centos', 'unix', 'docker']
         },
         dbs: {
-          name: "数据库和缓存",
-          data: ["mysql", "mongodb", "nosql", "oracle", "redis", "sql"]
+          name: '数据库和缓存',
+          data: ['mysql', 'mongodb', 'nosql', 'oracle', 'redis', 'sql']
         },
         tools: {
-          name: "开发工具",
-          data: [
-            "git",
-            "github",
-            "chrome",
-            "sublime-text",
-            "eclipse",
-            "ide",
-            "xcode",
-            "vue-tools",
-            "visual-studio"
-          ]
+          name: '开发工具',
+          data: ['git', 'github', 'chrome', 'sublime-text', 'eclipse', 'ide', 'xcode', 'vue-tools', 'visual-studio']
         },
         browsers: {
-          name: "浏览器",
-          data: [
-            "chrome",
-            "firefox",
-            "ie",
-            "opera",
-            "safari",
-            "android",
-            "ios",
-            "windows",
-            "linux"
-          ]
+          name: '浏览器',
+          data: ['chrome', 'firefox', 'ie', 'opera', 'safari', 'android', 'ios', 'windows', 'linux']
         }
       },
       canHide: true, // 能隐藏标签页面
-      createTag: "", // 创建标签
+      createTag: '', // 创建标签
       screenTags: [], // 标签搜索结果
       inputFlag: true, // 中文输入法下预输入触发事件的标志位
       tagFlag: {
@@ -360,18 +258,17 @@ export default {
         filter: false // 显示过滤的标签
         // delete: false // 删除标签
       },
-
       showBtn: false, // 显示按钮
-      dialog: { show: false, info: "" }, // 对话框
+      dialog: { show: false, info: '' }, // 对话框
       wating: {
         disabled: false,
-        info: { p: "发表文章", sd: "存为草稿", su: "更新" }
+        info: { p: '发表文章', sd: '存为草稿', su: '更新' }
       }
     }
   },
   computed: {
-    ...mapState("admin", {
-      articles: "articles"
+    ...mapState('admin', {
+      articles: 'articles'
     }),
     // 所有标签集合
     filterArray() {
@@ -386,40 +283,64 @@ export default {
     },
     // 问候语
     greet() {
-      let hour = new Date().getHours()
+      const hour = new Date().getHours()
       if (hour >= 0 && hour < 6) {
-        return "凌晨"
+        return '凌晨'
       }
       if (hour >= 6 && hour < 11) {
-        return "上午"
+        return '上午'
       }
       if (hour >= 11 && hour < 14) {
-        return "中午"
+        return '中午'
       }
       if (hour >= 14 && hour < 18) {
-        return "下午"
+        return '下午'
       }
       if (hour >= 18 && hour < 24) {
-        return "晚上"
+        return '晚上'
       }
-      return ""
+      return ''
     }
+  },
+  mounted() {
+    this.initUeditor()
+    this.initUeditorContent()
+    // 这句话的意思是点击其他区域关闭（也可以根据自己需求写触发事件）
+    // document.addEventListener("click", (e) => {
+    //   if (!this.$el.contains(e.target)) {
+    //     this.show = false
+    //   }
+    // })
+  },
+  destroyed() {
+    // 离开页面，销毁
+    if (this.editor !== null) {
+      this.editor.destroy()
+    }
+    this.articleInfo = {
+      title: '',
+      tags: [],
+      abstract: '',
+      content: ''
+    }
+    // 清除当前的文章
+    this.$store.commit('admin/ClearOnly')
   },
   methods: {
     ...mapActions({
-      SaveArticle: "admin/SaveArticle",
-      UpdateArticle: "admin/UpdateArticle"
+      SaveArticle: 'admin/SaveArticle',
+      UpdateArticle: 'admin/UpdateArticle'
     }),
     // 返回首页
     backHome() {
-      this.$router.push({ name: "admin" })
+      this.$router.push({ name: 'admin' })
     },
     // 退出
     exit() {
-      localStorage.removeItem("map_blog_token_info_item_name")
-      localStorage.removeItem("userName")
-      localStorage.removeItem("lastLogin")
-      this.$router.push({ name: "login" })
+      localStorage.removeItem('map_blog_token_info_item_name')
+      localStorage.removeItem('userName')
+      localStorage.removeItem('lastLogin')
+      this.$router.push({ name: 'login' })
     },
     // 标签框获取焦点
     getFocus() {
@@ -431,7 +352,7 @@ export default {
         this.tagFlag.recommend = true
       }
     },
-    /*标签框input只要获得焦点，此标志位和tagFlag.recommend均为true，点击其他位置
+    /* 标签框input只要获得焦点，此标志位和tagFlag.recommend均为true，点击其他位置
      *时触发blur事件，tagFlag.recommend为设为false,标签推荐页隐藏。点击标签框中的
      *div时，首先触发mousedown事件（先于blur事件），标志位flag赋值false,此时标签框input
      *失焦点，blur事件触发，this.itSelf为false,没有反应。这样就避免了标签推荐
@@ -441,19 +362,19 @@ export default {
       if (this.canHide) {
         this.tagFlag.recommend = false
         this.tagFlag.filter = false
-        this.createTag = ""
+        this.createTag = ''
       }
     },
     // 选择标签
     choseRecommend(tag) {
-      let tags = this.articleInfo.tags
+      const tags = this.articleInfo.tags
       // this.tagFlag.delete = true
       if (tags.indexOf(tag) === -1 && tags.length < 4) {
         this.articleInfo.tags.push(tag)
       } else if (tags.length === 4) {
         this.$toast({
-          message: "最多只能设置4个标签！",
-          type: "warning",
+          message: '最多只能设置4个标签！',
+          type: 'warning',
           duration: 2000
         })
       }
@@ -480,7 +401,7 @@ export default {
       if (this.inputFlag) {
         this.createTag = this.createTag.trim()
         // 如果没有创建标签
-        if (this.createTag === "") {
+        if (this.createTag === '') {
           // if (
           //   this.tagFlag.delete &&
           //   event.keyCode === 8 &&
@@ -499,9 +420,9 @@ export default {
             recommend: false
             // delete: false
           }
-          let tag = this.createTag
-          let pattern = new RegExp("^" + tag, "gi")
-          this.screenTags = this.filterArray.filter((item, index, arr) => {
+          const tag = this.createTag
+          const pattern = new RegExp('^' + tag, 'gi')
+          this.screenTags = this.filterArray.filter((item) => {
             return pattern.test(item)
           })
         }
@@ -509,52 +430,52 @@ export default {
     },
     // 选择或创建标签
     choseOrCreateTag(tag) {
-      let tags = this.articleInfo.tags
+      const tags = this.articleInfo.tags
       if (tags.indexOf(tag) === -1 && tags.length < 4) {
         this.articleInfo.tags.push(tag)
       } else if (tags.length === 4) {
         this.$toast({
-          message: "最多只能设置4个标签！",
-          type: "warning",
+          message: '最多只能设置4个标签！',
+          type: 'warning',
           duration: 2000
         })
       }
       this.tagFlag.filter = false
-      this.createTag = ""
+      this.createTag = ''
       setTimeout(() => {
-        this.tagFlag.recommend = false //先让getFocus触发
+        this.tagFlag.recommend = false // 先让getFocus触发
       }, 0)
     },
     // 表单验证验证
     validate() {
-      if (this.articleInfo.title === "") {
+      if (this.articleInfo.title === '') {
         this.$toast({
-          message: "请填写文章标题",
-          type: "warning",
+          message: '请填写文章标题',
+          type: 'warning',
           duration: 2000
         })
         return false
       }
       if (this.articleInfo.tags.length === 0) {
         this.$toast({
-          message: "请填写文章标签",
-          type: "warning",
+          message: '请填写文章标签',
+          type: 'warning',
           duration: 2000
         })
         return false
       }
-      if (this.articleInfo.abstract === "") {
+      if (this.articleInfo.abstract === '') {
         this.$toast({
-          message: "请填写文章前言",
-          type: "warning",
+          message: '请填写文章前言',
+          type: 'warning',
           duration: 2000
         })
         return false
       }
       if (this.articleInfo.content.length === 0) {
         this.$toast({
-          message: "内容不能为空",
-          type: "warning",
+          message: '内容不能为空',
+          type: 'warning',
           duration: 2000
         })
         return false
@@ -563,25 +484,25 @@ export default {
     },
     // 发表文章或存为草稿，通过设置isPublish来区别
     publishArticle(flag) {
-      console.log("发表文章或存为草稿", flag)
+      console.log('发表文章或存为草稿', flag)
       // 如果验证通过
       if (this.validate()) {
         // 发表
-        let isPublish = flag ? true : false
+        const isPublish = !!flag
         // 原创
-        let _original = this.articleInfo.original === "true" ? true : false
+        // const _original = this.articleInfo.original === 'true'
         // 更改按钮文字
         if (flag) {
           // 如果是发表文章
           this.wating = {
             disabled: true,
-            info: { p: "发表中...", sd: "存为草稿", su: "更新" }
+            info: { p: '发表中...', sd: '存为草稿', su: '更新' }
           }
         } else {
           // 如果是草稿箱
           this.wating = {
             disabled: true,
-            info: { p: "发表文章", sd: "保存中...", su: "更新" }
+            info: { p: '发表文章', sd: '保存中...', su: '更新' }
           }
         }
         // 保存文章
@@ -591,32 +512,32 @@ export default {
           abstract: this.articleInfo.abstract,
           content: this.articleInfo.content,
           tag: this.articleInfo.tags,
-          publish: flag ? true : false,
-          original: this.articleInfo.original === "true" ? true : false,
+          publish: !!flag,
+          original: this.articleInfo.original === 'true',
           pv: 0,
           date: Date.now()
         }).then((data) => {
           console.log(data)
           if (data.code === 200) {
-            //清空编辑器
-            this.editor.setContent("")
+            // 清空编辑器
+            this.editor.setContent('')
             // 修改按钮文字
             this.wating = {
               disabled: false,
-              info: { p: "发表文章", sd: "存为草稿", su: "更新" }
+              info: { p: '发表文章', sd: '存为草稿', su: '更新' }
             }
             // 重置表单
             this.articleInfo = {
-              original: "true",
-              title: "",
+              original: 'true',
+              title: '',
               tags: [],
-              content: "",
-              abstract: ""
+              content: '',
+              abstract: ''
             }
             if (isPublish) {
-              this.dialog = { show: true, info: "文章发表成功！" }
+              this.dialog = { show: true, info: '文章发表成功！' }
             } else {
-              this.dialog = { show: true, info: "草稿保存成功！" }
+              this.dialog = { show: true, info: '草稿保存成功！' }
             }
           }
         })
@@ -629,9 +550,9 @@ export default {
         // 是否发表文章
         let isPublish = false
         // 文章
-        let article = this.articles.only[0]
+        const article = this.articles.only[0]
         // 是否原创
-        let _original = this.articleInfo.original === "true" ? true : false
+        const _original = this.articleInfo.original === 'true'
         console.log(article)
         switch (flag) {
           // 已发表文章的更新
@@ -639,27 +560,27 @@ export default {
             isPublish = false
             this.wating = {
               disabled: true,
-              info: { p: "发表文章", sd: "存为草稿", su: "更新中..." }
+              info: { p: '发表文章', sd: '存为草稿', su: '更新中...' }
             }
-            this.dialog.info = "更新成功！"
+            this.dialog.info = '更新成功！'
             break
           // 草稿的更新
           case 2:
             isPublish = true
             this.wating = {
               disabled: true,
-              info: { p: "发表文章", sd: "存为草稿", su: "更新中..." }
+              info: { p: '发表文章', sd: '存为草稿', su: '更新中...' }
             }
-            this.dialog.info = "更新成功！"
+            this.dialog.info = '更新成功！'
             break
           // 草稿文章的发表
           case 3:
             isPublish = true
             this.wating = {
               disabled: true,
-              info: { p: "发表中...", sd: "存为草稿", su: "更新" }
+              info: { p: '发表中...', sd: '存为草稿', su: '更新' }
             }
-            this.dialog.info = "发表成功！"
+            this.dialog.info = '发表成功！'
             break
           default:
             break
@@ -674,18 +595,18 @@ export default {
           tag: this.articleInfo.tags,
           publish: isPublish
         }).then((data) => {
-          //清空编辑器
-          this.editor.setContent("")
+          // 清空编辑器
+          this.editor.setContent('')
           this.articleInfo = {
-            original: "true",
-            title: "",
+            original: 'true',
+            title: '',
             tags: [],
-            content: "",
-            abstract: ""
+            content: '',
+            abstract: ''
           }
           this.wating = {
             disabled: false,
-            info: { p: "发表文章", sd: "存为草稿", su: "更新" }
+            info: { p: '发表文章', sd: '存为草稿', su: '更新' }
           }
           this.dialog.show = true
         })
@@ -697,20 +618,19 @@ export default {
     },
     // 转化内容
     transformStr() {
-      let dom = document.createElement("div")
+      const dom = document.createElement('div')
       dom.innerHTML = this.getUEContent()
-      let strArr = dom.getElementsByTagName("pre")
+      const strArr = dom.getElementsByTagName('pre')
       for (let i = 0; i < strArr.length; i++) {
-        let el = strArr[i],
-          preContent = el.innerHTML,
-          code = document.createElement("code"),
-          cls =
-            "language-" + el.className.substring(6, el.className.indexOf(";"))
-        let tempCls = el.className
-        el.className = tempCls + " " + "line-numbers"
+        const el = strArr[i]
+        const preContent = el.innerHTML
+        const code = document.createElement('code')
+        const cls = 'language-' + el.className.substring(6, el.className.indexOf(';'))
+        const tempCls = el.className
+        el.className = tempCls + ' ' + 'line-numbers'
         code.className = cls
         code.innerHTML = preContent
-        let str = code.outerHTML
+        const str = code.outerHTML
         el.innerHTML = str
       }
       // 文章内容
@@ -723,17 +643,17 @@ export default {
     // 初始化编辑器
     initUeditor() {
       // eslint-disable-next-line no-undef
-      this.editor = UE.getEditor("editor", this.config) // 初始化UE
+      this.editor = UE.getEditor('editor', this.config) // 初始化UE
       // editor内容变化监听事件
-      this.editor.addListener("contentChange", () => {
-        console.log("ue contentChange")
+      this.editor.addListener('contentChange', () => {
+        console.log('ue contentChange')
         if (!this.showBtn) {
           this.showBtn = true
         }
         this.transformStr()
       })
-      this.editor.addListener("ready", () => {
-        console.log("ue ready")
+      this.editor.addListener('ready', () => {
+        console.log('ue ready')
         if (this.articles.only.length) {
           this.editor.setContent(this.articles.only[0].content)
         }
@@ -743,11 +663,11 @@ export default {
     initUeditorContent() {
       // 如果有文章
       if (this.articles.only.length) {
-        let atc = this.articles.only[0]
+        const atc = this.articles.only[0]
         // 标题 | 标签 | 前言
-        if (this.$route.path !== "/admin/publish") {
+        if (this.$route.path !== '/admin/publish') {
           this.articleInfo = {
-            original: atc.original === true ? "true" : "false",
+            original: atc.original === true ? 'true' : 'false',
             title: atc.title,
             tags: atc.tag,
             abstract: atc.abstract,
@@ -760,31 +680,8 @@ export default {
         // }
       }
     }
-  },
-  mounted() {
-    this.initUeditor()
-    this.initUeditorContent()
-    //这句话的意思是点击其他区域关闭（也可以根据自己需求写触发事件）
-    // document.addEventListener("click", (e) => {
-    //   if (!this.$el.contains(e.target)) {
-    //     this.show = false
-    //   }
-    // })
-  },
-  destroyed() {
-    // 离开页面，销毁
-    if (this.editor !== null) {
-      this.editor.destroy()
-    }
-    this.articleInfo = {
-      title: "",
-      tags: [],
-      abstract: "",
-      content: ""
-    }
-    // 清除当前的文章
-    this.$store.commit("admin/ClearOnly")
   }
+
 }
 </script>
 

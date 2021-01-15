@@ -18,26 +18,26 @@
 
 <script>
 // 调用富文本编辑器
-import QuillEditor from "../qe/QuillEditor.vue"
+import QuillEditor from '../qe/QuillEditor.vue'
 
 export default {
-  data() {
-    return {}
-  },
   components: {
     QuillEditor
   },
-  methods: {
-    publishArticle() {
-      console.log("发布文章")
-    },
-    saveArticle() {
-      console.log("存为草稿")
-    }
+  data() {
+    return {}
   },
   mounted() {},
+  methods: {
+    publishArticle() {
+      console.log('发布文章')
+    },
+    saveArticle() {
+      console.log('存为草稿')
+    }
+  },
   beforeRouteEnter(to, from, next) {
-    document.title = "后台管理 -发表文章"
+    document.title = '后台管理 -发表文章'
     next()
   }
 }

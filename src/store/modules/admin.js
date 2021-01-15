@@ -7,6 +7,13 @@ const state = {
   pageArray: [], // 已发表页码数组
   msgBoard: [], // 留言板
   comments: [], // 评论
+  news: {
+    pvNum: 0, // 点击数
+    comment: [], // 评论
+    msgboard: [], // 留言板
+    like: [], // 点赞
+    pv: [] // 点击
+  }, // 消息
   // =============================================
   tagsObj: {}, // 标签
   // 红点提示
@@ -17,14 +24,6 @@ const state = {
     p: false // 点击
   },
   forLocation: [], // 不知道有什么用
-  // 消息
-  news: {
-    pvNum: 0, // 点击数
-    comment: [], // 评论
-    msgboard: [], // 留言板
-    like: [], // 点赞
-    pv: [] // 点击
-  },
   // 文章列表
   articles: {
     all: [], // 所有文章

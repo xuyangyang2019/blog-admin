@@ -16,7 +16,7 @@ import Admin from './views/Admin.vue'
 // const Login = resolve => { require.ensure([], () => { resolve(require('./views/Login.vue')) }, 'login') }
 
 // 后台管理界面
-const eachTag = (resolve) => require(['@/components/article/eachTag'], resolve)
+// const eachTag = (resolve) => require(['@/components/common/EachTag'], resolve)
 
 Vue.use(Router)
 
@@ -52,7 +52,7 @@ const router = new Router({
         {
           path: 'allArticles/:tag',
           name: 'eachTag',
-          component: eachTag,
+          component: () => import(/* webpackChunkName: "admin" */ './components/common/EachTag.vue'),
           meta: {
             requireAuth: true,
             keepAlive: true
@@ -62,7 +62,7 @@ const router = new Router({
         {
           path: 'review/:eTag/:articleId',
           name: 'review',
-          component: () => import(/* webpackChunkName: "admin" */ './components/article/ReviewArticle.vue'),
+          component: () => import(/* webpackChunkName: "admin" */ './components/common/ReviewArticle.vue'),
           meta: {
             requireAuth: true,
             keepAlive: true

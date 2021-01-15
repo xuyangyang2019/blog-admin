@@ -4,29 +4,29 @@
   </div>
 </template>
 <script>
-import { mapActions, mapState } from "vuex"
-import list from "@/components/common/ArticleList"
+import { mapActions, mapState } from 'vuex'
+import list from '@/components/common/ArticleList'
 export default {
   components: {
     list
   },
-  created() {
-    this.getAdminArticles()
-    document.title = "后台管理--" + this.$route.params.tag + "文章"
-  },
   computed: {
-    ...mapState(["articles"])
+    ...mapState(['articles'])
   },
   watch: {
-    $route: function() {
+    $route: function () {
       this.getAdminArticles()
-      document.title = "后台管理--" + this.$route.params.tag
+      document.title = '后台管理--' + this.$route.params.tag
     }
   },
+  created() {
+    this.getAdminArticles()
+    document.title = '后台管理--' + this.$route.params.tag + '文章'
+  },
   methods: {
-    ...mapActions(["getArticles", "getArticlesCount"]),
-    getAdminArticles: function() {
-      let payload = {
+    ...mapActions(['getArticles', 'getArticlesCount']),
+    getAdminArticles: function () {
+      const payload = {
         publish: true,
         tag: this.$route.params.tag,
         page: 1
