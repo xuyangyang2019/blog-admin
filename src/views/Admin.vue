@@ -92,6 +92,7 @@
 
 <script>
 import { mapState } from 'vuex'
+import { getTags } from '../api/admin'
 
 export default {
   data() {
@@ -173,9 +174,12 @@ export default {
   },
   created() {
     // 获取最新的标签
-    // this.$store.dispatch("admin/GetTagsclass", { publish: true })
-    // 获取最新的留言评论
-    // this.$store.dispatch("admin/GetNews")
+    getTags(true).then((res) => {
+      console.log(res)
+      // if (data.tags && data.tags.length) {
+      //   commit('SET_TAGS', data)
+      // }
+    })
   },
   mounted() {
     // 添加监听事件
