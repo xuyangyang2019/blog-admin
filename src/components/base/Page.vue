@@ -1,6 +1,6 @@
 <template>
   <div class="page">
-    <button @click="prePage" :disabled="preDisabled" class="changebtn">
+    <button :disabled="preDisabled" class="changebtn" @click="prePage">
       <i class="fa fa-angle-left"></i>
     </button>
     <button
@@ -12,14 +12,14 @@
     >
       {{ page }}
     </button>
-    <button @click="nextPage" :disabled="nextDisabled" class="changebtn">
+    <button :disabled="nextDisabled" class="changebtn" @click="nextPage">
       <i class="fa fa-angle-right"></i>
     </button>
   </div>
 </template>
 
 <script>
-import { mapActions, mapState } from "vuex"
+import { mapActions, mapState } from 'vuex'
 
 export default {
   data() {
@@ -29,16 +29,21 @@ export default {
       nextDisabled: false
     }
   },
+  computed: {
+    ...mapState('admin', {
+      pageArray: 'pageArray'
+    })
+  },
   watch: {
     currentPage() {
-      let cpg = this.currentPage
-      //按钮锁定
+      const cpg = this.currentPage
+      // 按钮锁定
       if (cpg === 1) {
         this.preDisabled = true
       } else if (cpg > 1) {
         this.preDisabled = false
       }
-      //后退按钮锁定
+      // 后退按钮锁定
       if (cpg < this.pageArray.length) {
         this.nextDisabled = false
       } else if (cpg === this.pageArray.length) {
@@ -46,17 +51,12 @@ export default {
       }
     }
   },
-  computed: {
-    ...mapState("admin", {
-      pageArray: "pageArray"
-    })
-  },
   methods: {
     ...mapActions({
-      search: "admin/Search",
-      getArticles: "admin/GetArticles",
-      getMsgBoard: "admin/GetMsgBoard",
-      getAdminComments: "admin/GetAdminComments"
+      search: 'admin/Search',
+      getArticles: 'admin/GetArticles',
+      getMsgBoard: 'admin/GetMsgBoard',
+      getAdminComments: 'admin/GetAdminComments'
     }),
     // 上一页
     prePage() {
@@ -74,45 +74,44 @@ export default {
     },
     // 改变页数
     changePage(page) {
-      let payload = {}
-      let tag = ""
+      // const payload = {}
+      // const tag = ''
       this.currentPage = page
       switch (this.$route.name) {
-        case "allArticles":
+        case 'allArticles':
           this.getArticles({
             publish: true,
             page: page,
             tag: false
           })
           break
-        case "eachTag":
+        case 'eachTag':
           this.getArticles({
             publish: true,
             page: page,
             tag: this.$route.params.tag
           })
           break
-        case "draft":
+        case 'draft':
           this.getArticles({
             publish: false,
             page: page
           })
           break
-        case "adminMsgBoard":
+        case 'adminMsgBoard':
           this.getMsgBoard({ pageNum: page })
           break
-        case "comments":
+        case 'comments':
           this.getAdminComments({ page: page })
           break
-        case "search":
-          if (this.$route.params.base.indexOf("-") !== -1) {
+        case 'search':
+          if (this.$route.params.base.indexOf('-') !== -1) {
             // eslint-disable-next-line no-useless-escape
-            let timeArr = this.$route.params.base.match(/\d+\-\d+\-\d+/g)
-            //utc时间0点起
-            let startTime = new Date(Date.parse(timeArr[0])).getTime()
-            //utc时间24点
-            let endTime =
-              new Date(Date.parse(timeArr[1])).getTime() + 1000 * 60 * 60 * 24
+            const timeArr = this.$route.params.base.match(/\d+\-\d+\-\d+/g)
+            // utc时间0点起
+            const startTime = new Date(Date.parse(timeArr[0])).getTime()
+            // utc时间24点
+            const endTime = new Date(Date.parse(timeArr[1])).getTime() + 1000 * 60 * 60 * 24
             this.search({
               publish: true,
               start: startTime,
@@ -123,7 +122,7 @@ export default {
             this.search({
               publish: true,
               key: this.$route.params.base,
-              according: "key",
+              according: 'key',
               page: page
             })
           }

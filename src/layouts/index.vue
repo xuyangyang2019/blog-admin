@@ -6,11 +6,11 @@
 
 <script>
 export default {
-  name: "Layout",
+  name: 'Layout',
+  components: {},
   data() {
     return {}
-  },
-  components: {}
+  }
 }
 </script>
 

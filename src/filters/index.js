@@ -35,20 +35,19 @@ const ifZero = (value) => {
 // }
 
 const reviseTime = (value) => {
-  let localTime = new Date(value),
-    year = localTime.getFullYear(),
-    month = localTime.getMonth() + 1,
-    day = localTime.getDate(),
-    hours = localTime.getHours(),
-    minutes = localTime.getMinutes(),
-    // seconds = localTime.getSeconds(),
-    finTime
+  const localTime = new Date(value)
+  const year = localTime.getFullYear()
+  const month = localTime.getMonth() + 1
+  const day = localTime.getDate()
+  const hours = localTime.getHours()
+  let minutes = localTime.getMinutes()
+  // seconds = localTime.getSeconds(),
   for (let i = 0; i < 10; i++) {
     if (i === minutes) {
-      minutes = "0" + minutes
+      minutes = '0' + minutes
     }
   }
-  finTime = year + "-" + month + "-" + day + " " + hours + ":" + minutes
+  const finTime = year + '-' + month + '-' + day + ' ' + hours + ':' + minutes
   // + ":" +seconds
   return finTime
 }

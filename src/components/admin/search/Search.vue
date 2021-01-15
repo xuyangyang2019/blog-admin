@@ -2,44 +2,41 @@
   <div class="search-articles">
     <div class="search-info">以下是为您搜索到的内容：</div>
 
-    <div class="search-empty" v-if="!articles.search.length">
-      啊哦~~空空如也
-    </div>
-    <list
-      :article_list="articles.search"
-      v-if="articles.search && articles.search.length"
-    ></list>
+    <div v-if="!articles.search.length" class="search-empty">啊哦~~空空如也</div>
+    <list v-if="articles.search && articles.search.length" :article_list="articles.search"></list>
   </div>
 </template>
 
 <script>
-import { mapActions, mapState } from "vuex"
-import list from "@/components/common/ArticleList"
+import { mapActions, mapState } from 'vuex'
+import list from '@/components/common/ArticleList'
 
 export default {
   components: {
     list
   },
   computed: {
-    ...mapState("admin", {
-      articles: "articles"
+    ...mapState('admin', {
+      articles: 'articles'
     })
+  },
+  created() {
+    this.getSearch(this.$route)
   },
   methods: {
     ...mapActions({
-      searchArticles: "admin/SearchAdminArticles",
-      getArticlesCount: "admin/GetArticlesCount"
+      searchArticles: 'admin/SearchAdminArticles',
+      getArticlesCount: 'admin/GetArticlesCount'
     }),
     getSearch(route) {
-      //时间范围搜索
-      if (route.params.base.indexOf("-") !== -1) {
+      // 时间范围搜索
+      if (route.params.base.indexOf('-') !== -1) {
         // eslint-disable-next-line no-useless-escape
-        let timeArr = route.params.base.match(/\d+\-\d+\-\d+/g)
-        //utc时间0点起
-        let startTime = new Date(Date.parse(timeArr[0])).getTime()
-        //utc时间24点
-        let endTime =
-          new Date(Date.parse(timeArr[1])).getTime() + 1000 * 60 * 60 * 24
+        const timeArr = route.params.base.match(/\d+\-\d+\-\d+/g)
+        // utc时间0点起
+        const startTime = new Date(Date.parse(timeArr[0])).getTime()
+        // utc时间24点
+        const endTime = new Date(Date.parse(timeArr[1])).getTime() + 1000 * 60 * 60 * 24
         this.searchArticles({
           publish: true,
           start: startTime,
@@ -51,12 +48,12 @@ export default {
           start: startTime,
           end: endTime
         })
-        //关键词搜索
+        // 关键词搜索
       } else {
         this.searchArticles({
           publish: true,
           key: route.params.base,
-          according: "key",
+          according: 'key',
           page: 1
         })
         this.getArticlesCount({
@@ -67,16 +64,14 @@ export default {
     }
   },
   beforeRouteEnter(to, from, next) {
-    document.title = "后台管理 -文章搜索"
+    document.title = '后台管理 -文章搜索'
     next((vm) => {
-      if (from.name !== "search") {
+      if (from.name !== 'search') {
         vm.getSearch(to)
       }
     })
   },
-  created() {
-    this.getSearch(this.$route)
-  },
+
   beforeRouteUpdate(to, from, next) {
     this.getSearch(to)
     next()

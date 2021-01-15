@@ -396,7 +396,7 @@ export default {
       this.inputFlag = true
     },
     // 自动匹配标签
-    tagIndex(event) {
+    tagIndex() {
       // 如果输入结束
       if (this.inputFlag) {
         this.createTag = this.createTag.trim()
@@ -594,7 +594,7 @@ export default {
           content: this.articleInfo.content,
           tag: this.articleInfo.tags,
           publish: isPublish
-        }).then((data) => {
+        }).then(() => {
           // 清空编辑器
           this.editor.setContent('')
           this.articleInfo = {

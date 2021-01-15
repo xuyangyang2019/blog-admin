@@ -188,7 +188,7 @@ export default {
       //   item.style.background = "#" + Math.floor(Math.random() * 0xffffff).toString(16)
       // })
       // 随机选中颜色
-      this.$refs.listTag.forEach((item, index, arr) => {
+      this.$refs.listTag.forEach((item) => {
         item.style.background = this.color[Math.floor(Math.random() * 10)]
       })
     },
@@ -208,7 +208,7 @@ export default {
     allChoose() {
       if (this.articlesChose.length !== this.articleList.length) {
         const _arr = []
-        this.articleList.forEach((item, index, arr) => {
+        this.articleList.forEach((item) => {
           _arr.push(item.articleId)
         })
         this.articlesChose = _arr
