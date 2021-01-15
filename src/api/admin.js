@@ -42,16 +42,47 @@ function downloadDb() {
 }
 
 // ========================== 文章相关===================================
+/**
+ * 确认token
+ */
+function confirmToken() {
+  return fetch.get('/api/confirmToken')
+}
 
 /**
- * 分页获取文章列表
+ * 按条件分页查询文章列表
  * @param {Number} pageNum 第几页
  * @param {Number} pageSize 每页的文章数量
- * @param {Number} publish 是否发表 1发表 0未发表
+ * @param {Boolean} publish 是否发表 true发表 false未发表
  * @param {String} tag 文章标签
  */
 function getArticleList(pageNum, pageSize, publish, tag) {
   return fetch.get('/api/getArticleList', { pageNum: pageNum, pageSize: pageSize, publish: publish, tag: tag })
+}
+
+/**
+ * 添加文章
+ * @param {*} newArticle
+ */
+function addArticle(newArticle) {
+  // articleId: 0,
+  // title: this.articleInfo.title,
+  // abstract: this.articleInfo.abstract,
+  // content: this.articleInfo.content,
+  // tag: this.articleInfo.tags,
+  // publish: !!flag,
+  // original: this.articleInfo.original === 'true',
+  // pv: 0,
+  // date: new Date().getTime()
+  return fetch.post('/api/addArticle', newArticle)
+}
+
+/**
+ * 删除文章
+ * @param {Array} ids 要删除的文章的id的集合
+ */
+function deleteArticles(ids) {
+  return fetch.delete('/api/deleteArticles', { ids: ids })
 }
 
 // 获取对应模块的文章总数，为分页按钮个数提供支持
@@ -67,11 +98,6 @@ function getArticleList(pageNum, pageSize, publish, tag) {
 //     console.log(data)
 //     commit('SET_ARTICLES_SEARCH', data)
 //   })
-// },
-
-// // 删除文章
-// RemoveArticle({ commit }, payload) {
-//   return fetch.delete('/api/deleteArticle', payload)
 // },
 
 // // 精准获取文章
@@ -107,16 +133,8 @@ function getArticleList(pageNum, pageSize, publish, tag) {
 //   })
 // },
 
-/**
- * 确认token
- */
-function confirmToken() {
-  return fetch.get('/api/confirmToken')
-}
-
 // // 发表或保存文章
 // SaveArticle({ commit }, payload) {
-//   return fetch.post('/api/saveArticle', payload)
 // },
 
 // // 更新文章
@@ -235,6 +253,8 @@ export {
   copyData,
   downloadDb,
   getArticleList,
+  addArticle,
+  deleteArticles,
   getMsgBoard,
   replyMsgBoard,
   deleteMsgBoards,
