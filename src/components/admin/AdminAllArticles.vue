@@ -1,6 +1,6 @@
 <template>
   <div class="admin-articles">
-    <list :articleList="allArticls"></list>
+    <list :articleList="allArticles"></list>
   </div>
 </template>
 
@@ -16,7 +16,7 @@ export default {
   },
   computed: {
     ...mapState('admin', {
-      allArticls: 'allArticls'
+      allArticles: 'allArticles'
     })
   },
   created() {
@@ -30,7 +30,8 @@ export default {
     }),
     // 查询已发表的文章列表
     queryArticles() {
-      getArticleList(1, 10, 1, '').then((res) => {
+      getArticleList(1, 10, true, '').then((res) => {
+        console.log(res)
         if (res.code === 200) {
           this.SET_ALL_ARTICLES(res.data.list)
           this.SET_PAGE_ARRAY(res.data.count)
