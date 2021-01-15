@@ -172,6 +172,8 @@ import '@/../public/UE/lang/zh-cn/zh-cn'
 // 下面注释的文件会报错
 import '@/../public/UE/themes/default/css/ueditor.css'
 
+import { addArticle } from '../../api/admin'
+
 export default {
   props: {
     config: {
@@ -328,7 +330,6 @@ export default {
   },
   methods: {
     ...mapActions({
-      SaveArticle: 'admin/SaveArticle',
       UpdateArticle: 'admin/UpdateArticle'
     }),
     // 返回首页
@@ -506,7 +507,7 @@ export default {
           }
         }
         // 保存文章
-        this.SaveArticle({
+        addArticle({
           articleId: 0,
           title: this.articleInfo.title,
           abstract: this.articleInfo.abstract,
@@ -515,7 +516,7 @@ export default {
           publish: !!flag,
           original: this.articleInfo.original === 'true',
           pv: 0,
-          date: Date.now()
+          date: new Date().getTime()
         }).then((data) => {
           console.log(data)
           if (data.code === 200) {
@@ -681,7 +682,6 @@ export default {
       }
     }
   }
-
 }
 </script>
 
