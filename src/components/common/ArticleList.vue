@@ -20,14 +20,10 @@
       </thead>
       <!-- 表格主题 -->
       <tbody class="tbody-list">
-        <tr
-          v-for="(item, index) in articleList"
-          :key="index"
-          :class="{ bg: articlesChose.indexOf(item.articleId) !== -1 }"
-        >
+        <tr v-for="(item, index) in articleList" :key="index" :class="{ bg: articles2Del.indexOf(item._id) !== -1 }">
           <!-- 选中框 -->
           <td>
-            <input v-model="articlesChose" type="checkbox" :value="item.articleId" @click="singleChecked()" />
+            <input v-model="articles2Del" type="checkbox" :value="item._id" @click="singleChecked()" />
             <span style="visibility: hidden">单选</span>
           </td>
           <!-- 序号 -->
@@ -59,7 +55,7 @@
               <i class="fa fa-pencil-square-o fa-lg" aria-hidden="true" title="修改"></i>
             </button>
             <!-- 删除 -->
-            <button class="operation-btn" @click="deleteArticle(item.articleId, index)">
+            <button class="operation-btn" @click="removeArticle(item._id, index)">
               <i class="fa fa-trash-o fa-lg" aria-hidden="true" title="删除"></i>
             </button>
           </td>
@@ -68,8 +64,8 @@
     </table>
 
     <!-- 批量删除按钮 -->
-    <div v-show="articlesChose.length" class="remove-all">
-      <button @click="deleteArticles()">删除选中项</button>
+    <div v-show="articles2Del.length" class="remove-all">
+      <button @click="removeArticles()">删除选中项</button>
     </div>
 
     <!-- 分页 -->
@@ -78,7 +74,7 @@
     </transition>
 
     <!-- 二次确认弹框 -->
-    <transition name="fade">
+    <!-- <transition name="fade">
       <div v-show="showDeleteDialog" class="validate-mask">
         <div class="validate-bin">
           <div class="exit-validate">
@@ -91,7 +87,7 @@
           </div>
         </div>
       </div>
-    </transition>
+    </transition> -->
 
     <!-- 过度窗口 -->
     <transition name="fade">
@@ -106,7 +102,8 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapMutations, mapState } from 'vuex'
+import { deleteArticles } from '../../api/admin'
 
 import page from '@/components/base/Page'
 
@@ -136,11 +133,11 @@ export default {
   data() {
     return {
       allChecked: false, // 全选
-      articlesChose: [], // 选中的文章的id的集合
-      showDeleteDialog: false, // 显示确认删除的对话框
-      deleteDialogMsg: '', // 确人删除的提示语
-      articleIdToDel: {}, // 要删除的文章id
-      deleteType: 'single', // 删除的类型 单独删:single 批量删:multi
+      articles2Del: [], // 选中的文章的id的集合
+      // showDeleteDialog: false, // 显示确认删除的对话框
+      // deleteDialogMsg: '', // 确人删除的提示语
+      // articleIdToDel: {}, // 要删除的文章id
+      // deleteType: 'single', // 删除的类型 单独删:single 批量删:multi
       updateInfo: { show: false, wait: false },
       // 标签背景颜色
       color: [
@@ -165,7 +162,7 @@ export default {
   watch: {
     articleList() {
       this.allChecked = false
-      this.articlesChose = []
+      this.articles2Del = []
       this.$nextTick(() => {
         if (this.articleList.length) {
           this.initBackground()
@@ -181,6 +178,10 @@ export default {
     }
   },
   methods: {
+    ...mapMutations({
+      REDUCE_ARR: 'admin/REDUCE_ARR',
+      REDUCE_ARR_ALL: 'admin/REDUCE_ARR_ALL'
+    }),
     // 随机生成标签的背景色 ok
     initBackground() {
       // 随机生成标签的背景色
@@ -197,7 +198,7 @@ export default {
       // 加定时器是因为先触发click事件，此时articleItem
       // 还没有被推入新的值，因此将此事件推入事件队列，先让articleItem插值完成
       setTimeout(() => {
-        if (this.articlesChose.length === this.articleList.length) {
+        if (this.articles2Del.length === this.articleList.length) {
           this.allChecked = true
         } else {
           this.allChecked = false
@@ -206,21 +207,21 @@ export default {
     },
     // 全选 ok
     allChoose() {
-      if (this.articlesChose.length !== this.articleList.length) {
-        const _arr = []
+      if (this.articles2Del.length !== this.articleList.length) {
+        const choseArr = []
         this.articleList.forEach((item) => {
-          _arr.push(item.articleId)
+          choseArr.push(item._id)
         })
-        this.articlesChose = _arr
+        this.articles2Del = choseArr
       } else {
-        this.articlesChose = []
+        this.articles2Del = []
       }
     },
     // 预览文章 ok
     reviewArticle(item) {
       this.$router.push({
         name: 'review',
-        params: { eTag: item.tag[0], articleId: item.articleId }
+        params: { eTag: item.tag[0], _id: item._id }
       })
     },
     // 修改文章 ok
@@ -229,7 +230,7 @@ export default {
       this.$store
         .dispatch('admin/GetArticle', {
           tag: item.tag[0],
-          articleId: item.articleId
+          _id: item._id
         })
         .then((data) => {
           if (data.length) {
@@ -246,46 +247,64 @@ export default {
         })
     },
     // 删除单篇文章 ok
-    deleteArticle(aid, index) {
-      this.showDeleteDialog = true
-      this.articleIdToDel.aid = aid
-      this.articleIdToDel.aindex = index
-      this.deleteDialogMsg = '确定删除此项么？'
-      this.deleteType = 'single'
-    },
-    // 删除多篇文章 ok
-    deleteArticles() {
-      this.showDeleteDialog = true
-      this.deleteType = 'multi'
-      this.deleteDialogMsg = '确定删除选中的' + this.articlesChose.length + '项么？'
-    },
-    // 确认删除文章
-    sureRemove() {
-      if (this.deleteType === 'single') {
-        this.$store
-          .dispatch('admin/RemoveArticle', {
-            articleId: [this.articleIdToDel.aid]
-          })
-          .then((data) => {
+    removeArticle(_id, index) {
+      this.$confirm('确认删除该文章?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          deleteArticles([_id]).then((res) => {
             // 如果删除成功 删除缓存中的数据
-            if (data.deleteCode === 200) {
-              this.$store.commit('admin/REDUCE_ARR', {
+            if (res.code === 200) {
+              this.REDUCE_ARR({
                 name: this.$route.name,
-                index: this.articleIdToDel.aindex
+                index: index
               })
             }
-          })
-      } else {
-        this.$store.dispatch('admin/RemoveArticle', { articleId: this.articlesChose }).then((data) => {
-          if (data.deleteCode === 200) {
-            this.$store.commit('admin/REDUCE_ARR_ALL', {
-              name: this.$route.name,
-              removeArr: this.articlesChose
+            this.$message({
+              type: res.code === 200 ? 'success' : 'warning',
+              message: res.code === 200 ? '删除成功!' : '删除失败'
             })
-          }
+          })
         })
-      }
-      this.showDeleteDialog = false // 退出确认框
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除',
+            duration: 1000
+          })
+        })
+    },
+    // 删除多篇文章 ok
+    removeArticles() {
+      this.$confirm('确认删除选中的文章?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          deleteArticles(this.articles2Del).then((res) => {
+            // 如果删除成功 删除缓存中的数据
+            if (res.code === 200) {
+              this.REDUCE_ARR_ALL({
+                name: this.$route.name,
+                removeArr: this.articles2Del
+              })
+            }
+            this.$message({
+              type: res.code === 200 ? 'success' : 'warning',
+              message: res.code === 200 ? '删除成功!' : '删除失败'
+            })
+          })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除',
+            duration: 1000
+          })
+        })
     }
   }
 }
