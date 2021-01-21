@@ -147,7 +147,7 @@
 
 <script>
 import { mapMutations, mapActions, mapGetters, mapState } from 'vuex'
-import { replyMsgBoard, deleteMsgBoards, updateMsgBoard } from '../../api/admin'
+import { replyMsgBoard, deleteMsgBoards, updateMsgBoard, deleteComments } from '../../api/admin'
 
 import page from '@/components/base/Page'
 
@@ -208,7 +208,6 @@ export default {
     }),
     ...mapActions({
       addCommentsReply: 'admin/AddCommentsReply',
-      removeComments: 'admin/RemoveComments',
       reduceComments: 'admin/ReduceComments'
     }),
     // 单选
@@ -357,8 +356,9 @@ export default {
         if (this.$route.name === 'comments') {
           // 删除一级评论
           if (ol !== -1 && tl === -1) {
-            this.removeComments({ id: [ol] }).then((data) => {
-              if (data.deleteCode === 200) {
+            console.log('删除一级评论')
+            deleteComments([ol]).then((res) => {
+              if (res.code === 200) {
                 this.reduceArr({ name: 'comments', oneIndex: oi, twoIndex: ti })
               }
             })
@@ -386,8 +386,8 @@ export default {
         }
         // 批量删除评论
         if (this.$route.name === 'comments') {
-          this.removeComments({ id: this.itemsToDel }).then((data) => {
-            if (data.deleteCode === 200) {
+          deleteComments(this.itemsToDel).then((res) => {
+            if (res.code === 200) {
               this.reduceArr_all({
                 name: 'comments',
                 removeArr: this.itemsToDel
