@@ -208,6 +208,14 @@ function getCommentsList(pageNum, pageSize) {
   return fetch.get('/api/getCommentsList', { pageNum: pageNum, pageSize: pageSize })
 }
 
+/**
+ * 删除文章的评论
+ * @param {Array} ids 评论的_id
+ */
+function deleteComments(ids) {
+  return fetch.delete('/api/deleteComments', { ids: ids })
+}
+
 // 获取评论数
 // GetCommentsCount({ commit }) {
 //   return fetch.get("/api/getCommentsCount").then((data) => {
@@ -218,11 +226,6 @@ function getCommentsList(pageNum, pageSize) {
 // // 添加评论
 // AddCommentsReply({ commit }, payload) {
 //   return fetch.patch('/api/addComment', payload)
-// },
-
-// // 移除评论
-// RemoveComments({ commit }, payload) {
-//   return fetch.delete('/api/removeComments', payload)
 // },
 
 // // 减少评论
@@ -260,6 +263,7 @@ export {
   deleteMsgBoards,
   updateMsgBoard,
   getCommentsList,
+  deleteComments,
   confirmToken,
   getNews,
   getTags
