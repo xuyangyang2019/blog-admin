@@ -14,19 +14,10 @@
       <div class="article-details-type">
         <div class="item-title">类 型 ：</div>
         <div class="item-content">
-          <input id="original" v-model="articleInfo.original" type="radio" name="original" value="true" />
-          <label class="itme-label" for="original">原创</label>
-
-          <input id="reprint" v-model="articleInfo.original" type="radio" name="original" value="false" />
-          <label class="itme-label" for="reprint">转载</label>
-          <!-- <input
-          type="radio"
-          name="original"
-          value="3"
-          id="translate"
-          v-model="articleInfo.original"
-        />
-          <label for="translate">翻译</label>-->
+          <input id="originalId" v-model="articleInfo.original" type="radio" name="original" value="true" />
+          <label class="itme-label" for="originalId">原创</label>
+          <input id="reprintId" v-model="articleInfo.original" type="radio" name="original" value="false" />
+          <label class="itme-label" for="reprintId">转载</label>
         </div>
       </div>
       <!-- 标题 -->
@@ -490,8 +481,6 @@ export default {
       if (this.validate()) {
         // 发表
         const isPublish = !!flag
-        // 原创
-        // const _original = this.articleInfo.original === 'true'
         // 更改按钮文字
         if (flag) {
           // 如果是发表文章
@@ -507,18 +496,9 @@ export default {
           }
         }
         // 保存文章
-        addArticle({
-          articleId: 0,
-          title: this.articleInfo.title,
-          abstract: this.articleInfo.abstract,
-          content: this.articleInfo.content,
-          tag: this.articleInfo.tags,
-          publish: !!flag,
-          original: this.articleInfo.original === 'true',
-          pv: 0,
-          date: new Date().getTime()
-        }).then((data) => {
-          console.log(data)
+        console.log('保存文章', this.articleInfo)
+        const { title, abstract, content, tags, original } = this.articleInfo
+        addArticle(title, abstract, content, tags, !!flag, original === 'true').then((data) => {
           if (data.code === 200) {
             // 清空编辑器
             this.editor.setContent('')
@@ -668,7 +648,7 @@ export default {
         // 标题 | 标签 | 前言
         if (this.$route.path !== '/admin/publish') {
           this.articleInfo = {
-            original: atc.original === true ? 'true' : 'false',
+            original: atc.original === 'true' ? 'true' : 'false',
             title: atc.title,
             tags: atc.tag,
             abstract: atc.abstract,

@@ -62,19 +62,25 @@ function getArticleList(pageNum, pageSize, publish, tag) {
 
 /**
  * 添加文章
- * @param {*} newArticle
+ * @param {String} title 文章标题
+ * @param {String} abstract 文章摘要
+ * @param {String} content 文章内容
+ * @param {Array} tag 标签
+ * @param {Boolean} publish 是否发表
+ * @param {Boolean} original 是否原创
  */
-function addArticle(newArticle) {
-  // articleId: 0,
-  // title: this.articleInfo.title,
-  // abstract: this.articleInfo.abstract,
-  // content: this.articleInfo.content,
-  // tag: this.articleInfo.tags,
-  // publish: !!flag,
-  // original: this.articleInfo.original === 'true',
-  // pv: 0,
-  // date: new Date().getTime()
-  return fetch.post('/api/addArticle', newArticle)
+function addArticle(title, abstract, content, tag, publish, original) {
+  const parameters = {
+    title: title,
+    abstract: abstract,
+    content: content,
+    tag: tag,
+    publish: publish,
+    original: original,
+    pv: 0,
+    date: new Date().getTime()
+  }
+  return fetch.post('/api/addArticle', parameters)
 }
 
 /**
