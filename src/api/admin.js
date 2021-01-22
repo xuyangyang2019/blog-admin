@@ -241,16 +241,20 @@ function replyComment(articleId, aite, content) {
   return fetch.patch('/api/replyComment', parameter)
 }
 
+/**
+ * 删除二级评论
+ * @param {String} commentId 评论id
+ * @param {String} replyId 二级评论id
+ */
+function updateComment(commentId, replyId) {
+  return fetch.patch('/api/updateComment', { commentId: commentId, replyId: replyId })
+}
+
 // 获取评论数
 // GetCommentsCount({ commit }) {
 //   return fetch.get("/api/getCommentsCount").then((data) => {
 //     commit("PAGE_ARRAY", data)
 //   })
-// },
-
-// // 删除二级评论
-// ReduceComments({ commit }, payload) {
-//   return fetch.patch('/api/reduceComments', payload)
 // },
 
 // ========================== 消息相关===================================
@@ -284,6 +288,7 @@ export {
   updateMsgBoard,
   getCommentsList,
   deleteComments,
+  updateComment,
   replyComment,
   confirmToken,
   getNews,
