@@ -146,8 +146,8 @@
 </template>
 
 <script>
-import { mapMutations, mapActions, mapGetters, mapState } from 'vuex'
-import { replyMsgBoard, deleteMsgBoards, updateMsgBoard, deleteComments } from '../../api/admin'
+import { mapMutations, mapGetters, mapState } from 'vuex'
+import { replyMsgBoard, deleteMsgBoards, updateMsgBoard, deleteComments, replyComment } from '../../api/admin'
 
 import page from '@/components/base/Page'
 
@@ -205,10 +205,6 @@ export default {
       reduceArr_all: 'admin/REDUCE_ARR_ALL',
       addLocalWord: 'admin/ADD_LOCAL_WORD',
       addLocalComment: 'admin/ADD_LOCAL_COMMENT'
-    }),
-    ...mapActions({
-      addCommentsReply: 'admin/AddCommentsReply',
-      reduceComments: 'admin/ReduceComments'
     }),
     // 单选
     singleChecked() {
@@ -278,18 +274,9 @@ export default {
       }
       // 回复评论
       if (this.$route.name === 'comments') {
-        this.addCommentsReply({
-          _id: id,
-          name: 'admin（管理员）',
-          aite: this.aite,
-          imgUrl: '/img/logo.png',
-          content: this.replyContent,
-          like: 0,
-          email: '',
-          date: new Date()
-        }).then((data) => {
-          if (data._id) {
-            this.addLocalComment(data)
+        replyComment(id, this.aite, this.replyContent).then((res) => {
+          if (res.code === 200) {
+            this.addLocalComment(res.data)
             this.replyContent = ''
           }
         })
@@ -365,11 +352,12 @@ export default {
           }
           // 删除二级评论
           if (ol !== -1 && tl !== -1) {
-            this.reduceComments({ mainId: ol, secondId: tl }).then((data) => {
-              if (data.deleteCode === 200) {
-                this.reduceArr({ name: 'comments', oneIndex: oi, twoIndex: ti })
-              }
-            })
+            console.log('删除二级评论')
+            // this.reduceComments({ mainId: ol, secondId: tl }).then((data) => {
+            //   if (data.deleteCode === 200) {
+            //     this.reduceArr({ name: 'comments', oneIndex: oi, twoIndex: ti })
+            //   }
+            // })
           }
         }
       } else {
