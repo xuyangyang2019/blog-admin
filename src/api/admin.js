@@ -224,13 +224,13 @@ function deleteComments(ids) {
 
 /**
  * 回复评论
- * @param {String} articleId 文章id
+ * @param {String} commentId 评论id
  * @param {String} aite 要回复的人
  * @param {String} content 回复的内容
  */
-function replyComment(articleId, aite, content) {
+function replyComment(commentId, aite, content) {
   const parameter = {
-    id: articleId,
+    id: commentId,
     aite: aite,
     content: content,
     name: 'admin（管理员）',
