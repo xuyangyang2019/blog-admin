@@ -222,6 +222,25 @@ function deleteComments(ids) {
   return fetch.delete('/api/deleteComments', { ids: ids })
 }
 
+/**
+ * 回复评论
+ * @param {String} articleId 文章id
+ * @param {String} aite 要回复的人
+ * @param {String} content 回复的内容
+ */
+function replyComment(articleId, aite, content) {
+  const parameter = {
+    id: articleId,
+    aite: aite,
+    content: content,
+    name: 'admin（管理员）',
+    imgUrl: '/img/logo.png',
+    like: 0,
+    date: new Date().getTime()
+  }
+  return fetch.patch('/api/replyComment', parameter)
+}
+
 // 获取评论数
 // GetCommentsCount({ commit }) {
 //   return fetch.get("/api/getCommentsCount").then((data) => {
@@ -229,12 +248,7 @@ function deleteComments(ids) {
 //   })
 // },
 
-// // 添加评论
-// AddCommentsReply({ commit }, payload) {
-//   return fetch.patch('/api/addComment', payload)
-// },
-
-// // 减少评论
+// // 删除二级评论
 // ReduceComments({ commit }, payload) {
 //   return fetch.patch('/api/reduceComments', payload)
 // },
@@ -270,6 +284,7 @@ export {
   updateMsgBoard,
   getCommentsList,
   deleteComments,
+  replyComment,
   confirmToken,
   getNews,
   getTags
