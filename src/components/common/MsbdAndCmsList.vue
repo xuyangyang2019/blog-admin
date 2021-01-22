@@ -147,7 +147,14 @@
 
 <script>
 import { mapMutations, mapGetters, mapState } from 'vuex'
-import { replyMsgBoard, deleteMsgBoards, updateMsgBoard, deleteComments, replyComment } from '../../api/admin'
+import {
+  replyMsgBoard,
+  deleteMsgBoards,
+  updateMsgBoard,
+  deleteComments,
+  replyComment,
+  updateComment
+} from '../../api/admin'
 
 import page from '@/components/base/Page'
 
@@ -352,12 +359,11 @@ export default {
           }
           // 删除二级评论
           if (ol !== -1 && tl !== -1) {
-            console.log('删除二级评论')
-            // this.reduceComments({ mainId: ol, secondId: tl }).then((data) => {
-            //   if (data.deleteCode === 200) {
-            //     this.reduceArr({ name: 'comments', oneIndex: oi, twoIndex: ti })
-            //   }
-            // })
+            updateComment(ol, tl).then((res) => {
+              if (res.code === 200) {
+                this.reduceArr({ name: 'comments', oneIndex: oi, twoIndex: ti })
+              }
+            })
           }
         }
       } else {
