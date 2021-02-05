@@ -87,13 +87,9 @@ const errorHandle = (status, errData) => {
 axios.defaults.timeout = 10000 // 请求超时时间
 
 // 环境的切换
-// if (process.env.NODE_ENV === 'development') {
-//   axios.defaults.baseURL = 'http://localhost:8080'
-// } else if (process.env.NODE_ENV === 'debug') {
-//   axios.defaults.baseURL = ''
-// } else if (process.env.NODE_ENV === 'production') {
-//   axios.defaults.baseURL = 'http://localhost:8080'
-// }
+if (process.env.NODE_ENV === 'production') {
+  axios.defaults.baseURL = 'http://182.92.221.114:3000'
+}
 
 // post请求头
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded; charset=UTF-8'
@@ -102,8 +98,6 @@ axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded
 // 如果需要访问多个服务地址，而这些服务请求和响应的结构也可能都完全不同
 // 那么你可以通过axios.create创建不同的实例来处理。
 const httpInstance = axios.create({
-  // url: "/data.json", // 请求的路径
-  // baseURL: "http://localhost:8080", // 请求的域名，基本地址
   timeout: 10000, // 请求的超时时长，单位毫秒
   method: 'get,post,put,patch,delete', // 请求方法
   withCredentials: true, // 跨域
@@ -188,7 +182,7 @@ function apiAxios(method, url, params) {
     httpInstance({
       url: url,
       method: method,
-      // baseURL: 'http://192.168.0.115:10010', // 开发模式下vue-cli已经配置了请求转发，所以不用基础路径即可
+      // baseURL: 'http://192.168.0.111:3000', // 开发模式下vue-cli已经配置了请求转发，所以不用基础路径即可
       params: method === 'GET' || method === 'DELETE' ? params : null,
       paramsSerializer: (params) => {
         return qs.stringify(params, { indices: false })

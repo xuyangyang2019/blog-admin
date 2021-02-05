@@ -277,7 +277,8 @@ export default {
     download() {
       const a = document.createElement('a')
       const token = localStorage.getItem('validateToken')
-      a.href = 'http://localhost:8098/api/downloadDb?authToken=' + token
+      const host = process.env.NODE_ENV === 'production' ? '182.92.221.114:' : '192.168.0.111'
+      a.href = `http://${host}:3000/api/downloadDb?authToken=${token}`
       a.download = 'admin.zip'
       document.body.appendChild(a)
       a.click()
