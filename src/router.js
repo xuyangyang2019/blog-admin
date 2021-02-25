@@ -25,10 +25,6 @@ const router = new Router({
   base: process.env.BASE_URL,
   routes: [
     {
-      path: '/',
-      redirect: '/login'
-    },
-    {
       path: '/admin',
       name: 'admin',
       component: Admin,
@@ -176,8 +172,8 @@ const router = new Router({
     },
     // 登陆页面
     {
-      path: '/login',
-      name: 'login',
+      path: '/admin/login',
+      name: 'adminLogin',
       component: () => import(/* webpackChunkName: "admin" */ './views/Login.vue')
     },
     // 其他
@@ -193,11 +189,12 @@ const router = new Router({
 router.beforeEach((to, from, next) => {
   // 如果要去的路由 需要验证
   if (to.matched.some((res) => res.meta.requireAuth)) {
+    console.log(from)
     if (localStorage.getItem('validateToken')) {
       next()
     } else {
       next({
-        path: '/login'
+        path: '/admin/login'
         // query: { redirect: to.fullPath }
       })
     }
