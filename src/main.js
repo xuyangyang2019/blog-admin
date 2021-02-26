@@ -10,7 +10,7 @@ import store from './store'
 import filters from './filters'
 
 // 自定义的toast
-import Toast from './components/toast/index'
+// import Toast from './components/toast/index'
 
 // 引入整个 Element
 import ElementUI from 'element-ui'
@@ -18,14 +18,20 @@ import 'element-ui/lib/theme-chalk/index.css'
 
 // 导入icon-font的js
 import '@/assets/iconfont/iconfont.js'
+// 引入font-awesome
+import 'font-awesome/css/font-awesome.css'
+// 引入iconfont
+import './assets/iconfont/iconfont.js'
+import './assets/iconfont/iconfont.css'
 
 Vue.config.productionTip = false
 
 // 将api挂载到vue的原型上复制代码
 // Vue.prototype.$api = api
 
-Vue.use(Toast)
+// Vue.use(Toast)
 // Vue.prototype.$toast = Toast
+
 Vue.use(ElementUI)
 
 // 全局过滤器

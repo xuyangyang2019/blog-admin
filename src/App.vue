@@ -25,8 +25,6 @@ export default {
 @import './styles/reset.scss';
 @import './styles/common.scss';
 @import './styles/normalize.css';
-@import '~@/assets/font-awesome/css/font-awesome.css';
-@import '~@/assets/iconfont/iconfont.css';
 
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
