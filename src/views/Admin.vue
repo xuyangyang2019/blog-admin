@@ -493,12 +493,14 @@ export default {
   }
 }
 
+// 平板
 @media screen and(min-width: 768px) {
   .phone-greet {
     display: none;
   }
 }
 
+// 手机端
 @media screen and(max-width: 767px) {
   .admin-header {
     position: fixed;

@@ -22,9 +22,15 @@ export default {
 </script>
 
 <style lang="scss">
-@import './styles/reset.scss';
+// 自定义的reset
+@import './styles/reset.css';
+// 排版样式
+// @import './styles/typo.css';
+// 适应不同浏览器
+// @import './styles/normalize.css';
+
+// 公共的css
 @import './styles/common.scss';
-@import './styles/normalize.css';
 
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
@@ -32,6 +38,7 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #fff;
+
   height: 100%;
   overflow: hidden;
 }
