@@ -1,8 +1,5 @@
 <template>
   <div id="app">
-    <Layout>
-      <router-view name="layOut" />
-    </Layout>
     <!-- <div id="nav">
       <router-link to="/">Home</router-link> |
       <router-link to="/about">About</router-link>
@@ -12,12 +9,8 @@
 </template>
 
 <script>
-import Layout from '@/layouts'
 export default {
-  name: 'App',
-  components: {
-    Layout
-  }
+  name: 'App'
 }
 </script>
 
