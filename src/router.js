@@ -4,6 +4,9 @@ import Router from 'vue-router'
 // 正常加载
 import Admin from './views/Admin.vue'
 
+import { getUserInfo } from './api/admin'
+import store from './store/index'
+
 // 按需（懒）加载（vue实现）推荐
 // 没有指定webpackChunkName,每个组件打包成一个js文件
 // const Login = () => import( /* webpackChunkName: "login" */ './views/Login.vue')
@@ -24,6 +27,11 @@ const router = new Router({
   mode: 'history',
   base: process.env.BASE_URL,
   routes: [
+    {
+      path: '/',
+      name: '/',
+      redirect: '/admin/login'
+    },
     {
       path: '/admin',
       name: 'admin',
@@ -189,9 +197,21 @@ const router = new Router({
 router.beforeEach((to, from, next) => {
   // 如果要去的路由 需要验证
   if (to.matched.some((res) => res.meta.requireAuth)) {
-    console.log(from)
-    if (localStorage.getItem('validateToken')) {
-      next()
+    const token = localStorage.getItem('validateToken')
+    if (token) {
+      // 获取用户信息
+      getUserInfo(token)
+        .then((res) => {
+          if (res.code === 200) {
+            store.commit('admin/SET_USER_INFO', res.data)
+            next() // resolve 钩子
+          }
+        })
+        .catch(() => {
+          next({
+            path: '/admin/login'
+          })
+        })
     } else {
       next({
         path: '/admin/login'
