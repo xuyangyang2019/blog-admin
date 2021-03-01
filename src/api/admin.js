@@ -5,7 +5,6 @@
  */
 
 import fetch from '@/utils/fetch'
-// import { generateTaskId } from '@/utils/util'
 
 // ========================== 账户相关===================================
 
@@ -16,6 +15,15 @@ import fetch from '@/utils/fetch'
  */
 function adminLogin(username, password) {
   return fetch.post('/api/login', { username: username, password: password })
+}
+
+/**
+ * 获取用户信息
+ * @param { String } token token
+ */
+function getUserInfo(token) {
+  // return fetch.get('/api/confirmToken')
+  return fetch.post('/api/getUserInfo', { token: token })
 }
 
 /**
@@ -276,6 +284,7 @@ function getTags(publish) {
 
 export {
   adminLogin,
+  getUserInfo,
   reviseKey,
   copyData,
   downloadDb,
