@@ -255,8 +255,7 @@ export default {
       this.adminSetMask.show = false
       // 删除本地保存的数据
       localStorage.removeItem('validateToken')
-      localStorage.removeItem('userName')
-      localStorage.removeItem('lastLogin')
+      this.$store.commit('admin/SET_USER_INFO', {})
       // 跳转到登陆页面
       this.$router.push({ name: 'login' })
     },

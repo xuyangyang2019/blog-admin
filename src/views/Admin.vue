@@ -7,11 +7,11 @@
         <span class="xyy-admin can-not-select">管理首页</span>
       </div>
       <!-- 手机上的问好 -->
-      <span class="phone-greet">{{ greet }}好，{{ userName }}！</span>
+      <span class="phone-greet">{{ greet }}好，{{ userInfo.nickname }}！</span>
       <!-- 管理员的信息 -->
       <div class="admin-info">
         <img src="/img/logo.png" style="width: 20px; height: 20px; vertical-align: middle" alt="xyy" />
-        <span>{{ greet }}好，{{ userName }}！上次登录是：{{ lastLogin }}</span>
+        <span>{{ greet }}好，{{ userInfo.nickname }}！上次登录是：{{ userInfo.last_login_time }}</span>
       </div>
       <!-- 面包屑导航 -->
       <div class="toggle-btn" @click="showList = !showList">
@@ -97,8 +97,8 @@ import { getTags } from '../api/admin'
 export default {
   data() {
     return {
-      lastLogin: localStorage.getItem('lastLogin') || 'My Lord', // 最近一次的登陆时间
-      userName: localStorage.getItem('userName') || '', // 用户名
+      // lastLogin: localStorage.getItem('lastLogin') || 'My Lord', // 最近一次的登陆时间
+      // userName: localStorage.getItem('userName') || '', // 用户名
       // location: [], // 当前位置
       choseType: 'key', // 搜索类型
       searchKey: '', // 关键词
@@ -144,7 +144,7 @@ export default {
   computed: {
     ...mapState('admin', {
       redSup: 'redSup', // 红点
-      // tagsObj: "tagsObj", // 标签信息
+      userInfo: 'userInfo', // 用户信息
       forLocation: 'forLocation'
     }),
     // 问候语
@@ -198,10 +198,10 @@ export default {
       })
         .then(() => {
           localStorage.removeItem('validateToken')
-          localStorage.removeItem('userName')
-          localStorage.removeItem('lastLogin')
+          // localStorage.removeItem('userName')
+          // localStorage.removeItem('lastLogin')
           // 跳转到登陆页面
-          this.$router.push({ name: 'login' })
+          this.$router.push({ name: 'adminLogin' })
         })
         .catch(() => {
           this.$message({

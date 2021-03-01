@@ -2,6 +2,8 @@ import Vue from 'vue'
 
 // initial state
 const state = {
+  token: '', // token
+  userInfo: {}, // 用户信息
   allArticles: [], // 所有的文章
   draftsArticles: [], // 草稿箱
   pageArray: [], // 已发表页码数组
@@ -42,6 +44,12 @@ const actions = {}
 
 // mutations
 const mutations = {
+  SET_TOKEN(state, tokenData) {
+    state.token = tokenData
+  },
+  SET_USER_INFO(state, userInfo) {
+    state.userInfo = userInfo
+  },
   // 设置所有的文章列表
   SET_ALL_ARTICLES(state, data) {
     state.allArticles = data

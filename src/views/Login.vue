@@ -70,9 +70,7 @@ export default {
           console.log('登陆结果', res)
           this.btnInfo = { text: '登录', disabled: false }
           if (res.code === 200) {
-            const user = res.data.userInfo
-            localStorage.setItem('userName', user.username)
-            localStorage.setItem('lastLogin', user.last_login_time)
+            this.$store.commit('admin/SET_USER_INFO', res.data.userInfo)
             localStorage.setItem('validateToken', res.data.token)
             // 页面跳转
             this.$router.push({ path: toPath })
