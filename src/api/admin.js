@@ -21,9 +21,8 @@ function adminLogin(username, password) {
  * 获取用户信息
  * @param { String } token token
  */
-function getUserInfo(token) {
-  // return fetch.get('/api/confirmToken')
-  return fetch.post('/api/getUserInfo', { token: token })
+function getUserInfo() {
+  return fetch.get('/api/getUserInfo')
 }
 
 /**
