@@ -23,8 +23,6 @@ import 'font-awesome/css/font-awesome.css'
 // 引入iconfont
 import './assets/iconfont/iconfont.js'
 import './assets/iconfont/iconfont.css'
-// 使用cookies
-import VueCookies from 'vue-cookies'
 
 Vue.config.productionTip = false
 
@@ -35,7 +33,6 @@ Vue.config.productionTip = false
 // Vue.prototype.$toast = Toast
 
 Vue.use(ElementUI)
-Vue.use(VueCookies)
 
 // 全局过滤器
 Object.keys(filters).forEach((filterName) => {
