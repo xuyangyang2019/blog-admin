@@ -1,35 +1,48 @@
 <template>
   <div class="login">
-    <div class="form-content">
-      <div class="input">
-        <label for="i">用户名 ：</label>
-        <div class="input-box">
-          <input id="i" v-model="user" type="text" placeholder="请输入用户名" @focus="clearErr" />
-          <span class="err">{{ err.user }}</span>
-        </div>
-      </div>
-      <div class="pwd">
-        <label for="p">密码 ：</label>
-        <div class="input-box">
-          <input
-            id="p"
-            v-model="password"
-            type="password"
-            placeholder="请输入密码"
-            @keydown.enter="validateAndLonin(toPath)"
-            @focus="clearErr"
-          />
-          <span class="err">{{ err.password }}</span>
-          <span class="err">{{ err.validate }}</span>
-        </div>
-      </div>
-      <div class="submit">
-        <button :disabled="btnInfo.disabled" @click="validateAndLonin(toPath)">
-          {{ btnInfo.text }}
-        </button>
-      </div>
-    </div>
-    <div class="login-mask"></div>
+    <div class="login-img"></div>
+    <el-form ref="loginForm" :model="loginForm" :rules="rules" :size="'medium'" status-icon class="my-login-form">
+      <!-- 用户名 -->
+      <el-form-item prop="name">
+        <el-input
+          v-model="loginForm.name"
+          clearable
+          :maxlength="20"
+          placeholder="输入用户名"
+          prefix-icon="el-icon-user"
+        ></el-input>
+      </el-form-item>
+      <!-- 密码 -->
+      <el-form-item prop="pass">
+        <el-input
+          v-model="loginForm.pass"
+          type="password"
+          autocomplete="off"
+          clearable
+          show-password
+          placeholder="输入密码"
+          :maxlength="20"
+          prefix-icon="el-icon-unlock"
+        ></el-input>
+      </el-form-item>
+      <!-- 记住密码 -->
+      <el-form-item>
+        <el-checkbox v-model="rememberPwd">记住密码</el-checkbox>
+      </el-form-item>
+      <!-- 登录 -->
+      <el-form-item class="login_btn_box">
+        <el-button
+          type="primary"
+          size="medium"
+          :loading="loading"
+          :disabled="loading"
+          class="login-btn"
+          @click="submitForm('loginForm')"
+        >
+          登录
+        </el-button>
+      </el-form-item>
+    </el-form>
   </div>
 </template>
 
@@ -39,54 +52,144 @@ import { adminLogin } from '../api/admin'
 
 export default {
   data() {
+    // 自定义的用户名规则
+    const checkName = (rule, value, callback) => {
+      if (!value) {
+        return callback(new Error('用户名不能为空'))
+      } else {
+        callback()
+      }
+    }
+    // 自定义的密码校验规则
+    const validatePass = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请输入密码'))
+      } else {
+        callback()
+      }
+    }
     return {
-      user: '', // 用户名
-      password: '', // 密码
-      err: { user: '', password: '', validate: '' }, // 错误信息
-      btnInfo: { text: '登录', disabled: false } // 登录按钮的状态
+      rememberPwd: false, // 记住密码
+      loading: false, // 登陆中
+      loginForm: {
+        name: '',
+        pass: ''
+      }, // 登陆表单
+      rules: {
+        name: [
+          { required: true, message: '请输入用户名' },
+          { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' },
+          { validator: checkName, trigger: 'blur' }
+        ],
+        pass: [
+          { required: true, message: '请输入密码' },
+          { min: 6, max: 20, message: '长度在 6 到 20 个字符', trigger: 'blur' },
+          { validator: validatePass, trigger: 'blur' }
+        ]
+      } // 表单校验规则
     }
   },
   computed: {
     ...mapState({
       toPath: 'toPath'
-    })
+    }),
+    // 从本地读取用户名
+    localName() {
+      if (localStorage.getItem('localNameOfBlog')) {
+        return localStorage.getItem('localNameOfBlog')
+      }
+      return ''
+    },
+    // 从本地读取密码
+    localPwd() {
+      if (localStorage.getItem('localPwdOfBlog')) {
+        return localStorage.getItem('localPwdOfBlog')
+      }
+      return ''
+    }
+  },
+  watch: {
+    // 监听记住密码
+    rememberPwd(val) {
+      if (val) {
+        localStorage.setItem('remarkPwdOfBlog', 1)
+      } else {
+        localStorage.removeItem('remarkPwdOfBlog')
+        localStorage.removeItem('localNameOfBlog')
+        localStorage.removeItem('localPwdOfBlog')
+      }
+    }
+  },
+  created() {
+    // 记住密码
+    if (localStorage.getItem('remarkPwdOfBlog')) {
+      this.rememberPwd = true
+      if (this.localName && this.localPwd) {
+        this.loginForm.name = this.localName
+        this.loginForm.pass = this.localPwd
+      }
+    }
   },
   methods: {
-    // 表单验证并登陆
-    validateAndLonin(toPath) {
-      if (!this.user) {
-        this.err.user = '请填写用户名'
-      }
-      if (!this.password) {
-        this.err.password = '请填写密码'
-      }
-      // “!!” ——两个叹号表示把目标值转化为布尔值，相当于使用Boolean()方法
-      // 在if语句中,表达式的结果将被强制为布尔值，通过双重否定（!!）或强制转换为布尔值Boolean是不必要的
-      if (!!this.password && !!this.user) {
-        // 修改按钮显示的文字 不能再次点击
-        this.btnInfo = { text: '登录中...', disabled: true }
-        // admin 登陆
-        adminLogin(this.user, this.password).then((res) => {
-          console.log('登陆结果', res)
-          this.btnInfo = { text: '登录', disabled: false }
-          if (res.code === 200) {
-            this.$store.commit('admin/SET_USER_INFO', res.data.userInfo)
-            localStorage.setItem('validateToken', res.data.token)
-            // 页面跳转
-            this.$router.push({ path: toPath })
-          } else if (res.code === -1) {
-            // 错误提示
-            this.err.validate = res.msg
+    // 登陆
+    submitForm(formName) {
+      this.$refs[formName].validate(async (valid) => {
+        if (valid) {
+          // 表单验证通过，可以登陆
+          console.log('表单验证通过，可以登陆')
+          // 记住密码
+          if (this.rememberPwd) {
+            localStorage.setItem('localNameOfBlog', this.loginForm.name)
+            localStorage.setItem('localPwdOfBlog', this.loginForm.pass)
           }
-        })
-        setTimeout(() => {
-          this.btnInfo = { text: '登录', disabled: false }
-        }, 5000)
-      }
+          // 显示loading
+          this.loading = true
+          // const timer = setTimeout(() => {
+          //   // this.btnInfo = { text: '登录', disabled: false }
+          //   console.log('setTimeOut')
+          //   this.loading = false
+          // }, 5000)
+          // admin 登陆
+          const { name, pass } = this.loginForm
+          adminLogin(name, pass)
+            .then((res) => {
+              console.log('登陆结果', res)
+              this.loading = false
+              if (res.code === 200) {
+                this.$store.commit('admin/SET_USER_INFO', res.data.userInfo)
+                localStorage.setItem('validateToken', res.data.token)
+                // 页面跳转
+                this.$router.push({ path: this.toPath })
+              } else if (res.code === -1) {
+                // 错误提示
+                this.$message.error('账号或密码错误！')
+
+                // this.$refs['loginForm'].clearValidate()
+                // 手动操作校验、展示登录错误信息
+                this.rules.pass.push({
+                  // js新增一个自定义校验
+                  validator: (rule, value, callback) => {
+                    callback(new Error(res.msg ? res.msg : '账号或密码错误！'))
+                  },
+                  trigger: 'blur'
+                })
+                this.$refs['loginForm'].validateField('pass') // 手动校验
+                this.rules.pass = this.rules.pass.slice(3, 1) // 删除校验，这个看自己之前写了几个校验来定split也可
+              }
+            })
+            .catch((err) => {
+              console.log(err)
+              this.loading = false
+              // this.$alert('登陆超时！')
+            })
+        } else {
+          return false
+        }
+      })
     },
-    // 清除错误信息
-    clearErr() {
-      this.err = { user: '', password: '', validate: '' }
+    // 重置表单
+    resetForm(formName) {
+      this.$refs[formName].resetFields()
     }
   }
 }
@@ -99,98 +202,39 @@ export default {
   align-items: center;
   height: 100%;
   overflow: hidden;
-  background: url('/img/login-bg.jpeg') 0 0 no-repeat;
-  background-size: 100% 100%;
-  color: #ffffff;
-}
-
-.form-content {
-  box-sizing: border-box;
-  position: relative;
-  z-index: 100;
-  border-radius: 5px;
-  padding: 20px;
-  width: 40%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  .input,
-  .pwd {
-    display: flex;
-    align-items: center;
-    margin-top: 25px;
+  .login-img {
     width: 100%;
-
-    label {
-      position: absolute;
-      display: inline-block;
-      width: 75px;
-      text-align: right;
-      font-size: 14px;
-    }
-
-    input {
-      box-sizing: border-box;
-      flex-shrink: 1;
-      width: 100%;
-      outline: none;
-      padding: 10px;
-      border: 1px solid #ffffff;
-      border-radius: 5px;
-    }
-
-    .input-box {
-      display: inline-block;
-      position: relative;
-      width: 100%;
-      flex-shrink: 1;
-      margin-left: 80px;
-      .err {
-        color: red;
-        position: absolute;
-        top: 100%;
-        left: 0;
-        font-size: 14px;
-      }
-
-      .err-validate {
-        color: red;
-        font-size: 14px;
-      }
-    }
-  }
-  .submit {
-    margin-top: 25px;
-    button {
-      outline: none;
-      padding: 5px 25px;
-      border: 1px solid #46afcb;
-      border-radius: 5px;
-      cursor: pointer;
-      background: #46afcb;
-      color: #ffffff;
-    }
-    button:hover {
-      opacity: 0.9;
-    }
-    button[disabled] {
-      cursor: wait;
-    }
+    height: 100%;
+    background: url('/img/login-bg.jpeg') 0 0 no-repeat;
+    background-size: cover;
+    position: absolute;
+    top: 0;
+    right: 0;
+    filter: brightness(0.6);
   }
 }
 
-.login-mask {
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 100%;
-  background: rgba(0, 0, 0, 0.4);
+::v-deep .my-login-form {
+  padding: 20px;
+  z-index: 100;
+  display: flex;
+  width: 400px;
+  flex-direction: column;
+  justify-content: space-between;
+
+  .login_btn_box {
+    display: flex;
+    justify-content: center;
+    .login-btn {
+      width: 150px;
+    }
+  }
 }
 
 @media screen and(max-width: 767px) {
-  .form-content {
+  .my-login-form {
     width: 100%;
+    max-width: 400px;
   }
 }
 </style>
