@@ -133,7 +133,7 @@ export default {
   methods: {
     // 登陆
     submitForm(formName) {
-      this.$refs[formName].validate(async (valid) => {
+      this.$refs[formName].validate((valid) => {
         if (valid) {
           // 表单验证通过，可以登陆
           console.log('表单验证通过，可以登陆')
@@ -166,15 +166,15 @@ export default {
 
                 // this.$refs['loginForm'].clearValidate()
                 // 手动操作校验、展示登录错误信息
-                this.rules.pass.push({
-                  // js新增一个自定义校验
-                  validator: (rule, value, callback) => {
-                    callback(new Error(res.msg ? res.msg : '账号或密码错误！'))
-                  },
-                  trigger: 'blur'
-                })
-                this.$refs['loginForm'].validateField('pass') // 手动校验
-                this.rules.pass = this.rules.pass.slice(3, 1) // 删除校验，这个看自己之前写了几个校验来定split也可
+                // this.rules.pass.push({
+                //   // js新增一个自定义校验
+                //   validator: (rule, value, callback) => {
+                //     callback(new Error(res.msg ? res.msg : '账号或密码错误！'))
+                //   },
+                //   trigger: 'blur'
+                // })
+                // this.$refs['loginForm'].validateField('pass') // 手动校验
+                // this.rules.pass = this.rules.pass.slice(3, 1) // 删除校验，这个看自己之前写了几个校验来定split也可
               }
             })
             .catch((err) => {
