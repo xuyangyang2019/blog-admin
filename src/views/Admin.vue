@@ -198,12 +198,12 @@ export default {
       })
         .then(() => {
           localStorage.removeItem('validateToken')
-          // localStorage.removeItem('userName')
-          // localStorage.removeItem('lastLogin')
+          this.$store.commit('admin/SET_USER_INFO', {})
           // 跳转到登陆页面
           this.$router.push({ name: 'adminLogin' })
         })
-        .catch(() => {
+        .catch((err) => {
+          console.log(err)
           this.$message({
             type: 'info',
             message: '已取消'

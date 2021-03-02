@@ -329,9 +329,8 @@ export default {
     },
     // 退出
     exit() {
-      localStorage.removeItem('map_blog_token_info_item_name')
-      localStorage.removeItem('userName')
-      localStorage.removeItem('lastLogin')
+      localStorage.removeItem('validateToken')
+      this.$store.commit('admin/SET_USER_INFO', {})
       this.$router.push({ name: 'login' })
     },
     // 标签框获取焦点
