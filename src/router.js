@@ -5,6 +5,7 @@ import Router from 'vue-router'
 import Admin from './views/Admin.vue'
 
 import { getUserInfo } from './api/admin'
+import store from './store'
 
 // 按需（懒）加载（vue实现）推荐
 // 没有指定webpackChunkName,每个组件打包成一个js文件
@@ -201,6 +202,7 @@ router.beforeEach((to, from, next) => {
       // 获取用户信息
       getUserInfo().then((res) => {
         if (res.code === 200) {
+          store.commit('admin/SET_USER_INFO', res.data)
           next() // resolve 钩子
         }
       })
