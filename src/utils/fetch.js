@@ -12,7 +12,7 @@ import router from '../router'
 // 引入vuex
 // import store from '../store'
 // ui
-import { Message } from 'element-ui'
+import { Message, MessageBox } from 'element-ui'
 // 配置文件
 // import { baseUrl, baseUrlDev } from '../../app.config'
 
@@ -22,44 +22,45 @@ import { Message } from 'element-ui'
  * @param {String} errData 错误信息
  */
 const errorHandle = (status, errData) => {
+  const errMsg = errData.message ? errData.message : '无'
   switch (status) {
     // 401: 未登录
-    // 未登录则跳转登录页面，并携带当前页面的路径
-    // 在登录成功后返回当前页面，这一步需要在登录页操作。
     case 401:
+      Message.warning('未登录，请先登陆！')
+      // 未登录则跳转登录页面，并携带当前页面的路径
       router.replace({
-        path: '/',
+        path: '/admin/login',
         query: { redirect: router.currentRoute.fullPath }
       })
+      // 在登录成功后返回当前页面，这一步需要在登录页操作。
       break
     // 403 token过期
-    // 登录过期对用户进行提示
-    // 清除本地token和清空vuex中token对象
-    // 跳转登录页面
     case 403:
-      console.log('登录过期，请重新登录')
-      console.log(`状态码:${status},错误信息:${errData}`)
+      // 登录过期对用户进行提示
+      Message.warning(`token过期,请重新登陆！`)
+      // 清除本地token和清空vuex中token对象
+      // 跳转登录页面
+      router.replace({
+        path: '/admin/login',
+        query: { redirect: router.currentRoute.fullPath }
+      })
       // MessageBox.alert(`登录过期，请重新登录`, '错误信息', {
       //   type: 'error',
       //   confirmButtonText: '确定',
-      //   callback: (action) => {
-      //     // this.$message({
-      //     //   type: 'info',
-      //     //   message: `action: ${action}`
-      //     // })
-      //     console.log(action)
+      //   callback: () => {
+      //     // console.log(action)
       //     // 清除token
-      //     // localStorage.removeItem('token')
+      //     localStorage.removeItem('validateToken')
       //     // store.commit('loginSuccess', null)
       //     // 跳转登录页面，并将要浏览的页面fullPath传过去，登录成功后跳转需要访问的页面
-      //     // setTimeout(() => {
-      //     //   router.replace({
-      //     //     path: '/login',
-      //     //     query: {
-      //     //       redirect: router.currentRoute.fullPath
-      //     //     }
-      //     //   })
-      //     // }, 1000)
+      //     setTimeout(() => {
+      //       router.replace({
+      //         path: '/admin/login',
+      //         query: {
+      //           redirect: router.currentRoute.fullPath
+      //         }
+      //       })
+      //     }, 1000)
       //   }
       // })
       break
@@ -73,11 +74,10 @@ const errorHandle = (status, errData) => {
       break
     // 其他错误，直接抛出错误提示
     default:
-      console.log(`状态码:${status},错误信息:${errData}`)
-    // MessageBox.alert(`状态码:${status},错误信息:${errMsg}`, '错误信息', {
-    //   type: 'error',
-    //   confirmButtonText: '确定'
-    // })
+      MessageBox.alert(`状态码:${status},错误信息:${errMsg}`, '错误信息', {
+        type: 'error',
+        confirmButtonText: '确定'
+      })
   }
 }
 
@@ -126,7 +126,6 @@ httpInstance.interceptors.request.use(
     // token && (config.headers.Authorization = token)
     // 如果后端使用的是koa-jwt鉴权
     token && (config.headers.Authorization = 'Bearer ' + token)
-    console.log(config)
     return config
   },
   (error) => {
@@ -145,23 +144,16 @@ httpInstance.interceptors.response.use(
     } else {
       return Promise.reject(response)
     }
-    // 如果需要统一处理错误msg
-    // if (response.status && response.status === 200 && response.data.code === -1) {
-    //   Message.error({ message: response.data.msg })
-    //   // return
-    // }
-    // return response
   },
   (error) => {
     // 服务器状态码不是2开头的的情况
     // 这里可以跟你们的后台开发人员协商好统一的错误状态码
     // 然后根据返回的状态码进行一些操作，例如登录过期提示，错误提示等等
     if (error.response && error.response.status) {
-      errorHandle(error.response.status, error.data ? error.data : error)
+      // console.log(error.response.status)
+      // console.log(error.response.data)
+      errorHandle(error.response.status, error.response.data)
     } else {
-      // console.log('响应拦截器-请求失败', error)
-      console.log('请求超时或断网', error)
-      // Message.error({ message: error })
       Message({
         type: 'error',
         message: `请求超时或断网:${error}`,
