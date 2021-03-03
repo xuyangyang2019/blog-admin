@@ -241,6 +241,7 @@ export default {
                 index: index
               })
             }
+            // 给出提示
             this.$message({
               type: res.code === 200 ? 'success' : 'warning',
               message: res.code === 200 ? '删除成功!' : '删除失败'
@@ -271,6 +272,7 @@ export default {
                 removeArr: this.articles2Del
               })
             }
+            // 提示
             this.$message({
               type: res.code === 200 ? 'success' : 'warning',
               message: res.code === 200 ? '删除成功!' : '删除失败'

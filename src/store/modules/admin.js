@@ -1,4 +1,4 @@
-import Vue from 'vue'
+// import Vue from 'vue'
 
 // initial state
 const state = {
@@ -20,7 +20,6 @@ const state = {
     pv: [] // 点击
   }, // 消息
   // =============================================
-  tagsObj: {}, // 标签
   // 红点提示
   redSup: {
     c: false, // 评论
@@ -72,13 +71,15 @@ const mutations = {
   REDUCE_ARR(state, payload) {
     // 删除指定index的文章
     if (payload.name === 'allArticles') {
-      state.allArticles.splice(payload.index, 1)
+      state.articles.splice(payload.index, 1)
     }
+    // 删除草稿
     if (payload.name === 'draft') {
-      state.draftsArticles.splice(payload.index, 1)
+      state.drafts.splice(payload.index, 1)
     }
+    // 删除标签
     if (payload.name === 'eachTag') {
-      state.articles.tags.splice(payload.index, 1)
+      state.tags.splice(payload.index, 1)
     }
     // 删除留言
     if (payload.name === 'adminMsgBoard') {
@@ -109,21 +110,25 @@ const mutations = {
         return payload.removeArr.indexOf(item._id) < 0
       })
     }
+    // 删除多个草稿
     if (payload.name === 'draft') {
       state.draftsArticles = state.draftsArticles.filter((item) => {
         return payload.removeArr.indexOf(item._id) < 0
       })
     }
+    // 删除多个标签
     if (payload.name === 'eachTag') {
       state.articles.tags = state.articles.tags.filter((item) => {
         return payload.removeArr.indexOf(item._id) < 0
       })
     }
+    // 删除留言
     if (payload.name === 'adminMsgBoard') {
       state.msgBoard = state.msgBoard.filter((item) => {
         return payload.removeArr.indexOf(item._id) < 0
       })
     }
+    // 删除评论
     if (payload.name === 'comments') {
       state.comments = state.comments.filter((item) => {
         return payload.removeArr.indexOf(item._id) < 0
@@ -167,10 +172,6 @@ const mutations = {
       }
     })
   },
-  // 设置标签
-  SET_TAGS(state, tags) {
-    state.tagsObj = tags
-  },
   // // 设置文章
   // SET_ARTICLES(state, dataObj) {
   //   const payload = dataObj.payload
@@ -210,6 +211,9 @@ const mutations = {
     state.articles.only = []
     state.forLocation = []
   },
+  // SET_ARTICLES_ONLY(state, oa) {
+  //   Vue.set(state.articles, 'only', oa)
+  // },
   SET_FOR_LOCATION(state, fl) {
     state.forLocation = fl
   }
