@@ -131,16 +131,6 @@
         </button>
       </div>
     </div>
-
-    <!-- 二次确认 -->
-    <transition name="publish">
-      <div v-show="dialog.show" class="publish-mask">
-        <div class="mask-box">
-          <h3>{{ dialog.info }}</h3>
-          <button @click="dialog = { show: false, info: '' }">确认</button>
-        </div>
-      </div>
-    </transition>
   </div>
 </template>
 
@@ -244,7 +234,7 @@ export default {
         // delete: false // 删除标签
       },
       showBtn: false, // 显示按钮
-      dialog: { show: false, info: '' }, // 对话框
+      // dialog: { show: false, info: '' }, // 对话框
       wating: {
         disabled: false,
         info: { p: '发表文章', sd: '存为草稿', su: '更新' }
@@ -402,34 +392,30 @@ export default {
     // 表单验证验证
     validate() {
       if (this.articleInfo.title === '') {
-        this.$toast({
-          message: '请填写文章标题',
-          type: 'warning',
-          duration: 2000
+        this.$alert('请填写文章标题', '提示', {
+          confirmButtonText: '确定',
+          type: 'warning'
         })
         return false
       }
       if (this.articleInfo.tags.length === 0) {
-        this.$toast({
-          message: '请填写文章标签',
-          type: 'warning',
-          duration: 2000
+        this.$alert('请填写文章标签', '提示', {
+          confirmButtonText: '确定',
+          type: 'warning'
         })
         return false
       }
       if (this.articleInfo.abstract === '') {
-        this.$toast({
-          message: '请填写文章前言',
-          type: 'warning',
-          duration: 2000
+        this.$alert('请填写文章前言', '提示', {
+          confirmButtonText: '确定',
+          type: 'warning'
         })
         return false
       }
       if (this.articleInfo.content.length === 0) {
-        this.$toast({
-          message: '内容不能为空',
-          type: 'warning',
-          duration: 2000
+        this.$alert('内容不能为空', '提示', {
+          confirmButtonText: '确定',
+          type: 'warning'
         })
         return false
       }
@@ -437,52 +423,82 @@ export default {
     },
     // 发表文章或存为草稿，通过设置isPublish来区别
     publishArticle(flag) {
-      console.log('发表文章或存为草稿', flag)
       // 如果验证通过
       if (this.validate()) {
-        // 发表
-        const isPublish = !!flag
-        // 更改按钮文字
-        if (flag) {
-          // 如果是发表文章
-          this.wating = {
-            disabled: true,
-            info: { p: '发表中...', sd: '存为草稿', su: '更新' }
-          }
-        } else {
-          // 如果是草稿箱
-          this.wating = {
-            disabled: true,
-            info: { p: '发表文章', sd: '保存中...', su: '更新' }
-          }
-        }
-        // 保存文章
-        console.log('保存文章', this.articleInfo)
-        const { title, abstract, content, tags, original } = this.articleInfo
-        addArticle(title, abstract, content, tags, !!flag, original === 'true').then((data) => {
-          if (data.code === 200) {
-            // 清空编辑器
-            this.editor.setContent('')
-            // 修改按钮文字
-            this.wating = {
-              disabled: false,
-              info: { p: '发表文章', sd: '存为草稿', su: '更新' }
-            }
-            // 重置表单
-            this.articleInfo = {
-              original: 'true',
-              title: '',
-              tags: [],
-              content: '',
-              abstract: ''
-            }
-            if (isPublish) {
-              this.dialog = { show: true, info: '文章发表成功！' }
-            } else {
-              this.dialog = { show: true, info: '草稿保存成功！' }
-            }
-          }
+        // 发表之前二次确认
+        this.$confirm('即将发布文章, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
         })
+          .then(() => {
+            // 发表
+            const isPublish = !!flag
+            // 更改按钮文字
+            if (flag) {
+              // 如果是发表文章
+              this.wating = {
+                disabled: true,
+                info: { p: '发表中...', sd: '存为草稿', su: '更新' }
+              }
+            } else {
+              // 如果是草稿箱
+              this.wating = {
+                disabled: true,
+                info: { p: '发表文章', sd: '保存中...', su: '更新' }
+              }
+            }
+            // 保存文章
+            const { title, abstract, content, tags, original } = this.articleInfo
+            addArticle(title, abstract, content, tags, !!flag, original === 'true').then((data) => {
+              if (data.code === 200) {
+                // 清空编辑器
+                this.editor.setContent('')
+                // 修改按钮文字
+                this.wating = {
+                  disabled: false,
+                  info: { p: '发表文章', sd: '存为草稿', su: '更新' }
+                }
+                // 重置表单
+                this.articleInfo = {
+                  original: 'true',
+                  title: '',
+                  tags: [],
+                  content: '',
+                  abstract: ''
+                }
+                if (isPublish) {
+                  this.$message({
+                    type: 'success',
+                    message: '文章发表成功！'
+                  })
+                  // this.$alert('文章发表成功！', '提示', {
+                  //   confirmButtonText: '确定',
+                  //   type: 'success'
+                  // })
+                } else {
+                  // this.$alert('草稿保存成功！', '提示', {
+                  //   confirmButtonText: '确定',
+                  //   type: 'success'
+                  // })
+                  this.$message({
+                    type: 'success',
+                    message: '草稿保存成功！'
+                  })
+                }
+              }
+            })
+            // this.$message({
+            //   type: 'success',
+            //   message: '删除成功!'
+            // })
+          })
+          .catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消发布'
+            })
+          })
       }
     },
     // updateOrDraftPublish三个作用  ---> 已发表文章的更新 + 草稿的更新 + 草稿文章的发表
@@ -819,76 +835,37 @@ export default {
       text-align: right;
     }
   }
-
-  .publish-mask {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
-    .mask-box {
-      background: #ffffff;
-      border-radius: 5px;
-      margin: 150px auto;
-      width: 30%;
-      text-align: center;
-      overflow: hidden; /*消除对父元素的margin-top绑架*/
-      h3 {
-        margin-top: 50px;
-        color: #e6a23c;
-      }
-      button {
-        padding: 5px 10px;
-        border: 1px solid #5bc0de;
-        background: #5bc0de;
-        margin: 50px 0 20px;
-        color: #ffffff;
-        border-radius: 5px;
-        cursor: pointer;
-      }
-      button:hover {
-        opacity: 0.9;
-      }
-    }
-  }
 }
 
-.publish-enter-active,
-.publish-leave-active {
-  transition: all ease 0.5s;
-}
-.publish-enter,
-.publish-leave-to {
-  opacity: 0;
-}
-.phone-greet {
-  display: none;
-}
+// .publish-enter-active,
+// .publish-leave-active {
+//   transition: all ease 0.5s;
+// }
+// .publish-enter,
+// .publish-leave-to {
+//   opacity: 0;
+// }
+
+// .phone-greet {
+//   display: none;
+// }
 
 @media screen and(max-width: 767px) {
-  .phone-greet {
-    display: inline-block;
-  }
-  .client-greet {
-    display: none;
-  }
-  .mask-box {
-    width: 80%;
-  }
+  // .phone-greet {
+  //   display: inline-block;
+  // }
+  // .client-greet {
+  //   display: none;
+  // }
+  // .mask-box {
+  //   width: 80%;
+  // }
   .input-box-move {
     width: 100% !important;
   }
   .has-chosed {
     display: block;
   }
-  .preview {
-    display: none;
-  }
-  // .editor-write {
-  //   width: 100% !important;
-  // }
   .article-details-title label,
   .article-details-tag label,
   .article-details-abstract label {
