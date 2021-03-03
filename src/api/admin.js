@@ -113,38 +113,13 @@ function deleteArticles(ids) {
 //   })
 // },
 
-// // 精准获取文章
-// GetArticle({ commit }, payload) {
-//   return fetch.get('/api/getAdminArticle', payload).then((data) => {
-//     if (data.length) {
-//       commit('SET_ARTICLES_ONLY', data)
-//       const _tag = data[0].tag[0]
-//       let forLocation = []
-//       if (data[0].publish) {
-//         forLocation = [
-//           { pathName: 'allArticles', showName: '已发表文章' },
-//           { pathName: 'eachTag', showName: _tag, params: { tag: _tag } },
-//           {
-//             pathName: 'review',
-//             showName: data[0].title,
-//             params: { eTag: _tag, articleId: data[0].articleId }
-//           }
-//         ]
-//       } else {
-//         forLocation = [
-//           { pathName: 'draft', showName: '草稿' },
-//           {
-//             pathName: 'review',
-//             showName: data[0].title,
-//             params: { eTag: _tag, articleId: data[0].articleId }
-//           }
-//         ]
-//       }
-//       commit('SET_FOR_LOCATION', forLocation)
-//     }
-//     return data
-//   })
-// },
+/**
+ * 精准获取文章
+ * @param {Number} articleId 文章的id
+ */
+function getArticle(articleId) {
+  return fetch.get('/api/admin/getArticle', { id: articleId })
+}
 
 // // 发表或保存文章
 // SaveArticle({ commit }, payload) {
@@ -290,6 +265,7 @@ export {
   getArticleList,
   addArticle,
   deleteArticles,
+  getArticle,
   getMsgBoard,
   replyMsgBoard,
   deleteMsgBoards,
