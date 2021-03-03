@@ -207,10 +207,10 @@ const mutations = {
       }
     })
   },
-  ClearOnly(state) {
-    state.articles.only = []
-    state.forLocation = []
-  },
+  // ClearOnly(state) {
+  //   state.articles.only = []
+  //   state.forLocation = []
+  // },
   // SET_ARTICLES_ONLY(state, oa) {
   //   Vue.set(state.articles, 'only', oa)
   // },
