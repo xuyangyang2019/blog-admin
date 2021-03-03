@@ -106,7 +106,16 @@ export default {
   created() {
     // 先鉴权
     confirmToken().then((res) => {
-      console.log(res)
+      if (res.code !== 200) {
+        this.$alert('你没有权限到这个页面！', '提示', {
+          confirmButtonText: '确定',
+          callback: () => {
+            this.$router.push({
+              name: 'adminLogin'
+            })
+          }
+        })
+      }
     })
   },
   methods: {
