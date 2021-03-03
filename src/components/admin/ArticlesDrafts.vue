@@ -1,25 +1,26 @@
 <template>
   <div class="draft">
-    <list :articleList="draftsArticles"></list>
+    <article-list :articleList="drafts"></article-list>
   </div>
 </template>
 
 <script>
-import { mapState, mapMutations } from 'vuex'
+import { mapState } from 'vuex'
 import { getArticleList } from '../../api/admin'
 
-import list from '@/components/common/ArticleList'
+import ArticleList from '../common/ArticleList.vue'
 
 export default {
+  name: 'ArticleDrafts',
   components: {
-    list
+    ArticleList
   },
   data() {
     return {}
   },
   computed: {
     ...mapState('admin', {
-      draftsArticles: 'draftsArticles'
+      drafts: 'drafts'
     })
   },
   created() {
@@ -27,16 +28,12 @@ export default {
     // this.queryDraftsArticles()
   },
   methods: {
-    ...mapMutations({
-      SET_DRAFTS_ARTICLES: 'admin/SET_DRAFTS_ARTICLES',
-      SET_PAGE_ARRAY: 'admin/SET_PAGE_ARRAY'
-    }),
     // 分页查询未发表的文章
     queryDraftsArticles() {
       getArticleList(1, 10, 0, '').then((res) => {
         if (res.code === 200) {
-          this.SET_DRAFTS_ARTICLES(res.data.list)
-          this.SET_PAGE_ARRAY(res.data.count)
+          this.$store.commit('admin/SET_DRAFTS', res.data.list)
+          this.$store.commit('admin/SET_PAGE_ARRAY', res.data.count)
         }
       })
     }

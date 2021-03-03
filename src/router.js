@@ -77,7 +77,7 @@ const router = new Router({
           path: 'draft',
           name: 'draft',
           // component: draft,
-          component: () => import(/* webpackChunkName: "admin" */ './components/admin/AdminDraft.vue'),
+          component: () => import(/* webpackChunkName: "admin" */ './components/admin/ArticlesDrafts.vue'),
           meta: {
             requireAuth: true,
             keepAlive: true
