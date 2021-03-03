@@ -26,7 +26,6 @@
 
 <script>
 import Prism from 'prismjs'
-import { mapState } from 'vuex'
 import { getArticle } from '../../api/admin'
 
 export default {
@@ -36,15 +35,10 @@ export default {
     }
   },
   // 离开之前清空预览
-  beforeRouteLeave(to, from, next) {
-    this.$store.commit('admin/ClearOnly')
-    next()
-  },
-  computed: {
-    ...mapState('admin', {
-      // article: 'article'
-    })
-  },
+  // beforeRouteLeave(to, from, next) {
+  //   this.$store.commit('admin/ClearOnly')
+  //   next()
+  // },
   watch: {
     $route() {
       if (this.$route.name === 'review') {

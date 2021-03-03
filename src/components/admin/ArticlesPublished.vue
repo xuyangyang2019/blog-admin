@@ -37,7 +37,6 @@ export default {
   },
   // 组件缓存后，为了让每个模块显示正确的页码，故重新计算页码数
   beforeRouteEnter(to, from, next) {
-    console.log('beforeRouteEnter')
     next((vm) => {
       vm.queryArticles()
       document.title = '后台管理 -已发表文章'

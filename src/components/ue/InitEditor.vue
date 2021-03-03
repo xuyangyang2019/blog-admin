@@ -4,7 +4,7 @@
     <div class="back-home">
       <i class="fa fa-home fa-2x" aria-hidden="true" title="回到管理首页" @click="backHome"></i>
       <span class="client-greet">{{ greet }}好，admin！</span>
-      <span class="phone-greet">{{ greet }}好，admin！</span>
+      <!-- <span class="phone-greet">{{ greet }}好，admin！</span> -->
       <i class="fa fa-sign-out" aria-hidden="true" title="退出管理界面" @click="exit"></i>
     </div>
     <!-- UEditor -->
@@ -153,5 +153,14 @@ export default {
       cursor: pointer;
     }
   }
+  // .phone-greet {
+  //   display: inline-block;
+  // }
+  // .client-greet {
+  //   display: none;
+  // }
+  // .mask-box {
+  //   width: 80%;
+  // }
 }
 </style>
