@@ -4,15 +4,17 @@
     <div class="review-title">
       <h2>{{ article.title }}</h2>
     </div>
-    <!-- 标签|前言|时间 -->
+    <!-- 标签 -->
     <div class="review-tags">
       <h4 class="review-article-h4">标签：</h4>
       <span v-for="(t, index1) in article.tag" :key="'tab' + index1" class="review-article-span" v-text="t"></span>
     </div>
+    <!-- 前言 -->
     <div class="review-abstract">
       <h4 class="review-article-h4">前言：</h4>
       <span class="review-article-span" v-text="article.abstract"></span>
     </div>
+    <!-- 发表时间 -->
     <div class="review-date">
       <h4 class="review-article-h4">发表时间：</h4>
       <span class="review-article-span" v-text="$options.filters.reviseTime(article.date)"></span>
@@ -105,13 +107,14 @@ export default {
   padding: 0 20px;
   border-radius: 2px;
   // border: solid 1px rgba(0, 0, 0, 0.8);
-  overflow: auto;
-  // overflow: hidden;
-  @include scroll;
+  overflow: hidden;
+  // overflow: auto;
+  // @include scroll;
 
   .review-title {
     text-align: center;
   }
+
   .review-tags,
   .review-abstract,
   .review-date {
@@ -127,6 +130,10 @@ export default {
 
   .review-content {
     text-align: start;
+    word-wrap: break-word;
+    overflow: auto;
+    @include scroll;
+
     // li {
     //   margin-left: 15px;
     //   border: solid red 1px;
