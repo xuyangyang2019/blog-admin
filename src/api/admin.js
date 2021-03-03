@@ -84,10 +84,11 @@ function addArticle(title, abstract, content, tag, publish, original) {
     tag: tag,
     publish: publish,
     original: original,
-    pv: 0,
-    date: new Date().getTime()
+    pv: 0, // 点击数
+    commentNum: 0, // 评论数
+    likeNum: 0 // 点赞数
   }
-  return fetch.post('/api/addArticle', parameters)
+  return fetch.post('/api/admin/addArticle', parameters)
 }
 
 /**
@@ -120,10 +121,6 @@ function deleteArticles(ids) {
 function getArticle(articleId) {
   return fetch.get('/api/admin/getArticle', { id: articleId })
 }
-
-// // 发表或保存文章
-// SaveArticle({ commit }, payload) {
-// },
 
 // // 更新文章
 // UpdateArticle({ commit }, payload) {
