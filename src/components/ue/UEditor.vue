@@ -1,13 +1,5 @@
 <template>
   <div class="my-ue">
-    <!-- 返回|退出 -->
-    <div class="back">
-      <i class="fa fa-home fa-2x" aria-hidden="true" title="回到管理首页" @click="backHome"></i>
-      <span class="client-greet">{{ greet }}好，admin！</span>
-      <span class="phone-greet">{{ greet }}好，admin！</span>
-      <i class="fa fa-sign-out" aria-hidden="true" title="退出管理界面" @click="exit"></i>
-    </div>
-
     <!-- 类型|标题|标签|前言 -->
     <div class="article-details">
       <!-- 类型 -->
@@ -102,7 +94,7 @@
     <div class="editor-container">
       <!-- 百度富文本编辑器 -->
       <div class="editor-write">
-        <div id="editor" type="text/plain" style="width: 100%; height: 350px"></div>
+        <div id="editor" type="text/plain" style="width: 100%; height: 100%"></div>
       </div>
       <!-- 预览 -->
       <!-- <div class="preview">
@@ -273,26 +265,6 @@ export default {
         }
       }
       return filter_arr
-    },
-    // 问候语
-    greet() {
-      const hour = new Date().getHours()
-      if (hour >= 0 && hour < 6) {
-        return '凌晨'
-      }
-      if (hour >= 6 && hour < 11) {
-        return '上午'
-      }
-      if (hour >= 11 && hour < 14) {
-        return '中午'
-      }
-      if (hour >= 14 && hour < 18) {
-        return '下午'
-      }
-      if (hour >= 18 && hour < 24) {
-        return '晚上'
-      }
-      return ''
     }
   },
   mounted() {
@@ -323,16 +295,6 @@ export default {
     ...mapActions({
       UpdateArticle: 'admin/UpdateArticle'
     }),
-    // 返回首页
-    backHome() {
-      this.$router.push({ name: 'admin' })
-    },
-    // 退出
-    exit() {
-      localStorage.removeItem('validateToken')
-      this.$store.commit('admin/SET_USER_INFO', {})
-      this.$router.push({ name: 'login' })
-    },
     // 标签框获取焦点
     getFocus() {
       this.canHide = true
@@ -672,19 +634,6 @@ export default {
   display: flex;
   flex-direction: column;
 
-  .back {
-    padding: 15px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    color: #ccc;
-    border-bottom: 1px solid #ccc;
-    .fa {
-      font-size: 26px;
-      cursor: pointer;
-    }
-  }
-
   .article-details {
     color: #fff;
     padding: 15px;
@@ -738,7 +687,6 @@ export default {
       @extend .article-details-item;
       .item-content {
         cursor: text;
-        // border: solid red 1px;
       }
 
       .has-chosed {
@@ -815,44 +763,38 @@ export default {
   .editor-container {
     flex: 1 1 auto;
     margin: 0 20px;
-    overflow-y: scroll;
-    display: flex;
-    justify-content: space-between;
-    overflow: hidden;
-    border: solid red 1px;
-
-    ::v-deep .editor-write {
-      overflow-y: scroll;
-      border: solid red 1px;
-      .edui-default .edui-editor-toolbarboxouter {
-        border: solid red 1px;
+    .editor-write {
+      height: 100%;
+      height: 100%;
+      #editor {
+        height: 100%;
+        .edui-editor {
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+          border: solid red 1px;
+          // .edui-editor-toolbarboxouter {
+          //   border: solid blue 1px;
+          // }
+          .edui-editor-iframeholder {
+            flex: auto 1 1;
+            border: solid blue 1px;
+          }
+        }
       }
     }
 
-    .preview {
-      width: 49%;
-      padding: 5px;
-      text-align: start;
-      font-size: 14px;
-      border-radius: 2px;
-      line-height: 1.5;
-      overflow-y: scroll;
-      background-color: #fff;
-      border: solid red 1px;
-
-      // li {
-      //   margin-left: 15px;
-      // }
-      // hr {
-      //   margin: 15px 0;
-      //   height: 0;
-      //   border: 0;
-      //   border-top: 1px solid #ccc;
-      // }
-      // img {
-      //   max-width: 100%;
-      // }
-    }
+    // .preview {
+    //   width: 49%;
+    //   padding: 5px;
+    //   text-align: start;
+    //   font-size: 14px;
+    //   border-radius: 2px;
+    //   line-height: 1.5;
+    //   overflow-y: scroll;
+    //   background-color: #fff;
+    //   border: solid red 1px;
+    // }
   }
 
   .article-handle {
@@ -944,9 +886,9 @@ export default {
   .preview {
     display: none;
   }
-  .editor-write {
-    width: 100% !important;
-  }
+  // .editor-write {
+  //   width: 100% !important;
+  // }
   .article-details-title label,
   .article-details-tag label,
   .article-details-abstract label {
