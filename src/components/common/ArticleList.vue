@@ -73,22 +73,6 @@
       <page v-show="pageArray.length > 1"></page>
     </transition>
 
-    <!-- 二次确认弹框 -->
-    <!-- <transition name="fade">
-      <div v-show="showDeleteDialog" class="validate-mask">
-        <div class="validate-bin">
-          <div class="exit-validate">
-            <span @click="showDeleteDialog = false">X</span>
-          </div>
-          <div class="sure-delete">
-            <h3>{{ deleteDialogMsg }}</h3>
-            <button @click="sureRemove">确定</button>
-            <button @click="showDeleteDialog = false">取消</button>
-          </div>
-        </div>
-      </div>
-    </transition> -->
-
     <!-- 过度窗口 -->
     <transition name="fade">
       <div v-show="updateInfo.show" class="validate-mask">
@@ -106,6 +90,7 @@ import { mapMutations, mapState } from 'vuex'
 import { deleteArticles } from '../../api/admin'
 
 import page from '@/components/base/Page'
+import { getArticle } from '../../api/admin'
 
 export default {
   components: {
@@ -134,10 +119,6 @@ export default {
     return {
       allChecked: false, // 全选
       articles2Del: [], // 选中的文章的id的集合
-      // showDeleteDialog: false, // 显示确认删除的对话框
-      // deleteDialogMsg: '', // 确人删除的提示语
-      // articleIdToDel: {}, // 要删除的文章id
-      // deleteType: 'single', // 删除的类型 单独删:single 批量删:multi
       updateInfo: { show: false, wait: false },
       // 标签背景颜色
       color: [
@@ -221,30 +202,28 @@ export default {
     reviewArticle(item) {
       this.$router.push({
         name: 'review',
-        params: { eTag: item.tag[0], _id: item._id }
+        params: { eTag: item.tag[0], articleId: item._id }
       })
     },
     // 修改文章 ok
     modifyArticle(item) {
       this.updateInfo = { show: false, wait: true }
-      this.$store
-        .dispatch('admin/GetArticle', {
-          tag: item.tag[0],
-          _id: item._id
-        })
-        .then((data) => {
-          if (data.length) {
-            this.updateInfo = { show: false, wait: false }
-            // 如果当前是草稿箱 跳转到draftrevise
-            if (this.$route.path === '/admin/draft') {
-              this.$router.push({ name: 'draftrevise' })
-            } else {
-              this.$router.push({ name: 'update' })
-            }
+
+      getArticle(item._id).then((res) => {
+        console.log(res)
+        if (res.code === 200) {
+          this.updateInfo = { show: false, wait: false }
+          this.$store.commit('admin/SET_ARTICLE', res.data)
+          // 如果当前是草稿箱 跳转到draftrevise
+          if (this.$route.path === '/admin/draft') {
+            this.$router.push({ name: 'draftrevise' })
           } else {
-            this.updateInfo = { show: true, wait: false }
+            this.$router.push({ name: 'update' })
           }
-        })
+        } else {
+          this.updateInfo = { show: true, wait: false }
+        }
+      })
     },
     // 删除单篇文章 ok
     removeArticle(_id, index) {
