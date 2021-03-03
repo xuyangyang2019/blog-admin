@@ -1,22 +1,23 @@
 <template>
   <div class="admin-articles">
-    <list :articleList="allArticles"></list>
+    <article-list :articleList="articles"></article-list>
   </div>
 </template>
 
 <script>
-import { mapState, mapMutations } from 'vuex'
+import { mapState } from 'vuex'
 import { getArticleList } from '../../api/admin'
 
-import list from '@/components/common/ArticleList'
+import ArticleList from '../common/ArticleList.vue'
 
 export default {
+  name: 'ArticlesPublished',
   components: {
-    list
+    ArticleList
   },
   computed: {
     ...mapState('admin', {
-      allArticles: 'allArticles'
+      articles: 'articles'
     })
   },
   created() {
@@ -24,17 +25,12 @@ export default {
     // this.queryArticles()
   },
   methods: {
-    ...mapMutations({
-      SET_ALL_ARTICLES: 'admin/SET_ALL_ARTICLES',
-      SET_PAGE_ARRAY: 'admin/SET_PAGE_ARRAY'
-    }),
     // 查询已发表的文章列表
     queryArticles() {
       getArticleList(1, 10, true, '').then((res) => {
-        console.log(res)
         if (res.code === 200) {
-          this.SET_ALL_ARTICLES(res.data.list)
-          this.SET_PAGE_ARRAY(res.data.count)
+          this.$store.commit('admin/SET_ARTICLES', res.data.list)
+          this.$store.commit('admin/SET_PAGE_ARRAY', res.data.count)
         }
       })
     }
