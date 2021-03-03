@@ -1,34 +1,38 @@
 <template>
   <div class="article-review">
-    <div v-for="(item, index) in articles.only" :key="index">
-      <!-- 文章标题 -->
-      <div class="review-title">
-        <h2>{{ item.title }}</h2>
-      </div>
-      <!-- 标签|前言|时间 -->
-      <div class="review-tags">
-        <h4 class="review-article-h4">标签：</h4>
-        <span v-for="(t, index1) in item.tag" :key="'tab' + index1" class="review-article-span" v-text="t"></span>
-      </div>
-      <div class="review-abstract">
-        <h4 class="review-article-h4">前言：</h4>
-        <span class="review-article-span" v-text="item.abstract"></span>
-      </div>
-      <div class="review-date">
-        <h4 class="review-article-h4">发表时间：</h4>
-        <span class="review-article-span" v-text="$options.filters.reviseTime(item.date)"></span>
-      </div>
-      <!-- 文章内容 -->
-      <div class="review-content" v-html="item.content"></div>
+    <!-- 文章标题 -->
+    <div class="review-title">
+      <h2>{{ article.title }}</h2>
     </div>
+    <!-- 标签|前言|时间 -->
+    <div class="review-tags">
+      <h4 class="review-article-h4">标签：</h4>
+      <span v-for="(t, index1) in article.tag" :key="'tab' + index1" class="review-article-span" v-text="t"></span>
+    </div>
+    <div class="review-abstract">
+      <h4 class="review-article-h4">前言：</h4>
+      <span class="review-article-span" v-text="article.abstract"></span>
+    </div>
+    <div class="review-date">
+      <h4 class="review-article-h4">发表时间：</h4>
+      <span class="review-article-span" v-text="$options.filters.reviseTime(article.date)"></span>
+    </div>
+    <!-- 文章内容 -->
+    <div class="review-content" v-html="article.content"></div>
   </div>
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import Prism from 'prismjs'
+import { mapState } from 'vuex'
+import { getArticle } from '../../api/admin'
 
 export default {
+  data() {
+    return {
+      article: {}
+    }
+  },
   // 离开之前清空预览
   beforeRouteLeave(to, from, next) {
     this.$store.commit('admin/ClearOnly')
@@ -36,7 +40,7 @@ export default {
   },
   computed: {
     ...mapState('admin', {
-      articles: 'articles'
+      // article: 'article'
     })
   },
   watch: {
@@ -54,17 +58,39 @@ export default {
   methods: {
     // 精准获取文章
     getOnlyArticle() {
-      this.$store
-        .dispatch('admin/GetArticle', {
-          tag: this.$route.params.eTag,
-          articleId: this.$route.params.articleId
+      getArticle(this.$route.params.articleId).then((res) => {
+        console.log(res)
+        if (res.code === 200) {
+          this.article = res.data
+          //   const _tag = data[0].tag[0]
+          //   let forLocation = []
+          //   if (data[0].publish) {
+          //     forLocation = [
+          //       { pathName: 'allArticles', showName: '已发表文章' },
+          //       { pathName: 'eachTag', showName: _tag, params: { tag: _tag } },
+          //       {
+          //         pathName: 'review',
+          //         showName: data[0].title,
+          //         params: { eTag: _tag, articleId: data[0].articleId }
+          //       }
+          //     ]
+          //   } else {
+          //     forLocation = [
+          //       { pathName: 'draft', showName: '草稿' },
+          //       {
+          //         pathName: 'review',
+          //         showName: data[0].title,
+          //         params: { eTag: _tag, articleId: data[0].articleId }
+          //       }
+          //     ]
+          //   }
+          //   commit('SET_FOR_LOCATION', forLocation)
+        }
+        this.$nextTick(() => {
+          // 代码高亮
+          Prism.highlightAll()
         })
-        .then(() => {
-          this.$nextTick(() => {
-            // 代码高亮
-            Prism.highlightAll()
-          })
-        })
+      })
     }
   }
 }
