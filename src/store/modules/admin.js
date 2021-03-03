@@ -4,8 +4,11 @@ import Vue from 'vue'
 const state = {
   token: '', // token
   userInfo: {}, // 用户信息
-  allArticles: [], // 所有的文章
-  draftsArticles: [], // 草稿箱
+  articles: [], // 已经发表的文章
+  article: {}, // 当前要展示的文章
+  drafts: [], // 草稿箱
+  tags: [], // 文章标签
+  // =============================================
   pageArray: [], // 已发表页码数组
   msgBoard: [], // 留言板
   comments: [], // 评论
@@ -25,15 +28,7 @@ const state = {
     l: false, // 点赞
     p: false // 点击
   },
-  forLocation: [], // 不知道有什么用
-  // 文章列表
-  articles: {
-    all: [], // 所有文章
-    drafts: [], // 草稿箱
-    tags: [], // 标签
-    search: [], // 搜索结果
-    only: [] // 要预览的文章
-  }
+  forLocation: [] // 不知道有什么用
 }
 
 // getters
@@ -44,20 +39,27 @@ const actions = {}
 
 // mutations
 const mutations = {
+  // 设置token
   SET_TOKEN(state, tokenData) {
     state.token = tokenData
   },
+  // 设置admin的信息
   SET_USER_INFO(state, userInfo) {
     state.userInfo = userInfo
   },
-  // 设置所有的文章列表
-  SET_ALL_ARTICLES(state, data) {
-    state.allArticles = data
+  // 设置已发表的文章列表
+  SET_ARTICLES(state, data) {
+    state.articles = data
   },
   // 设置草稿箱
-  SET_DRAFTS_ARTICLES(state, data) {
-    state.draftsArticles = data
+  SET_DRAFTS(state, data) {
+    state.drafts = data
   },
+  // 设置单个文章
+  SET_ARTICLE(state, data) {
+    state.article = data
+  },
+  // ======================================================
   // 设置留言版信息
   SET_MSG_BOARD(state, msgBoardData) {
     state.msgBoard = msgBoardData
@@ -169,26 +171,25 @@ const mutations = {
   SET_TAGS(state, tags) {
     state.tagsObj = tags
   },
-  // 设置文章
-  SET_ARTICLES(state, dataObj) {
-    const payload = dataObj.payload
-    const data = dataObj.data
-    if (data.length) {
-      if (!payload.tag) {
-        if (payload.publish === true) {
-          state.articles.all = data
-        } else {
-          state.articles.drafts = data
-        }
-      } else {
-        state.articles.tags = data
-      }
-    }
-  },
+  // // 设置文章
+  // SET_ARTICLES(state, dataObj) {
+  //   const payload = dataObj.payload
+  //   const data = dataObj.data
+  //   if (data.length) {
+  //     if (!payload.tag) {
+  //       if (payload.publish === true) {
+  //         state.articles.all = data
+  //       } else {
+  //         state.articles.drafts = data
+  //       }
+  //     } else {
+  //       state.articles.tags = data
+  //     }
+  //   }
+  // },
   SET_ARTICLES_SEARCH(state, data) {
     state.articles.search = data
   },
-
   ADD_LOCAL_WORD(state, add) {
     state.msgBoard.forEach((item, index) => {
       if (item._id === add._id) {
@@ -208,10 +209,6 @@ const mutations = {
   ClearOnly(state) {
     state.articles.only = []
     state.forLocation = []
-  },
-  SET_ARTICLES_ONLY(state, oa) {
-    // state.articles.only = oa
-    Vue.set(state.articles, 'only', oa)
   },
   SET_FOR_LOCATION(state, fl) {
     state.forLocation = fl

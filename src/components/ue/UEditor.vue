@@ -243,7 +243,7 @@ export default {
   },
   computed: {
     ...mapState('admin', {
-      articles: 'articles'
+      article: 'article'
     }),
     // 所有标签集合
     filterArray() {
@@ -508,7 +508,7 @@ export default {
         // 是否发表文章
         let isPublish = false
         // 文章
-        const article = this.articles.only[0]
+        const article = this.article
         // 是否原创
         const _original = this.articleInfo.original === 'true'
         console.log(article)
@@ -612,16 +612,16 @@ export default {
       })
       this.editor.addListener('ready', () => {
         console.log('ue ready')
-        if (this.articles.only.length) {
-          this.editor.setContent(this.articles.only[0].content)
+        if (JSON.stringify(this.article) !== '{}') {
+          this.editor.setContent(this.article.content)
         }
       })
     },
     // 初始化编辑器内容
     initUeditorContent() {
       // 如果有文章
-      if (this.articles.only.length) {
-        const atc = this.articles.only[0]
+      if (JSON.stringify(this.article) !== '{}') {
+        const atc = this.article
         // 标题 | 标签 | 前言
         if (this.$route.path !== '/admin/publish') {
           this.articleInfo = {
