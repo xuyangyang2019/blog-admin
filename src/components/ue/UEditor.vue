@@ -104,32 +104,36 @@
 
     <!-- 对文章的一系列操作: 1.文章发表 2.存为草稿 3.已发表文章的更新 4.草稿的更新 5.草稿发表 -->
     <div class="article-handle">
+      <!-- {{ article }} -->
+      <el-button type="primary" size="small" @click="publishArticle">发布文章</el-button>
+      <el-button v-if="!article.publish" type="plain" size="small" @click="draftArticle">保存草稿</el-button>
+
       <!-- 发布文章 发表文章按钮 | 存为草稿按钮 -->
-      <div v-if="this.$route.path === '/admin/publish'" class="publish">
+      <!-- <div v-if="this.$route.path === '/admin/publish'" class="publish">
         <button :disabled="wating.disabled" class="true-publish" @click="publishArticle(1)">
           {{ wating.info.p }}
         </button>
         <button :disabled="wating.disabled" class="false-publish" @click="publishArticle(0)">
           {{ wating.info.sd }}
         </button>
-      </div>
+      </div> -->
 
       <!-- 已发表的文章 更新按钮 -->
-      <div v-if="this.$route.path === '/admin/update'" class="publish">
-        <button v-show="showBtn" :disabled="wating.disabled" class="published-update" @click="updateOrDraftPublish(1)">
+      <!-- <div v-if="this.$route.path === '/admin/update'" class="publish">
+        <button :disabled="wating.disabled" class="published-update" @click="updateOrDraftPublish(1)">
           {{ wating.info.su }}
         </button>
-      </div>
+      </div> -->
 
       <!-- 草稿箱的按钮 更新按钮 | 发表文章按钮 -->
-      <div v-if="this.$route.path === '/admin/draftrevise'" class="publish">
-        <button v-show="showBtn" :disabled="wating.disabled" class="draft-update" @click="updateOrDraftPublish(2)">
+      <!-- <div v-if="this.$route.path === '/admin/draftrevise'" class="publish">
+        <button :disabled="wating.disabled" class="draft-update" @click="updateOrDraftPublish(2)">
           {{ wating.info.su }}
         </button>
         <button :disabled="wating.disabled" class="draft-publish" @click="updateOrDraftPublish(3)">
           {{ wating.info.p }}
         </button>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
@@ -145,7 +149,7 @@ import '@/../public/UE/lang/zh-cn/zh-cn'
 // 下面注释的文件会报错
 import '@/../public/UE/themes/default/css/ueditor.css'
 
-import { addArticle } from '../../api/admin'
+import { addArticle, getArticle } from '../../api/admin'
 
 export default {
   props: {
@@ -162,7 +166,8 @@ export default {
         title: '', // 标题
         tags: [], // 标签
         abstract: '', // 前言
-        content: '' // 内容
+        content: '', // 内容
+        publish: true // 默认发表
       },
       currentTagNav: 'languages', // 当前的标签nav
       // 标签库
@@ -233,7 +238,7 @@ export default {
         filter: false // 显示过滤的标签
         // delete: false // 删除标签
       },
-      showBtn: false, // 显示按钮
+      // showBtn: false, // 显示按钮
       // dialog: { show: false, info: '' }, // 对话框
       wating: {
         disabled: false,
@@ -272,6 +277,7 @@ export default {
     if (this.editor !== null) {
       this.editor.destroy()
     }
+    // 数据还原
     this.articleInfo = {
       title: '',
       tags: [],
@@ -279,7 +285,7 @@ export default {
       content: ''
     }
     // 清除当前的文章
-    this.$store.commit('admin/ClearOnly')
+    this.$store.commit('admin/SET_ARTICLE', {})
   },
   methods: {
     ...mapActions({
@@ -422,7 +428,7 @@ export default {
       return true
     },
     // 发表文章或存为草稿，通过设置isPublish来区别
-    publishArticle(flag) {
+    publishArticle() {
       // 如果验证通过
       if (this.validate()) {
         // 发表之前二次确认
@@ -432,66 +438,38 @@ export default {
           type: 'warning'
         })
           .then(() => {
-            // 发表
-            const isPublish = !!flag
-            // 更改按钮文字
-            if (flag) {
-              // 如果是发表文章
-              this.wating = {
-                disabled: true,
-                info: { p: '发表中...', sd: '存为草稿', su: '更新' }
-              }
+            console.log('发布文章', this.articleInfo)
+            console.log('发布文章', this.article)
+            if (this.article._id) {
+              console.log('更新文章')
+              //   this.UpdateArticle({
+              //     articleId: article.articleId,
+              //     original: _original,
+              //     title: this.articleInfo.title,
+              //     abstract: this.articleInfo.abstract,
+              //     content: this.articleInfo.content,
+              //     tag: this.articleInfo.tags,
+              //     publish: isPublish
+              //   }).then(() => {
+              //     // 清空编辑器
+              //     this.editor.setContent('')
+              //     this.articleInfo = {
+              //       original: 'true',
+              //       title: '',
+              //       tags: [],
+              //       content: '',
+              //       abstract: ''
+              //     }
+              //     this.wating = {
+              //       disabled: false,
+              //       info: { p: '发表文章', sd: '存为草稿', su: '更新' }
+              //     }
+              //     this.dialog.show = true
+              //   })
+              // }
             } else {
-              // 如果是草稿箱
-              this.wating = {
-                disabled: true,
-                info: { p: '发表文章', sd: '保存中...', su: '更新' }
-              }
+              this.addNewArticle()
             }
-            // 保存文章
-            const { title, abstract, content, tags, original } = this.articleInfo
-            addArticle(title, abstract, content, tags, !!flag, original === 'true').then((data) => {
-              if (data.code === 200) {
-                // 清空编辑器
-                this.editor.setContent('')
-                // 修改按钮文字
-                this.wating = {
-                  disabled: false,
-                  info: { p: '发表文章', sd: '存为草稿', su: '更新' }
-                }
-                // 重置表单
-                this.articleInfo = {
-                  original: 'true',
-                  title: '',
-                  tags: [],
-                  content: '',
-                  abstract: ''
-                }
-                if (isPublish) {
-                  this.$message({
-                    type: 'success',
-                    message: '文章发表成功！'
-                  })
-                  // this.$alert('文章发表成功！', '提示', {
-                  //   confirmButtonText: '确定',
-                  //   type: 'success'
-                  // })
-                } else {
-                  // this.$alert('草稿保存成功！', '提示', {
-                  //   confirmButtonText: '确定',
-                  //   type: 'success'
-                  // })
-                  this.$message({
-                    type: 'success',
-                    message: '草稿保存成功！'
-                  })
-                }
-              }
-            })
-            // this.$message({
-            //   type: 'success',
-            //   message: '删除成功!'
-            // })
           })
           .catch(() => {
             this.$message({
@@ -501,75 +479,38 @@ export default {
           })
       }
     },
-    // updateOrDraftPublish三个作用  ---> 已发表文章的更新 + 草稿的更新 + 草稿文章的发表
-    updateOrDraftPublish(flag) {
-      // 如果通过表单验证
-      if (this.validate()) {
-        // 是否发表文章
-        let isPublish = false
-        // 文章
-        const article = this.article
-        // 是否原创
-        const _original = this.articleInfo.original === 'true'
-        console.log(article)
-        switch (flag) {
-          // 已发表文章的更新
-          case 1:
-            isPublish = false
-            this.wating = {
-              disabled: true,
-              info: { p: '发表文章', sd: '存为草稿', su: '更新中...' }
-            }
-            this.dialog.info = '更新成功！'
-            break
-          // 草稿的更新
-          case 2:
-            isPublish = true
-            this.wating = {
-              disabled: true,
-              info: { p: '发表文章', sd: '存为草稿', su: '更新中...' }
-            }
-            this.dialog.info = '更新成功！'
-            break
-          // 草稿文章的发表
-          case 3:
-            isPublish = true
-            this.wating = {
-              disabled: true,
-              info: { p: '发表中...', sd: '存为草稿', su: '更新' }
-            }
-            this.dialog.info = '发表成功！'
-            break
-          default:
-            break
-        }
-
-        this.UpdateArticle({
-          articleId: article.articleId,
-          original: _original,
-          title: this.articleInfo.title,
-          abstract: this.articleInfo.abstract,
-          content: this.articleInfo.content,
-          tag: this.articleInfo.tags,
-          publish: isPublish
-        }).then(() => {
+    // 新文章存为草稿或已有的文章改为草稿
+    draftArticle() {
+      this.articleInfo.publish = false
+      this.addNewArticle()
+    },
+    // 保存文章
+    addNewArticle() {
+      console.log('保存文章')
+      // 保存文章
+      const { title, abstract, content, tags, publish, original } = this.articleInfo
+      addArticle(title, abstract, content, tags, publish, original === 'true').then((res) => {
+        if (res.code === 200) {
           // 清空编辑器
           this.editor.setContent('')
+          // 重置表单
           this.articleInfo = {
             original: 'true',
             title: '',
             tags: [],
             content: '',
-            abstract: ''
+            abstract: '',
+            publish: true
           }
-          this.wating = {
-            disabled: false,
-            info: { p: '发表文章', sd: '存为草稿', su: '更新' }
-          }
-          this.dialog.show = true
-        })
-      }
+          // 提示
+          this.$message({
+            type: 'success',
+            message: publish ? '文章发表成功!' : '保存草稿成功!'
+          })
+        }
+      })
     },
+
     // 获取ue内容
     getUEContent() {
       return this.editor.getContent()
@@ -605,37 +546,57 @@ export default {
       // editor内容变化监听事件
       this.editor.addListener('contentChange', () => {
         console.log('ue contentChange')
-        if (!this.showBtn) {
-          this.showBtn = true
-        }
+        // if (!this.showBtn) {
+        //   this.showBtn = true
+        // }
         this.transformStr()
       })
+      // ue加载完成
       this.editor.addListener('ready', () => {
         console.log('ue ready')
         if (JSON.stringify(this.article) !== '{}') {
-          this.editor.setContent(this.article.content)
+          this.editor.setContent(this.articleInfo.content)
         }
       })
     },
     // 初始化编辑器内容
     initUeditorContent() {
+      console.log('initUeditorContent初始化编辑器内容')
       // 如果有文章
-      if (JSON.stringify(this.article) !== '{}') {
-        const atc = this.article
-        // 标题 | 标签 | 前言
-        if (this.$route.path !== '/admin/publish') {
-          this.articleInfo = {
-            original: atc.original === 'true' ? 'true' : 'false',
-            title: atc.title,
-            tags: atc.tag,
-            abstract: atc.abstract,
-            content: atc.content
+      if (this.$route.path !== '/admin/publish') {
+        // 如果有数据
+        if (JSON.stringify(this.article) !== '{}') {
+          // 标题 | 标签 | 前言
+          if (this.$route.path !== '/admin/publish') {
+            this.articleInfo = {
+              original: this.article.original === 'true' ? 'true' : 'false',
+              title: this.article.title,
+              tags: this.article.tag,
+              abstract: this.article.abstract,
+              content: this.article.content
+            }
           }
+          // // 技术文章 | 生活感悟
+          // if (this.articleInfo.tags[0] === "life") {
+          //   this.$refs.typeOfLife.checked = true
+          // }
+        } else {
+          console.log('获取数据')
+          getArticle(this.$route.params.articleId).then((res) => {
+            if (res.code === 200) {
+              console.log(res)
+              const atc = res.data
+              this.articleInfo = {
+                original: atc.original === 'true' ? 'true' : 'false',
+                title: atc.title,
+                tags: atc.tag,
+                abstract: atc.abstract,
+                content: atc.content
+              }
+              // this.editor.setContent(atc.content)
+            }
+          })
         }
-        // // 技术文章 | 生活感悟
-        // if (this.articleInfo.tags[0] === "life") {
-        //   this.$refs.typeOfLife.checked = true
-        // }
       }
     }
   }
@@ -815,51 +776,14 @@ export default {
 
   .article-handle {
     margin: 0 20px;
-    button {
-      border: 1px solid #409eff;
-      border-radius: 5px;
-      padding: 5px 10px;
-      margin-right: 10px;
-      background: #409eff;
-      cursor: pointer;
-      color: #ffffff;
-    }
-    button:hover {
-      opacity: 0.9;
-    }
-    button[disabled] {
-      cursor: wait;
-    }
-    .publish {
-      padding: 10px 0;
-      text-align: right;
-    }
+    min-height: 50px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
   }
 }
 
-// .publish-enter-active,
-// .publish-leave-active {
-//   transition: all ease 0.5s;
-// }
-// .publish-enter,
-// .publish-leave-to {
-//   opacity: 0;
-// }
-
-// .phone-greet {
-//   display: none;
-// }
-
 @media screen and(max-width: 767px) {
-  // .phone-greet {
-  //   display: inline-block;
-  // }
-  // .client-greet {
-  //   display: none;
-  // }
-  // .mask-box {
-  //   width: 80%;
-  // }
   .input-box-move {
     width: 100% !important;
   }
