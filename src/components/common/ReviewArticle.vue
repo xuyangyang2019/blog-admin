@@ -17,7 +17,7 @@
     <!-- 发表时间 -->
     <div class="review-date">
       <h4 class="review-article-h4">发表时间：</h4>
-      <span class="review-article-span" v-text="$options.filters.reviseTime(article.date)"></span>
+      <span class="review-article-span" v-text="$options.filters.reviseTime(article.updateTime)"></span>
     </div>
     <!-- 文章内容 -->
     <div class="review-content" v-html="article.content"></div>
