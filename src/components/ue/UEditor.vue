@@ -107,39 +107,13 @@
       <!-- {{ article }} -->
       <el-button type="primary" size="small" @click="publishArticle">发布文章</el-button>
       <el-button v-if="!article.publish" type="plain" size="small" @click="draftArticle">保存草稿</el-button>
-
-      <!-- 发布文章 发表文章按钮 | 存为草稿按钮 -->
-      <!-- <div v-if="this.$route.path === '/admin/publish'" class="publish">
-        <button :disabled="wating.disabled" class="true-publish" @click="publishArticle(1)">
-          {{ wating.info.p }}
-        </button>
-        <button :disabled="wating.disabled" class="false-publish" @click="publishArticle(0)">
-          {{ wating.info.sd }}
-        </button>
-      </div> -->
-
-      <!-- 已发表的文章 更新按钮 -->
-      <!-- <div v-if="this.$route.path === '/admin/update'" class="publish">
-        <button :disabled="wating.disabled" class="published-update" @click="updateOrDraftPublish(1)">
-          {{ wating.info.su }}
-        </button>
-      </div> -->
-
-      <!-- 草稿箱的按钮 更新按钮 | 发表文章按钮 -->
-      <!-- <div v-if="this.$route.path === '/admin/draftrevise'" class="publish">
-        <button :disabled="wating.disabled" class="draft-update" @click="updateOrDraftPublish(2)">
-          {{ wating.info.su }}
-        </button>
-        <button :disabled="wating.disabled" class="draft-publish" @click="updateOrDraftPublish(3)">
-          {{ wating.info.p }}
-        </button>
-      </div> -->
+      <el-button v-else type="plain" size="small" @click="draftArticle">存为草稿</el-button>
     </div>
   </div>
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex'
+import { mapState } from 'vuex'
 
 import Prism from 'prismjs'
 // ue相关的文件
@@ -149,7 +123,7 @@ import '@/../public/UE/lang/zh-cn/zh-cn'
 // 下面注释的文件会报错
 import '@/../public/UE/themes/default/css/ueditor.css'
 
-import { addArticle, getArticle } from '../../api/admin'
+import { addArticle, getArticle, updateArticle } from '../../api/admin'
 
 export default {
   props: {
@@ -278,19 +252,11 @@ export default {
       this.editor.destroy()
     }
     // 数据还原
-    this.articleInfo = {
-      title: '',
-      tags: [],
-      abstract: '',
-      content: ''
-    }
+    this.resetArticleForm()
     // 清除当前的文章
     this.$store.commit('admin/SET_ARTICLE', {})
   },
   methods: {
-    ...mapActions({
-      UpdateArticle: 'admin/UpdateArticle'
-    }),
     // 标签框获取焦点
     getFocus() {
       this.canHide = true
@@ -431,6 +397,7 @@ export default {
     publishArticle() {
       // 如果验证通过
       if (this.validate()) {
+        this.articleInfo.publish = true
         // 发表之前二次确认
         this.$confirm('即将发布文章, 是否继续?', '提示', {
           confirmButtonText: '确定',
@@ -438,35 +405,8 @@ export default {
           type: 'warning'
         })
           .then(() => {
-            console.log('发布文章', this.articleInfo)
-            console.log('发布文章', this.article)
             if (this.article._id) {
-              console.log('更新文章')
-              //   this.UpdateArticle({
-              //     articleId: article.articleId,
-              //     original: _original,
-              //     title: this.articleInfo.title,
-              //     abstract: this.articleInfo.abstract,
-              //     content: this.articleInfo.content,
-              //     tag: this.articleInfo.tags,
-              //     publish: isPublish
-              //   }).then(() => {
-              //     // 清空编辑器
-              //     this.editor.setContent('')
-              //     this.articleInfo = {
-              //       original: 'true',
-              //       title: '',
-              //       tags: [],
-              //       content: '',
-              //       abstract: ''
-              //     }
-              //     this.wating = {
-              //       disabled: false,
-              //       info: { p: '发表文章', sd: '存为草稿', su: '更新' }
-              //     }
-              //     this.dialog.show = true
-              //   })
-              // }
+              this.updateAlreadyArticle()
             } else {
               this.addNewArticle()
             }
@@ -482,7 +422,11 @@ export default {
     // 新文章存为草稿或已有的文章改为草稿
     draftArticle() {
       this.articleInfo.publish = false
-      this.addNewArticle()
+      if (this.article._id) {
+        this.updateAlreadyArticle()
+      } else {
+        this.addNewArticle()
+      }
     },
     // 保存文章
     addNewArticle() {
@@ -493,24 +437,45 @@ export default {
         if (res.code === 200) {
           // 清空编辑器
           this.editor.setContent('')
-          // 重置表单
-          this.articleInfo = {
-            original: 'true',
-            title: '',
-            tags: [],
-            content: '',
-            abstract: '',
-            publish: true
-          }
           // 提示
           this.$message({
             type: 'success',
             message: publish ? '文章发表成功!' : '保存草稿成功!'
           })
+          // 重置表单
+          this.resetArticleForm()
         }
       })
     },
-
+    // 更新已有文章
+    updateAlreadyArticle() {
+      console.log('更新已有文章', this.articleInfo)
+      // 保存文章
+      const { title, abstract, content, tags, publish, original } = this.articleInfo
+      updateArticle(this.article._id, title, abstract, content, tags, publish, original === 'true').then((res) => {
+        console.log(res)
+        if (res.code === 200) {
+          // 清空编辑器
+          this.editor.setContent('')
+          console.log(this.articleInfo)
+          // 提示
+          let msgStr = '更新文章成功!'
+          if ((publish && this.article.publish) || (!publish && !this.article.publish)) {
+            msgStr = '更新文章成功!'
+          } else if (publish && !this.article.publish) {
+            msgStr = '文章设为草稿成功!'
+          } else if (!publish && this.article.publish) {
+            msgStr = '文章发表成功!'
+          }
+          this.$message({
+            type: 'success',
+            message: msgStr
+          })
+          // 重置表单
+          this.resetArticleForm()
+        }
+      })
+    },
     // 获取ue内容
     getUEContent() {
       return this.editor.getContent()
@@ -538,6 +503,17 @@ export default {
       this.$nextTick(() => {
         Prism.highlightAll()
       })
+    },
+    // 重置表单
+    resetArticleForm() {
+      this.articleInfo = {
+        original: 'true',
+        title: '',
+        tags: [],
+        content: '',
+        abstract: '',
+        publish: true
+      }
     },
     // 初始化编辑器
     initUeditor() {
@@ -573,7 +549,8 @@ export default {
               title: this.article.title,
               tags: this.article.tag,
               abstract: this.article.abstract,
-              content: this.article.content
+              content: this.article.content,
+              publish: this.article.publish
             }
           }
           // // 技术文章 | 生活感悟
@@ -591,7 +568,8 @@ export default {
                 title: atc.title,
                 tags: atc.tag,
                 abstract: atc.abstract,
-                content: atc.content
+                content: atc.content,
+                publish: atc.publish
               }
               // this.editor.setContent(atc.content)
             }
