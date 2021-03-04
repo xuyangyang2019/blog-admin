@@ -171,7 +171,7 @@ const router = new Router({
     },
     // 更新文章
     {
-      path: '/admin/update',
+      path: '/admin/update/:articleId',
       name: 'update',
       component: () => import(/* webpackChunkName: "admin" */ './components/ue/InitEditor.vue'),
       meta: {

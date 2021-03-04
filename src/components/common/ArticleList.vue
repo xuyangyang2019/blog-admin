@@ -43,7 +43,7 @@
           <!-- 评论 -->
           <td v-text="item.commentNum"></td>
           <!-- 日期 -->
-          <td v-text="$options.filters.reviseTime(item.date)"></td>
+          <td v-text="$options.filters.reviseTime(item.updateTime)"></td>
           <!-- 操作 -->
           <td class="some-handle">
             <!-- 浏览 -->
@@ -208,17 +208,21 @@ export default {
     // 修改文章 ok
     modifyArticle(item) {
       this.updateInfo = { show: false, wait: true }
-
       getArticle(item._id).then((res) => {
-        console.log(res)
         if (res.code === 200) {
           this.updateInfo = { show: false, wait: false }
           this.$store.commit('admin/SET_ARTICLE', res.data)
           // 如果当前是草稿箱 跳转到draftrevise
           if (this.$route.path === '/admin/draft') {
-            this.$router.push({ name: 'draftrevise' })
+            this.$router.push({
+              name: 'draftrevise',
+              params: { articleId: item._id }
+            })
           } else {
-            this.$router.push({ name: 'update' })
+            this.$router.push({
+              name: 'update',
+              params: { articleId: item._id }
+            })
           }
         } else {
           this.updateInfo = { show: true, wait: false }
