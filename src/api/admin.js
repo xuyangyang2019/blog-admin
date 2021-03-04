@@ -92,11 +92,34 @@ function addArticle(title, abstract, content, tag, publish, original) {
 }
 
 /**
+ * 更新文章
+ * @param {Number} articleId 文章id
+ * @param {String} title 文章标题
+ * @param {String} abstract 文章摘要
+ * @param {String} content 文章内容
+ * @param {Array} tag 标签
+ * @param {Boolean} publish 是否发表
+ * @param {Boolean} original 是否原创
+ */
+function updateArticle(articleId, title, abstract, content, tag, publish, original) {
+  const parameters = {
+    articleId: articleId,
+    title: title,
+    abstract: abstract,
+    content: content,
+    tag: tag,
+    publish: publish,
+    original: original
+  }
+  return fetch.patch('/api/admin/updateArticle', parameters)
+}
+
+/**
  * 删除文章
  * @param {Array} ids 要删除的文章的id的集合
  */
 function deleteArticles(ids) {
-  return fetch.delete('/api/deleteArticles', { ids: ids })
+  return fetch.delete('/api/admin/deleteArticles', { ids: ids })
 }
 
 // 获取对应模块的文章总数，为分页按钮个数提供支持
@@ -121,12 +144,6 @@ function deleteArticles(ids) {
 function getArticle(articleId) {
   return fetch.get('/api/admin/getArticle', { id: articleId })
 }
-
-// // 更新文章
-// UpdateArticle({ commit }, payload) {
-//   return fetch.patch('/api/updata', payload)
-// }
-
 // ========================== 留言相关===================================
 
 /**
@@ -261,6 +278,7 @@ export {
   downloadDb,
   getArticleList,
   addArticle,
+  updateArticle,
   deleteArticles,
   getArticle,
   getMsgBoard,
