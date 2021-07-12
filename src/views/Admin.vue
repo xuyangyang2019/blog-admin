@@ -11,7 +11,7 @@
       <!-- 管理员的信息 -->
       <div class="admin-info">
         <img src="/img/logo.png" style="width: 20px; height: 20px; vertical-align: middle" alt="xyy" />
-        <span>{{ greet }}好，{{ userInfo.nickname }}！上次登录是：{{ userInfo.last_login_time }}</span>
+        <span>{{ greet }}好，{{ userInfo.nickname }}！上次登录是：{{ userInfo.lastLoginTime }}</span>
       </div>
       <!-- 面包屑导航 -->
       <div class="toggle-btn" @click="showList = !showList">
