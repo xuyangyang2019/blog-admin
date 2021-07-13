@@ -32,7 +32,6 @@ export default {
     }),
     queryMsgBoard() {
       getMsgBoard(1, 10).then((res) => {
-        console.log(res)
         if (res.code === 200) {
           this.SET_MSG_BOARD(res.data.list)
           this.SET_PAGE_ARRAY(res.data.count)

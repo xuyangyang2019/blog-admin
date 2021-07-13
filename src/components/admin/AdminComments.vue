@@ -33,7 +33,6 @@ export default {
     }),
     queryCommentsList() {
       getCommentsList(1, 10).then((res) => {
-        console.log(res)
         if (res.code === 200) {
           this.SET_COMMENTS(res.data.list)
           this.SET_PAGE_ARRAY(res.data.count)
