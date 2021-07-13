@@ -22,7 +22,7 @@ function adminLogin(username, password) {
  * @param { String } token token
  */
 function getUserInfo() {
-  return fetch.get('/api/getUserInfo')
+  return fetch.get('/api/user/info')
 }
 
 /**
@@ -64,7 +64,7 @@ function confirmToken() {
  * @param {String} tag 文章标签
  */
 function getArticleList(pageNum, pageSize, publish, tag) {
-  return fetch.get('/api/getArticleList', { pageNum: pageNum, pageSize: pageSize, publish: publish, tag: tag })
+  return fetch.get('/api/articles/list', { pageNum: pageNum, pageSize: pageSize, publish: publish, tag: tag })
 }
 
 /**
@@ -152,7 +152,7 @@ function getArticle(articleId) {
  * @param {Number} pageSize 每页的文章数量
  */
 function getMsgBoard(pageNum, pageSize) {
-  return fetch.get('/api/getMsgBoard', { pageNum: pageNum, pageSize: pageSize })
+  return fetch.get('/api/messages/list', { pageNum: pageNum, pageSize: pageSize })
 }
 
 // // 获取留言数量
@@ -207,7 +207,7 @@ function updateMsgBoard(msgId, replyId) {
  * @param {Number} pageSize 每页的文章数量
  */
 function getCommentsList(pageNum, pageSize) {
-  return fetch.get('/api/getCommentsList', { pageNum: pageNum, pageSize: pageSize })
+  return fetch.get('/api/comments/list', { pageNum: pageNum, pageSize: pageSize })
 }
 
 /**
