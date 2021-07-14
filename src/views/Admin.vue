@@ -92,7 +92,7 @@
 
 <script>
 import { mapState } from 'vuex'
-import { getTags } from '../api/admin'
+// import { getTags } from '../api/admin'
 
 export default {
   data() {
@@ -174,12 +174,11 @@ export default {
   },
   created() {
     // 获取最新的标签
-    getTags(true).then((res) => {
-      console.log(res)
-      // if (data.tags && data.tags.length) {
-      //   commit('SET_TAGS', data)
-      // }
-    })
+    // getTags(true).then((res) => {
+    //   // if (data.tags && data.tags.length) {
+    //   //   commit('SET_TAGS', data)
+    //   // }
+    // })
   },
   mounted() {
     // 添加监听事件

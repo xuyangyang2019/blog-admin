@@ -191,12 +191,16 @@ export default {
     },
     queryNews() {
       // 获取最新的留言评论
-      getNews().then((res) => {
-        console.log(res)
-        // if (data.newsArr && data.newsArr.length) {
-        //   commit('HANDLE_NEWS', data)
-        // }
-      })
+      getNews()
+        .then((res) => {
+          console.log(res)
+          // if (data.newsArr && data.newsArr.length) {
+          //   commit('HANDLE_NEWS', data)
+          // }
+        })
+        .catch((err) => {
+          console.log(err)
+        })
     },
     myEcharts() {
       // 基于准备好的dom，初始化echarts实例
