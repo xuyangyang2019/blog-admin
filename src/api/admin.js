@@ -14,7 +14,7 @@ import fetch from '@/utils/fetch'
  * @param {String} password 密码
  */
 function adminLogin(username, password) {
-  return fetch.post('/api/login', { username: username, password: password })
+  return fetch.post('/api/user/login', { username: username, password: password })
 }
 
 /**
