@@ -28,11 +28,6 @@ const router = new Router({
   base: process.env.BASE_URL,
   routes: [
     {
-      path: '/',
-      name: '/',
-      redirect: '/admin/login'
-    },
-    {
       path: '/admin',
       name: 'admin',
       component: Admin,
@@ -186,7 +181,7 @@ const router = new Router({
     },
     // 其他
     {
-      path: '/*',
+      path: '/admin/*',
       name: 'miss',
       component: () => import(/* webpackChunkName: "admin" */ '@/components/base/MissPage.vue')
     }
