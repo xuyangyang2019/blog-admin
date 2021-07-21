@@ -22,9 +22,9 @@ import { Message, MessageBox } from 'element-ui'
  * @param {String} errData 错误信息
  */
 const errorHandle = (status, errData) => {
-  const errMsg = errData.message ? errData.message : '无'
+  const errMsg = errData.message ? errData.message : null
   switch (status) {
-    // 401: 未登录
+    // 401: 未登录或token错误
     case 401:
       Message.warning('未登录，请先登陆！')
       // 未登录则跳转登录页面，并携带当前页面的路径
@@ -123,7 +123,6 @@ httpInstance.interceptors.request.use(
     // 后台根据携带的token判断用户的登录情况，并返回给我们对应的状态码
     // 而后我们可以在响应拦截器中，根据状态码进行一些统一的操作。
     const token = localStorage.getItem('validateToken')
-    // token && (config.headers.Authorization = token)
     // 如果后端使用的是koa-jwt鉴权
     token && (config.headers.Authorization = 'Bearer ' + token)
     return config
