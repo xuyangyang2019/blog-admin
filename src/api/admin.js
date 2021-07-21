@@ -88,7 +88,15 @@ function addArticle(title, abstract, content, tag, publish, original) {
     commentNum: 0, // 评论数
     likeNum: 0 // 点赞数
   }
-  return fetch.post('/api/admin/addArticle', parameters)
+  return fetch.post('/api/article', parameters)
+}
+
+/**
+ * 删除文章
+ * @param {Array} ids 要删除的文章的id的集合
+ */
+function deleteArticles(ids) {
+  return fetch.delete('/api/articles', { ids: ids })
 }
 
 /**
@@ -111,15 +119,7 @@ function updateArticle(articleId, title, abstract, content, tag, publish, origin
     publish: publish,
     original: original
   }
-  return fetch.patch('/api/admin/updateArticle', parameters)
-}
-
-/**
- * 删除文章
- * @param {Array} ids 要删除的文章的id的集合
- */
-function deleteArticles(ids) {
-  return fetch.delete('/api/admin/deleteArticles', { ids: ids })
+  return fetch.patch('/api/article', parameters)
 }
 
 // 获取对应模块的文章总数，为分页按钮个数提供支持
