@@ -181,7 +181,7 @@ const router = new Router({
     },
     // 其他
     {
-      path: '/admin/*',
+      path: '/*',
       name: 'miss',
       component: () => import(/* webpackChunkName: "admin" */ '@/components/base/MissPage.vue')
     }
