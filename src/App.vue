@@ -17,13 +17,13 @@ export default {
 <style lang="scss">
 // 自定义的reset
 @import './styles/reset.css';
-// 排版样式
-// @import './styles/typo.css';
 // 适应不同浏览器
-// @import './styles/normalize.css';
-
+@import './styles/normalize.css';
 // 公共的css
 @import './styles/common.scss';
+
+@import '~@/assets/iconfont/iconfont.css';
+@import '~@/assets/font-awesome/css/font-awesome.css';
 
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
