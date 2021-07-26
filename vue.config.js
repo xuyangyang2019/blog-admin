@@ -16,8 +16,8 @@ module.exports = {
   // 例如，如果你的应用被部署在 https://www.my-app.com/my-app/，则设置 publicPath 为 /my-app/。
   publicPath: process.env.NODE_ENV === 'production' ? './' : '/',
 
-  // outputDir: 在npm run build 或 yarn build 时 ，生成文件的目录名称（要和baseUrl的生产环境路径一致）
-  outputDir: 'dist-admin', // 打包后的目录名称
+  // outputDir: 在npm run build 或 yarn build 时 ，生成文件的目录名称（要和publicPath的生产环境路径一致）
+  outputDir: 'dist-admin/admin', // 打包后的目录名称
   // outputDir: process.env.outputDir, //打包后的目录名称
 
   // 用于放置生成的静态资源 (js、css、img、fonts) 的；（项目打包之后，静态资源会放在这个文件夹下）
