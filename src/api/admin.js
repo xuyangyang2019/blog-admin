@@ -63,8 +63,17 @@ function confirmToken() {
  * @param {Boolean} publish 是否发表 true发表 false未发表
  * @param {String} tag 文章标签
  */
-function getArticleList(pageNum, pageSize, publish, tag) {
-  return fetch.get('/api/articles/list', { pageNum: pageNum, pageSize: pageSize, publish: publish, tag: tag })
+function getArticlesList(pageNum, pageSize, publish, tag) {
+  return fetch.get('/api/admin/articles/list', { pageNum: pageNum, pageSize: pageSize, publish: publish, tag: tag })
+}
+
+/**
+ * 获取对应模块的文章总数，为分页按钮个数提供支持
+ * @param {Boolean} publish 是否发表
+ * @param {String} tag 标签
+ */
+function getArticlesCount(publish, tag) {
+  return fetch.get('/api/admin/articles/count', { publish: publish, tag: tag })
 }
 
 /**
@@ -121,13 +130,6 @@ function updateArticle(articleId, title, abstract, content, tag, publish, origin
   }
   return fetch.patch('/api/article', parameters)
 }
-
-// 获取对应模块的文章总数，为分页按钮个数提供支持
-// GetArticlesCount({ commit }, payload) {
-//   return fetch.get("/api/getCount", payload).then((data) => {
-//     commit("PAGE_ARRAY", data)
-//   })
-// },
 
 // // 搜索文章
 // SearchAdminArticles({ commit }, payload) {
@@ -276,7 +278,8 @@ export {
   reviseKey,
   copyData,
   downloadDb,
-  getArticleList,
+  getArticlesList,
+  getArticlesCount,
   addArticle,
   updateArticle,
   deleteArticles,
