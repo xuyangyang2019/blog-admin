@@ -6,7 +6,7 @@
 
 <script>
 import { mapState } from 'vuex'
-import { getArticleList } from '../../api/admin'
+import { getArticlesList, getArticlesCount } from '../../api/admin'
 
 import ArticleList from '../common/ArticleList.vue'
 
@@ -27,9 +27,13 @@ export default {
   methods: {
     // 查询已发表的文章列表
     queryArticles() {
-      getArticleList(1, 10, true, '').then((res) => {
+      getArticlesList(1, 10, true, '').then((res) => {
         if (res.code === 200) {
-          this.$store.commit('admin/SET_ARTICLES', res.data.list)
+          this.$store.commit('admin/SET_ARTICLES', res.data)
+        }
+      })
+      getArticlesCount(true, '').then((res) => {
+        if (res.code === 200) {
           this.$store.commit('admin/SET_PAGE_ARRAY', res.data.count)
         }
       })

@@ -6,7 +6,7 @@
 
 <script>
 import { mapState } from 'vuex'
-import { getArticleList } from '../../api/admin'
+import { getArticlesList } from '../../api/admin'
 
 import ArticleList from '../common/ArticleList.vue'
 
@@ -30,7 +30,7 @@ export default {
   methods: {
     // 分页查询未发表的文章
     queryDraftsArticles() {
-      getArticleList(1, 10, 0, '').then((res) => {
+      getArticlesList(1, 10, 0, '').then((res) => {
         if (res.code === 200) {
           this.$store.commit('admin/SET_DRAFTS', res.data.list)
           this.$store.commit('admin/SET_PAGE_ARRAY', res.data.count)

@@ -153,7 +153,6 @@ export default {
           const { name, pass } = this.loginForm
           adminLogin(name, pass)
             .then((res) => {
-              console.log('登陆结果', res)
               this.loading = false
               if (res.code === 200) {
                 this.$store.commit('admin/SET_USER_INFO', res.data.userInfo)
@@ -163,7 +162,6 @@ export default {
               } else if (res.code === -1) {
                 // 错误提示
                 this.$message.error('账号或密码错误！')
-
                 // this.$refs['loginForm'].clearValidate()
                 // 手动操作校验、展示登录错误信息
                 // this.rules.pass.push({
