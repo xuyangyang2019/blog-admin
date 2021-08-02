@@ -32,9 +32,9 @@ export default {
       articlesCount: 0 // 文章总数
     }
   },
-  created() {
-    this.queryArticles()
-  },
+  // created() {
+  //   this.queryArticles()
+  // },
   methods: {
     // 查询已发表的文章列表和文章数量
     queryArticles() {
