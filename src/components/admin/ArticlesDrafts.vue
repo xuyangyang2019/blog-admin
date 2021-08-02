@@ -1,11 +1,19 @@
 <template>
   <div class="draft">
-    <article-list :articleList="drafts"></article-list>
+    <ArticleList :articleList="drafts" />
+    <el-pagination
+      :current-page="currentPage"
+      :page-sizes="[10, 20, 30, 40]"
+      :page-size="pageSize"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="articlesCount"
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+    ></el-pagination>
   </div>
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import { getArticlesList, getArticlesCount } from '../../api/admin'
 
 import ArticleList from '../common/ArticleList.vue'
@@ -16,35 +24,57 @@ export default {
     ArticleList
   },
   data() {
-    return {}
+    return {
+      drafts: [], // 未发表的文章
+      currentPage: 1, // 当前页
+      pageSize: 10, // 每页文章数
+      articlesCount: 0 // 文章总数
+    }
   },
-  computed: {
-    ...mapState('admin', {
-      drafts: 'drafts'
-    })
-  },
-  created() {
-    // 查询未发表的文章
-    // this.queryDraftsArticles()
-  },
+  // created() {
+  //   // 查询未发表的文章
+  //   // this.queryDraftsArticles()
+  // },
   methods: {
-    // 分页查询未发表的文章
-    queryDraftsArticles() {
-      getArticlesList(1, 10, false, '').then((res) => {
-        if (res.code === 200) {
-          this.$store.commit('admin/SET_DRAFTS', res.data)
-        }
-      })
+    // 查询已发表的文章列表和文章数量
+    queryArticles() {
+      this.queryArticlesList()
+      // 查询文章数量
       getArticlesCount(false, '').then((res) => {
         if (res.code === 200) {
-          this.$store.commit('admin/SET_PAGE_ARRAY', res.data.count)
+          this.articlesCount = res.data.count
         }
       })
+    },
+    // 查询文章列表
+    queryArticlesList() {
+      getArticlesList(this.currentPage, this.pageSize, false, '')
+        .then((res) => {
+          if (res.code === 200) {
+            this.drafts = res.data
+          } else {
+            this.drafts = []
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+          this.drafts = []
+        })
+    },
+    // pageSize改变
+    handleSizeChange(val) {
+      this.pageSize = val
+      this.queryArticlesList()
+    },
+    // page改变
+    handleCurrentChange(val) {
+      this.currentPage = val
+      this.queryArticlesList()
     }
   },
   beforeRouteEnter(to, from, next) {
     next((vm) => {
-      vm.queryDraftsArticles({ publish: false })
+      vm.queryArticles()
       document.title = '后台管理 -草稿箱'
     })
   }
