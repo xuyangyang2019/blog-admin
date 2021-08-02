@@ -4,7 +4,7 @@
 
 <script>
 import { mapState, mapMutations } from 'vuex'
-import { getMsgBoard } from '../../api/admin'
+import { getMsgBoard, getMsgCount } from '../../api/admin'
 
 import msbdAndCmsList from '@/components/common/MsbdAndCmsList.vue'
 
@@ -33,7 +33,11 @@ export default {
     queryMsgBoard() {
       getMsgBoard(1, 10).then((res) => {
         if (res.code === 200) {
-          this.SET_MSG_BOARD(res.data.list)
+          this.SET_MSG_BOARD(res.data)
+        }
+      })
+      getMsgCount().then((res) => {
+        if (res.code === 200) {
           this.SET_PAGE_ARRAY(res.data.count)
         }
       })
