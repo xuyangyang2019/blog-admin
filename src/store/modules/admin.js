@@ -172,22 +172,6 @@ const mutations = {
       }
     })
   },
-  // // 设置文章
-  // SET_ARTICLES(state, dataObj) {
-  //   const payload = dataObj.payload
-  //   const data = dataObj.data
-  //   if (data.length) {
-  //     if (!payload.tag) {
-  //       if (payload.publish === true) {
-  //         state.articles.all = data
-  //       } else {
-  //         state.articles.drafts = data
-  //       }
-  //     } else {
-  //       state.articles.tags = data
-  //     }
-  //   }
-  // },
   SET_ARTICLES_SEARCH(state, data) {
     state.articles.search = data
   },
