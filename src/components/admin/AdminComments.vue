@@ -4,7 +4,7 @@
 
 <script>
 import { mapState, mapMutations } from 'vuex'
-import { getCommentsList } from '../../api/admin'
+import { getCommentsList, getCommentsCount } from '../../api/admin'
 
 import msbdAndCmsList from '@/components/common/MsbdAndCmsList'
 
@@ -34,7 +34,11 @@ export default {
     queryCommentsList() {
       getCommentsList(1, 10).then((res) => {
         if (res.code === 200) {
-          this.SET_COMMENTS(res.data.list)
+          this.SET_COMMENTS(res.data)
+        }
+      })
+      getCommentsCount(1, 10).then((res) => {
+        if (res.code === 200) {
           this.SET_PAGE_ARRAY(res.data.count)
         }
       })
