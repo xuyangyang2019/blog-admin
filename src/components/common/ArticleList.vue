@@ -68,11 +68,6 @@
       <button @click="removeArticles()">删除选中项</button>
     </div>
 
-    <!-- 分页 -->
-    <transition name="fade" mode="out-in">
-      <page v-show="pageArray.length > 1"></page>
-    </transition>
-
     <!-- 过度窗口 -->
     <transition name="fade">
       <div v-show="updateInfo.show" class="validate-mask">
@@ -86,16 +81,11 @@
 </template>
 
 <script>
-import { mapMutations, mapState } from 'vuex'
+import { mapMutations } from 'vuex'
 import { deleteArticles } from '../../api/admin'
-
-import page from '@/components/base/Page'
 import { getArticle } from '../../api/admin'
 
 export default {
-  components: {
-    page
-  },
   // 定义过滤器，将life标签替换为“生活”
   filters: {
     changeLife: function (value) {
@@ -134,11 +124,6 @@ export default {
         '#CCCC00'
       ]
     }
-  },
-  computed: {
-    ...mapState('admin', {
-      pageArray: 'pageArray'
-    })
   },
   watch: {
     articleList() {
@@ -469,16 +454,6 @@ export default {
   color: red;
   background: #409eff;
 }
-
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.3s;
-}
-.fade-enter,
-.fade-leave-to {
-  opacity: 0;
-}
-
 @media screen and(min-width: 768px) {
   .icon-crop-a,
   .icon-eye-a,
