@@ -154,15 +154,15 @@ function getArticle(articleId) {
  * @param {Number} pageSize 每页的文章数量
  */
 function getMsgBoard(pageNum, pageSize) {
-  return fetch.get('/api/messages/list', { pageNum: pageNum, pageSize: pageSize })
+  return fetch.get('/api/admin/messages/list', { pageNum: pageNum, pageSize: pageSize })
 }
 
-// // 获取留言数量
-// GetMsgCount({ commit }) {
-//   return fetch.get('/api/getMsgCount').then((res) => {
-//     commit('PAGE_ARRAY', res.data.count || 0)
-//   })
-// },
+/**
+ * 获取留言数量
+ */
+function getMsgCount() {
+  return fetch.get('/api/admin/messages/count')
+}
 
 /**
  * 回复留言
@@ -285,6 +285,7 @@ export {
   deleteArticles,
   getArticle,
   getMsgBoard,
+  getMsgCount,
   replyMsgBoard,
   deleteMsgBoards,
   updateMsgBoard,
