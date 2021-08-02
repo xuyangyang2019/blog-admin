@@ -1,6 +1,7 @@
 <template>
   <div class="admin-articles">
     <ArticleList :articleList="articlesPublished" />
+    <!-- 分页 -->
     <el-pagination
       :current-page="currentPage"
       :page-sizes="[10, 20, 30, 40]"
@@ -10,6 +11,7 @@
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
     ></el-pagination>
+    <!-- <transition name="fade" mode="out-in"></transition> -->
   </div>
 </template>
 
@@ -83,5 +85,13 @@ export default {
 <style lang="scss">
 .admin-articles {
   margin-top: 15px;
+  // .fade-enter-active,
+  // .fade-leave-active {
+  //   transition: opacity 0.3s;
+  // }
+  // .fade-enter,
+  // .fade-leave-to {
+  //   opacity: 0;
+  // }
 }
 </style>
