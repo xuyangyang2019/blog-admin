@@ -209,7 +209,14 @@ function updateMsgBoard(msgId, replyId) {
  * @param {Number} pageSize 每页的文章数量
  */
 function getCommentsList(pageNum, pageSize) {
-  return fetch.get('/api/comments/list', { pageNum: pageNum, pageSize: pageSize })
+  return fetch.get('/api/admin/comments/list', { pageNum: pageNum, pageSize: pageSize })
+}
+
+/**
+ * 获取评论数量
+ */
+function getCommentsCount() {
+  return fetch.get('/api/admin/comments/count')
 }
 
 /**
@@ -248,13 +255,6 @@ function updateComment(commentId, replyId) {
   return fetch.patch('/api/updateComment', { commentId: commentId, replyId: replyId })
 }
 
-// 获取评论数
-// GetCommentsCount({ commit }) {
-//   return fetch.get("/api/getCommentsCount").then((data) => {
-//     commit("PAGE_ARRAY", data)
-//   })
-// },
-
 // ========================== 消息相关===================================
 
 /**
@@ -289,6 +289,7 @@ export {
   deleteMsgBoards,
   updateMsgBoard,
   getCommentsList,
+  getCommentsCount,
   deleteComments,
   updateComment,
   replyComment,
