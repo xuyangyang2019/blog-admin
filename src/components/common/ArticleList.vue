@@ -284,6 +284,9 @@ export default {
 .bg {
   background: #fff38f !important;
 }
+.admin-article-list-box{
+  flex: 1 1 auto;
+}
 .admin-table-articles {
   width: 100%;
   color: #606266;
