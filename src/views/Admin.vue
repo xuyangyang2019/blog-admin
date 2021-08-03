@@ -62,22 +62,25 @@
       <div ref="content" class="admin-content">
         <!-- 搜索 -->
         <div v-if="$route.name === 'allArticles' || $route.name === 'draft'" class="location-search">
-          <!-- 搜索框 -->
-          <div class="search">
-            <div v-show="choseType === 'key'" class="search-key">
-              <input v-model="searchKey" type="text" placeholder="请输入关键词" @keyup.enter="searchArticle" />
-            </div>
-            <div v-show="choseType === 'time'" class="search-time">
-              <input v-model="date.from" type="date" :class="{ 'err-border': err.from }" @focus="err.from = false" />
-              至
-              <input v-model="date.to" type="date" :class="{ 'err-border': err.to }" @focus="err.to = false" />
-            </div>
-            <select id v-model="choseType" name>
-              <option value="key">关键字</option>
-              <option value="time">时间</option>
-            </select>
-            <button @click="searchArticle">查询</button>
-          </div>
+          <el-input
+            v-model="keyword"
+            style="width: 200px; margin-right: 10px"
+            placeholder="请输入关键词"
+            size="small"
+            clearable
+            maxlength="10"
+            show-word-limit
+          ></el-input>
+          <el-date-picker
+            v-model="searchTime"
+            style="width: 300px; margin-right: 10px"
+            type="daterange"
+            size="small"
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+          ></el-date-picker>
+          <el-button type="primary" size="small" @click="searchArticle">搜索</el-button>
         </div>
 
         <!-- 子路由 -->
@@ -97,11 +100,12 @@ import { mapState } from 'vuex'
 export default {
   data() {
     return {
+      keyword: '', // 关键词
+      searchTime: '',
       // lastLogin: localStorage.getItem('lastLogin') || 'My Lord', // 最近一次的登陆时间
       // userName: localStorage.getItem('userName') || '', // 用户名
       // location: [], // 当前位置
       choseType: 'key', // 搜索类型
-      searchKey: '', // 关键词
       date: { from: '', to: '' }, // 搜索时间
       err: { from: false, to: false }, // 错误信息
       showList: false, // 面包屑导航
@@ -211,7 +215,6 @@ export default {
     },
     // 路由跳转
     showPath(item) {
-      // console.log(this.$route.path)
       if (this.$route.path === item.path) return
       if (item.path === '/admin/publish') {
         window.open(item.path, '_blank')
@@ -274,26 +277,27 @@ export default {
       this.debounce(this.initHeight, 500)
     },
     searchArticle() {
-      if (this.choseType === 'key') {
-        // 去除前后的空格
-        this.searchKey = this.searchKey.replace(/(^\s*)|(\s*$)/g, '')
-        if (this.searchKey.length) {
-          this.$router.push({
-            name: 'search',
-            params: { base: this.searchKey }
-          })
-        }
-      } else {
-        if (!this.date.from) {
-          this.err.from = true
-        }
-        if (!this.date.to) {
-          this.err.to = true
-          return
-        }
-        const date = this.date.from + 'to' + this.date.to
-        this.$router.push({ name: 'search', params: { base: date } })
-      }
+      console.log(this.keyword)
+      console.log(this.searchTime)
+      // if (this.choseType === 'key') {
+      //   // 去除前后的空格
+      //   if (this.searchKey.length) {
+      //     this.$router.push({
+      //       name: 'search',
+      //       params: { base: this.searchKey }
+      //     })
+      //   }
+      // } else {
+      //   if (!this.date.from) {
+      //     this.err.from = true
+      //   }
+      //   if (!this.date.to) {
+      //     this.err.to = true
+      //     return
+      //   }
+      //   const date = this.date.from + 'to' + this.date.to
+      //   this.$router.push({ name: 'search', params: { base: date } })
+      // }
     },
     showListDelay() {
       setTimeout(() => {
@@ -478,15 +482,7 @@ export default {
       overflow: hidden;
       .location-search {
         display: flex;
-        align-items: center;
-        justify-content: space-between;
         padding: 5px 0;
-        .location {
-          display: flex;
-        }
-        .search {
-          display: flex;
-        }
       }
     }
   }
