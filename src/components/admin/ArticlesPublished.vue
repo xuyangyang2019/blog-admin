@@ -20,13 +20,13 @@
         start-placeholder="开始日期"
         end-placeholder="结束日期"
       ></el-date-picker>
-      <el-button type="primary" size="small" @click="searchArticle">搜索</el-button>
+      <el-button type="primary" size="small" @click="searchArticle(1, 10)">搜索</el-button>
     </div>
     <!-- 数据展示 -->
     <ArticleList :articleList="articlesPublished" />
     <!-- 分页 -->
     <el-pagination
-      style="padding:5px 0"
+      style="padding: 5px 0"
       :current-page="currentPage"
       :page-sizes="[10, 20, 30, 40]"
       :page-size="pageSize"
@@ -41,7 +41,7 @@
 
 <script>
 import ArticleList from '../common/ArticleList.vue'
-import { getArticlesList, getArticlesCount } from '../../api/admin'
+import { getArticlesList, getArticlesCount, searchArticles } from '../../api/admin'
 
 export default {
   name: 'ArticlesPublished',
@@ -63,9 +63,20 @@ export default {
   // },
   methods: {
     // 搜索文章
-    searchArticle() {
-      console.log(this.keyword)
-      console.log(this.searchTime)
+    searchArticle(page, size) {
+      this.currentPage = 1
+      let startTime = null
+      let endTime = null
+      if (this.searchTime instanceof Array) {
+        startTime = this.searchTime[0]
+        endTime = this.searchTime[1]
+      }
+      searchArticles(this.keyword, startTime, endTime, page, size).then((res) => {
+        if (res.code === 200) {
+          this.articlesPublished = res.data.docs
+          this.articlesCount = res.data.count
+        }
+      })
       // this.$router.push({ name: 'search', params: { keyword: this.keyword, searchTime: this.searchTime } })
     },
     // 查询已发表的文章列表和文章数量
@@ -96,12 +107,20 @@ export default {
     // pageSize改变
     handleSizeChange(val) {
       this.pageSize = val
-      this.queryArticlesList()
+      if (this.keyword || this.searchTime instanceof Array) {
+        this.searchArticle(this.currentPage, this.pageSize)
+      } else {
+        this.queryArticlesList()
+      }
     },
     // page改变
     handleCurrentChange(val) {
       this.currentPage = val
-      this.queryArticlesList()
+      if (this.keyword || this.searchTime instanceof Array) {
+        this.searchArticle(this.currentPage, this.pageSize)
+      } else {
+        this.queryArticlesList()
+      }
     }
   },
   // 组件缓存后，为了让每个模块显示正确的页码，故重新计算页码数
