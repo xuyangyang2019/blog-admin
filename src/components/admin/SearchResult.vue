@@ -1,7 +1,6 @@
 <template>
   <div class="search-articles">
     <div class="search-info">以下是为您搜索到的内容：</div>
-
     <div v-if="!articles.search.length" class="search-empty">啊哦~~空空如也</div>
     <list v-if="articles.search && articles.search.length" :article_list="articles.search"></list>
   </div>
