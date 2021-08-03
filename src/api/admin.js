@@ -68,6 +68,24 @@ function getArticlesList(pageNum, pageSize, publish, tag) {
 }
 
 /**
+ * 搜索文章
+ * @param {String} keyword 关键词
+ * @param {Date} startTime 启始时间
+ * @param {Date} endTime 结束时间
+ * @param {Number} pageNum 页码
+ * @param {Number} pageSize 每页文章数
+ */
+function searchArticles(keyword, startTime, endTime, pageNum, pageSize) {
+  return fetch.get('/api/admin/articles/search', {
+    keyword: keyword,
+    startTime: startTime,
+    endTime: endTime,
+    pageNum: pageNum,
+    pageSize: pageSize
+  })
+}
+
+/**
  * 获取对应模块的文章总数，为分页按钮个数提供支持
  * @param {Boolean} publish 是否发表
  * @param {String} tag 标签
@@ -130,14 +148,6 @@ function updateArticle(articleId, title, abstract, content, tag, publish, origin
   }
   return fetch.patch('/api/article', parameters)
 }
-
-// // 搜索文章
-// SearchAdminArticles({ commit }, payload) {
-//   fetch.get('/api/adminSearch', payload).then((data) => {
-//     console.log(data)
-//     commit('SET_ARTICLES_SEARCH', data)
-//   })
-// },
 
 /**
  * 精准获取文章
@@ -282,6 +292,7 @@ export {
   getArticlesCount,
   addArticle,
   updateArticle,
+  searchArticles,
   deleteArticles,
   getArticle,
   getMsgBoard,
