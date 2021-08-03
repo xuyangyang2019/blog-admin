@@ -1,9 +1,19 @@
 <template>
-  <msbdAndCmsList :mcList="msgBoard" :initTable="tableTitle"></msbdAndCmsList>
+  <div>
+    <msbdAndCmsList :mcList="msgBoard" :initTable="tableTitle"></msbdAndCmsList>
+    <el-pagination
+      :current-page="currentPage"
+      :page-sizes="[10, 20, 30, 40]"
+      :page-size="pageSize"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="msgCount"
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+    ></el-pagination>
+  </div>
 </template>
 
 <script>
-import { mapState, mapMutations } from 'vuex'
 import { getMsgBoard, getMsgCount } from '../../api/admin'
 
 import msbdAndCmsList from '@/components/common/MsbdAndCmsList.vue'
@@ -14,33 +24,51 @@ export default {
   },
   data() {
     return {
-      tableTitle: { th: ['序号', '用户名', '留言', '时间'] }
+      tableTitle: { th: ['序号', '用户名', '留言', '时间'] },
+      msgBoard: [], // 已发表的文章
+      currentPage: 1, // 当前页
+      pageSize: 10, // 每页文章数
+      msgCount: 0 // 文章总数
     }
-  },
-  computed: {
-    ...mapState('admin', {
-      msgBoard: 'msgBoard'
-    })
   },
   created() {
     // this.queryMsgBoard()
   },
   methods: {
-    ...mapMutations({
-      SET_MSG_BOARD: 'admin/SET_MSG_BOARD',
-      SET_PAGE_ARRAY: 'admin/SET_PAGE_ARRAY'
-    }),
+    // 查询已发表的文章列表和文章数量
     queryMsgBoard() {
-      getMsgBoard(1, 10).then((res) => {
-        if (res.code === 200) {
-          this.SET_MSG_BOARD(res.data)
-        }
-      })
+      this.queryMessagesList()
+      // 查询文章数量
       getMsgCount().then((res) => {
         if (res.code === 200) {
-          this.SET_PAGE_ARRAY(res.data.count)
+          this.msgCount = res.data.count
         }
       })
+    },
+    // 查询文章列表
+    queryMessagesList() {
+      getMsgBoard(this.currentPage, this.pageSize)
+        .then((res) => {
+          if (res.code === 200) {
+            this.msgBoard = res.data
+          } else {
+            this.msgBoard = []
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+          this.msgBoard = []
+        })
+    },
+    // pageSize改变
+    handleSizeChange(val) {
+      this.pageSize = val
+      this.queryMessagesList()
+    },
+    // page改变
+    handleCurrentChange(val) {
+      this.currentPage = val
+      this.queryMessagesList()
     }
   },
   beforeRouteEnter(to, from, next) {
