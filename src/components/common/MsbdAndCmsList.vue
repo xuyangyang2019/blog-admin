@@ -123,10 +123,6 @@
     <div v-show="itemsToDel.length" class="remove-all">
       <button @click="deleteOrNot(3)">删除选中项</button>
     </div>
-    <!-- 分页 -->
-    <transition name="fade" mode="out-in">
-      <page v-show="pageArray.length > 1"></page>
-    </transition>
     <!-- 确认删除 -->
     <transition name="fade">
       <div v-show="showDeleteDialog" class="validate-mask">
@@ -146,7 +142,7 @@
 </template>
 
 <script>
-import { mapMutations, mapGetters, mapState } from 'vuex'
+import { mapMutations, mapGetters } from 'vuex'
 import {
   replyMsgBoard,
   deleteMsgBoards,
@@ -156,12 +152,7 @@ import {
   updateComment
 } from '../../api/admin'
 
-import page from '@/components/base/Page'
-
 export default {
-  components: {
-    page
-  },
   props: {
     mcList: {
       type: Array
@@ -191,9 +182,6 @@ export default {
     }
   },
   computed: {
-    ...mapState('admin', {
-      pageArray: 'pageArray'
-    }),
     ...mapGetters({
       page: 'admin/page'
     })
