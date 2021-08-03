@@ -60,29 +60,6 @@
 
       <!-- content -->
       <div ref="content" class="admin-content">
-        <!-- 搜索 -->
-        <div v-if="$route.name === 'allArticles' || $route.name === 'draft'" class="location-search">
-          <el-input
-            v-model="keyword"
-            style="width: 200px; margin-right: 10px"
-            placeholder="请输入关键词"
-            size="small"
-            clearable
-            maxlength="10"
-            show-word-limit
-          ></el-input>
-          <el-date-picker
-            v-model="searchTime"
-            style="width: 300px; margin-right: 10px"
-            type="daterange"
-            size="small"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-          ></el-date-picker>
-          <el-button type="primary" size="small" @click="searchArticle">搜索</el-button>
-        </div>
-
         <!-- 子路由 -->
         <keep-alive v-if="$route.meta.keepAlive">
           <router-view />
@@ -95,22 +72,12 @@
 
 <script>
 import { mapState } from 'vuex'
-// import { getTags } from '../api/admin'
 
 export default {
   data() {
     return {
-      keyword: '', // 关键词
-      searchTime: '',
-      // lastLogin: localStorage.getItem('lastLogin') || 'My Lord', // 最近一次的登陆时间
-      // userName: localStorage.getItem('userName') || '', // 用户名
-      // location: [], // 当前位置
-      choseType: 'key', // 搜索类型
-      date: { from: '', to: '' }, // 搜索时间
-      err: { from: false, to: false }, // 错误信息
       showList: false, // 面包屑导航
       showPublishNav: false, // 显示发表文章的子菜单
-      // showChildMenu: true, // 显示所有文章的子菜单
       menu: [
         {
           name: '首页',
@@ -175,14 +142,6 @@ export default {
       //   this.location = this.forLocation
       // }
     }
-  },
-  created() {
-    // 获取最新的标签
-    // getTags(true).then((res) => {
-    //   // if (data.tags && data.tags.length) {
-    //   //   commit('SET_TAGS', data)
-    //   // }
-    // })
   },
   mounted() {
     // 添加监听事件
@@ -275,29 +234,6 @@ export default {
     },
     listen() {
       this.debounce(this.initHeight, 500)
-    },
-    searchArticle() {
-      console.log(this.keyword)
-      console.log(this.searchTime)
-      // if (this.choseType === 'key') {
-      //   // 去除前后的空格
-      //   if (this.searchKey.length) {
-      //     this.$router.push({
-      //       name: 'search',
-      //       params: { base: this.searchKey }
-      //     })
-      //   }
-      // } else {
-      //   if (!this.date.from) {
-      //     this.err.from = true
-      //   }
-      //   if (!this.date.to) {
-      //     this.err.to = true
-      //     return
-      //   }
-      //   const date = this.date.from + 'to' + this.date.to
-      //   this.$router.push({ name: 'search', params: { base: date } })
-      // }
     },
     showListDelay() {
       setTimeout(() => {
@@ -480,10 +416,6 @@ export default {
       padding: 10px 10px;
       flex: 1 1 auto;
       overflow: hidden;
-      .location-search {
-        display: flex;
-        padding: 5px 0;
-      }
     }
   }
 }
