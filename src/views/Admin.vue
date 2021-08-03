@@ -115,8 +115,7 @@ export default {
   computed: {
     ...mapState('admin', {
       redSup: 'redSup', // 红点
-      userInfo: 'userInfo', // 用户信息
-      forLocation: 'forLocation'
+      userInfo: 'userInfo' // 用户信息
     }),
     // 问候语
     greet() {
@@ -136,19 +135,10 @@ export default {
       }
     }
   },
-  watch: {
-    forLocation() {
-      // if (this.forLocation.length) {
-      //   this.location = this.forLocation
-      // }
-    }
-  },
-  mounted() {
-    // 添加监听事件
-    window.addEventListener('resize', this.listen)
-    // 初始话height
-    // this.initHeight()
-  },
+  // mounted() {
+  //   // 添加监听事件
+  //   window.addEventListener('resize', this.listen)
+  // },
   methods: {
     // 退出登录
     exit() {
@@ -205,87 +195,51 @@ export default {
           break
       }
     },
-    // 不管什么情况下都把list高度设为首屏高度
-    initHeight: function () {
-      if (this.$route.name === 'publish') {
-        return
-      } else {
-        if (document.body.clientWidth > 767) {
-          this.$refs.list.style.minHeight = document.body.clientHeight - 55 + 'px'
-        } else {
-          this.$refs.list.style = ''
-        }
-      }
-    },
-    // 函数去抖，避免频繁触发拖垮浏览器
-    debounce(func, delay) {
-      // eslint-disable-next-line consistent-this
-      const context = this
-      const args = arguments
-      if (document.body.clientWidth < 768) {
-        this.$refs.list.style = ''
-      }
-      if (this.timer) {
-        clearTimeout(this.timer)
-      }
-      this.timer = setTimeout(function () {
-        func.apply(context, args)
-      }, delay)
-    },
-    listen() {
-      this.debounce(this.initHeight, 500)
-    },
+    // // 不管什么情况下都把list高度设为首屏高度
+    // initHeight: function () {
+    //   if (this.$route.name === 'publish') {
+    //     return
+    //   } else {
+    //     if (document.body.clientWidth > 767) {
+    //       this.$refs.list.style.minHeight = document.body.clientHeight - 55 + 'px'
+    //     } else {
+    //       this.$refs.list.style = ''
+    //     }
+    //   }
+    // },
+    // // 函数去抖，避免频繁触发拖垮浏览器
+    // debounce(func, delay) {
+    //   // eslint-disable-next-line consistent-this
+    //   const context = this
+    //   const args = arguments
+    //   if (document.body.clientWidth < 768) {
+    //     this.$refs.list.style = ''
+    //   }
+    //   if (this.timer) {
+    //     clearTimeout(this.timer)
+    //   }
+    //   this.timer = setTimeout(function () {
+    //     func.apply(context, args)
+    //   }, delay)
+    // },
+    // listen() {
+    //   this.debounce(this.initHeight, 500)
+    // },
     showListDelay() {
       setTimeout(() => {
         this.showList = !this.showList
       }, 350)
-    },
-    // eslint-disable-next-line no-unused-vars
-    analysisRoute: function (to, from) {
-      const first = { pathName: 'allArticles', showName: '已发表文章' }
-      let tag = to.params.tag
-      switch (to.name) {
-        case 'allArticles':
-          this.location = [first]
-          break
-        case 'eachTag':
-          if (tag === 'life') {
-            tag = '生活'
-          }
-          this.location = [first, { pathName: 'eachTag', showName: tag, params: { tag: tag } }]
-          break
-        case 'review':
-          this.location = this.forLocation
-
-          break
-        case 'draft':
-          this.location = [{ pathName: 'draft', showName: '草稿箱' }]
-          break
-        case 'adminMsgBoard':
-          this.location = [{ pathName: 'adminMsgBoard', showName: '留言板' }]
-          break
-        case 'comments':
-          this.location = [{ pathName: 'comments', showName: '文章评论' }]
-          break
-        case 'newMsg':
-          this.location = [{ pathName: 'newMsg', showName: '新消息' }]
-          break
-        case 'adminSet':
-          this.location = [{ pathName: 'adminSet', showName: '账户设置' }]
-          break
-        case 'search':
-          this.location = [{ pathName: 'search', showName: '搜索' }]
-      }
     }
   },
   // 导航守卫 更新之前
   beforeRouteUpdate(to, from, next) {
-    this.analysisRoute(to)
+    console.log('beforeRouteUpdate')
+    // this.analysisRoute(to)
     next()
   },
   // 导航守卫 离开路由则解绑事件
   beforeRouteLeave(to, from, next) {
-    window.removeEventListener('resize', this.listen)
+    // window.removeEventListener('resize', this.listen)
     next()
   }
 }
