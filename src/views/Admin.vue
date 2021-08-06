@@ -82,32 +82,32 @@ export default {
         {
           name: '首页',
           icon: 'fa fa-bell-o',
-          path: '/admin/newMsg'
+          path: '/newMsg'
         },
         {
           name: '已发表',
           icon: 'fa fa-book',
-          path: '/admin/allArticles'
+          path: '/allArticles'
         },
         {
           name: '草稿箱',
           icon: 'fa fa-dashboard',
-          path: '/admin/draft'
+          path: '/draft'
         },
         {
           name: '留言板',
           icon: 'fa fa-comments-o',
-          path: '/admin/msgBoard'
+          path: '/msgBoard'
         },
         {
           name: '文章评论',
           icon: 'fa fa-commenting-o',
-          path: '/admin/comments'
+          path: '/comments'
         },
         {
           name: '账户设置',
           icon: 'fa fa-user',
-          path: '/admin/adminSet'
+          path: '/adminSet'
         }
       ]
     }
