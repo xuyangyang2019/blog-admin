@@ -187,11 +187,11 @@ export default {
             type: 'info',
             duration: 2000
           })
-          this.$router.push({ path: '/admin/qe' })
+          this.$router.push({ path: '/qe' })
           // window.open(item.path, "_blank")
           break
         default:
-          this.$router.push({ path: '/admin/publish' })
+          this.$router.push({ path: '/publish' })
           break
       }
     },
