@@ -233,7 +233,6 @@ export default {
   },
   // 导航守卫 更新之前
   beforeRouteUpdate(to, from, next) {
-    console.log('beforeRouteUpdate')
     // this.analysisRoute(to)
     next()
   },

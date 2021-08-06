@@ -135,8 +135,6 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          // 表单验证通过，可以登陆
-          console.log('表单验证通过，可以登陆')
           // 记住密码
           if (this.rememberPwd) {
             localStorage.setItem('localNameOfBlog', this.loginForm.name)
