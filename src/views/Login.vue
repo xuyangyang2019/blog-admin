@@ -47,7 +47,6 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import { adminLogin } from '../api/admin'
 
 export default {
@@ -90,9 +89,6 @@ export default {
     }
   },
   computed: {
-    ...mapState({
-      toPath: 'toPath'
-    }),
     // 从本地读取用户名
     localName() {
       if (localStorage.getItem('localNameOfBlog')) {
@@ -142,11 +138,6 @@ export default {
           }
           // 显示loading
           this.loading = true
-          // const timer = setTimeout(() => {
-          //   // this.btnInfo = { text: '登录', disabled: false }
-          //   console.log('setTimeOut')
-          //   this.loading = false
-          // }, 5000)
           // admin 登陆
           const { name, pass } = this.loginForm
           adminLogin(name, pass)
@@ -156,7 +147,7 @@ export default {
                 this.$store.commit('admin/SET_USER_INFO', res.data.userInfo)
                 localStorage.setItem('validateToken', res.data.token)
                 // 页面跳转
-                this.$router.push({ path: this.toPath })
+                this.$router.push({ path: '/' })
               } else if (res.code === -1) {
                 // 错误提示
                 this.$message.error('账号或密码错误！')
