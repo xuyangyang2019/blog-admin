@@ -154,13 +154,7 @@ export default {
           // 跳转到登陆页面
           this.$router.push({ name: 'adminLogin' })
         })
-        .catch((err) => {
-          console.log(err)
-          this.$message({
-            type: 'info',
-            message: '已取消'
-          })
-        })
+        .catch(() => {})
     },
     // 路由跳转
     showPath(item) {
