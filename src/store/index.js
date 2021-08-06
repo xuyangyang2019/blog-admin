@@ -3,9 +3,7 @@ import Vuex from 'vuex'
 import modules from './modules'
 
 // state
-const state = {
-  toPath: '/admin'
-}
+const state = {}
 
 // getters
 const getters = {}
