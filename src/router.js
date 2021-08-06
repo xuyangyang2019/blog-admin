@@ -25,6 +25,10 @@ const router = new Router({
   base: process.env.BASE_URL,
   routes: [
     {
+      path: '/',
+      redirect: '/admin/allArticles'
+    },
+    {
       path: '/admin',
       name: 'admin',
       component: Admin,
