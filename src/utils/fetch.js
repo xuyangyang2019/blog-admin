@@ -88,7 +88,8 @@ axios.defaults.timeout = 10000 // 请求超时时间
 
 // 环境的切换
 if (process.env.NODE_ENV === 'production') {
-  axios.defaults.baseURL = 'http://182.92.221.114:3000'
+  // axios.defaults.baseURL = 'http://182.92.221.114:3000'
+  axios.defaults.baseURL = 'http://www.xyy.life'
 }
 
 // post请求头
