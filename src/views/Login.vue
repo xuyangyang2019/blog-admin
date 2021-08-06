@@ -192,7 +192,7 @@ export default {
   .login-img {
     width: 100%;
     height: 100%;
-    background: url('/img/login-bg.jpeg') 0 0 no-repeat;
+    background: url('../assets/images/login-bg.jpeg') 0 0 no-repeat;
     background-size: cover;
     position: absolute;
     top: 0;
