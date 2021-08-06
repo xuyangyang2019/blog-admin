@@ -22,16 +22,17 @@ module.exports = {
 
   // 用于放置生成的静态资源 (js、css、img、fonts) 的；（项目打包之后，静态资源会放在这个文件夹下）
   assetsDir: 'static', // 静态资源目录名称
+
   // 指定生成的 index.html 的输出路径  (打包之后，改变系统默认的index.html的文件名)
   // indexPath: "index.html",
+
   // 默认情况下，生成的静态资源在它们的文件名中包含了 hash 以便更好的控制缓存。
   // 你可以通过将这个选项设为 false 来关闭文件名哈希。(false的时候就是让原来的文件名不改变)
   filenameHashing: false,
 
   // lintOnSave：{ type:Boolean default:true } 问你是否使用eslint
-  lintOnSave: true,
   // 如果你想要在生产构建时禁用 eslint-loader，你可以用如下配置
-  // lintOnSave: process.env.NODE_ENV !== 'production',
+  lintOnSave: process.env.NODE_ENV !== 'production',
 
   // 是否使用包含运行时编译器的 Vue 构建版本。
   // 设置为 true 后你就可以在 Vue 组件中使用 template 选项了，但是这会让你的应用额外增加 10kb 左右。(默认false)
@@ -112,7 +113,6 @@ module.exports = {
       // 给 sass-loader 传递选项
       sass: {
         // @/ 是 src/ 的别名
-        // 所以这里假设你有 `src/variables.sass` 这个文件
         // 注意：在 sass-loader v7 中，这个选项名是 "data"
         prependData: `
         @import "@/styles/mixin.scss";
@@ -131,88 +131,5 @@ module.exports = {
         `
       }
     }
-  },
-
-  pluginOptions: {
-    // electronBuilder: {
-    //   // chainWebpackMainProcess: config => {
-    //   //     // Chain webpack config for electron main process only
-    //   // },
-    //   // chainWebpackRendererProcess: config => {
-    //   //     // Chain webpack config for electron renderer process only
-    //   //     // The following example will set IS_ELECTRON to true in your app
-    //   //     //     config.plugin('define').tap(args => {
-    //   //     //         args[0]['IS_ELECTRON'] = true
-    //   //     //         return args
-    //   //     //     })
-    //   // },
-    //   // Use this to change the entrypoint of your app's main process
-    //   // mainProcessFile: 'src/background.js',
-    //   // Provide an array of files that, when changed, will recompile the main process and restart Electron
-    //   // Your main process file will be added by default
-    //   // mainProcessWatch: [],
-    //   // [1.0.0-rc.4+] Provide a list of arguments that Electron will be launched with during "electron:serve",
-    //   // which can be accessed from the main process (src/background.js).
-    //   // Note that it is ignored when --debug flag is used with "electron:serve", as you must launch Electron yourself
-    //   // Command line args (excluding --debug, --dashboard, and --headless) are passed to Electron as well
-    //   // mainProcessArgs: ['--arg-name', 'arg-value']
-    //   builderOptions: {
-    //     appId: "com.jubochat.app",
-    //     // "productName": "juliao", // 项目名，也是生成的安装文件名，即aDemo.exe
-    //     copyright: "Copyright © 2019 jubotech", // 版权信息
-    //     // "directories": {
-    //     //     "output": "./dist_electron" // 输出文件路径
-    //     // },
-    //     // "asar": true,
-    //     // "dmg": {
-    //     //     "contents": [
-    //     //         {
-    //     //             "x": 410,
-    //     //             "y": 150,
-    //     //             "type": "link",
-    //     //             "path": "/Applications"
-    //     //         },
-    //     //         {
-    //     //             "x": 130,
-    //     //             "y": 150,
-    //     //             "type": "file"
-    //     //         }
-    //     //     ]
-    //     // },
-    //     mac: {
-    //       icon: "./public/app.icns"
-    //     },
-    //     win: {
-    //       // win相关配置
-    //       icon: "./public/app.ico" // 图标，当前图标在根目录下，注意这里有两个坑
-    //       // "target": [
-    //       //     {
-    //       //         "target": "nsis", // 利用nsis制作安装程序
-    //       //         "arch": [
-    //       //             "x64", // 64位
-    //       //             "ia32" // 32位
-    //       //         ]
-    //       //     }
-    //       // ]
-    //     },
-    //     nsis: {
-    //       oneClick: false, // 是否一键安装
-    //       allowElevation: true, // 允许请求提升。 如果为false，则用户必须使用提升的权限重新启动安装程序。
-    //       allowToChangeInstallationDirectory: true, // 允许修改安装目录
-    //       installerIcon: "./public/app.ico", // 安装图标
-    //       uninstallerIcon: "./public/app.ico", //卸载图标
-    //       installerHeaderIcon: "./public/app.ico", // 安装时头部图标
-    //       createDesktopShortcut: true, // 创建桌面图标
-    //       createStartMenuShortcut: true, // 创建开始菜单图标
-    //       shortcutName: "聚聊" // 图标名称
-    //     }
-    //     // "publish": [
-    //     //     {
-    //     //         "provider": "generic",
-    //     //         "url": "http://**.**.**.**:3001/download/",//隐藏版本服务器地址
-    //     //     }
-    //     // ]
-    //   }
-    // }
   }
 }
