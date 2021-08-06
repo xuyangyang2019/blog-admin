@@ -121,7 +121,7 @@ export default {
   methods: {
     // 返回首页
     backHome() {
-      this.$router.push({ name: 'admin' })
+      this.$router.push({ name: 'home' })
     },
     // 退出
     exit() {
