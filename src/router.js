@@ -21,9 +21,8 @@ import store from './store'
 Vue.use(Router)
 
 const router = new Router({
-  mode: 'history',
-  // base: process.env.BASE_URL,
-  base: '/admin/',
+  // mode: 'history', // require service support
+  // base: '/admin/', // process.env.BASE_URL
   routes: [
     {
       path: '/',
