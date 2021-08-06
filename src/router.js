@@ -199,6 +199,10 @@ router.beforeEach((to, from, next) => {
         if (res.code === 200) {
           store.commit('admin/SET_USER_INFO', res.data)
           next() // resolve 钩子
+        } else {
+          next({
+            path: '/admin/login'
+          })
         }
       })
     } else {
