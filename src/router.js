@@ -22,17 +22,14 @@ Vue.use(Router)
 
 const router = new Router({
   mode: 'history',
-  base: process.env.BASE_URL,
+  // base: process.env.BASE_URL,
+  base: '/admin/',
   routes: [
     {
       path: '/',
-      redirect: '/admin/allArticles'
-    },
-    {
-      path: '/admin',
-      name: 'admin',
+      name: 'home',
       component: Admin,
-      redirect: '/admin/allArticles',
+      redirect: '/allArticles',
       meta: {
         requireAuth: true,
         keepAlive: true
@@ -131,7 +128,7 @@ const router = new Router({
     },
     // 发表文章
     {
-      path: '/admin/qe',
+      path: '/qe',
       name: 'qe',
       component: () => import(/* webpackChunkName: "admin" */ './components/admin/PublishArticle.vue'),
       meta: {
@@ -139,7 +136,7 @@ const router = new Router({
       }
     },
     {
-      path: '/admin/md',
+      path: '/md',
       name: 'md',
       component: () => import(/* webpackChunkName: "admin" */ './components/admin/PublishArticle.vue'),
       meta: {
@@ -147,7 +144,7 @@ const router = new Router({
       }
     },
     {
-      path: '/admin/publish',
+      path: '/publish',
       name: 'publish',
       component: () => import(/* webpackChunkName: "admin" */ './components/ue/InitEditor.vue'),
       meta: {
@@ -156,7 +153,7 @@ const router = new Router({
     },
     // 草稿修改
     {
-      path: '/admin/draftrevise',
+      path: '/draftrevise',
       name: 'draftrevise',
       component: () => import(/* webpackChunkName: "admin" */ './components/ue/InitEditor.vue'),
       meta: {
@@ -165,7 +162,7 @@ const router = new Router({
     },
     // 更新文章
     {
-      path: '/admin/update/:articleId',
+      path: '/update/:articleId',
       name: 'update',
       component: () => import(/* webpackChunkName: "admin" */ './components/ue/InitEditor.vue'),
       meta: {
@@ -174,7 +171,7 @@ const router = new Router({
     },
     // 登陆页面
     {
-      path: '/admin/login',
+      path: '/login',
       name: 'adminLogin',
       component: () => import(/* webpackChunkName: "admin" */ './views/Login.vue')
     },
@@ -200,13 +197,13 @@ router.beforeEach((to, from, next) => {
           next() // resolve 钩子
         } else {
           next({
-            path: '/admin/login'
+            path: '/login'
           })
         }
       })
     } else {
       next({
-        path: '/admin/login'
+        path: '/login'
         // query: { redirect: to.fullPath }
       })
     }
