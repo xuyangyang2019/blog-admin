@@ -345,23 +345,6 @@ export default {
     border-radius: 3px;
     color: #ffffff;
   }
-  // .chose {
-  //   text-align: left;
-  //   width: 12px;
-  //   position: relative;
-  //   background: url("/img/checkbox.png") no-repeat;
-  //   background-position: 0 50%;
-  //   input {
-  //     position: absolute;
-  //     visibility: hidden;
-  //   }
-  //   label {
-  //     padding-left: 13px;
-  //   }
-  // }
-  // .checked {
-  //   background-position: -16px 50%;
-  // }
 }
 
 .validate-mask {
