@@ -18,9 +18,6 @@ import store from './store'
 // 按需（懒）加载（webpack动态导入）不推荐
 // const Login = resolve => { require.ensure([], () => { resolve(require('./views/Login.vue')) }, 'login') }
 
-// 后台管理界面
-// const eachTag = (resolve) => require(['@/components/common/EachTag'], resolve)
-
 Vue.use(Router)
 
 const router = new Router({
@@ -71,7 +68,6 @@ const router = new Router({
         {
           path: 'draft',
           name: 'draft',
-          // component: draft,
           component: () => import(/* webpackChunkName: "admin" */ './components/admin/ArticlesDrafts.vue'),
           meta: {
             requireAuth: true,
@@ -102,7 +98,6 @@ const router = new Router({
         {
           path: 'newMsg',
           name: 'newMsg',
-          // component: newMsg,
           component: () => import(/* webpackChunkName: "admin" */ './components/admin/AdminNewMsg.vue'),
           meta: {
             requireAuth: true,
