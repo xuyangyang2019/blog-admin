@@ -37,12 +37,16 @@ const errorHandle = (status, errData) => {
     // 403 token过期
     case 403:
       // 登录过期对用户进行提示
-      Message.warning(`token过期,请重新登陆！`)
+      Message({
+        type: 'warning',
+        message: 'token过期,请重新登陆！',
+        duration: 1000
+      })
       // 清除本地token和清空vuex中token对象
       // 跳转登录页面
       router.replace({
-        path: '/admin/login',
-        query: { redirect: router.currentRoute.fullPath }
+        path: '/admin/login'
+        // query: { redirect: router.currentRoute.fullPath }
       })
       // MessageBox.alert(`登录过期，请重新登录`, '错误信息', {
       //   type: 'error',
