@@ -29,7 +29,7 @@ const errorHandle = (status, errData) => {
       Message.warning('未登录，请先登陆！')
       // 未登录则跳转登录页面，并携带当前页面的路径
       router.replace({
-        path: '/admin/login',
+        path: '/login',
         query: { redirect: router.currentRoute.fullPath }
       })
       // 在登录成功后返回当前页面，这一步需要在登录页操作。
@@ -45,8 +45,8 @@ const errorHandle = (status, errData) => {
       // 清除本地token和清空vuex中token对象
       // 跳转登录页面
       router.replace({
-        path: '/admin/login'
-        // query: { redirect: router.currentRoute.fullPath }
+        path: '/login',
+        query: { redirect: router.currentRoute.fullPath }
       })
       // MessageBox.alert(`登录过期，请重新登录`, '错误信息', {
       //   type: 'error',
@@ -59,7 +59,7 @@ const errorHandle = (status, errData) => {
       //     // 跳转登录页面，并将要浏览的页面fullPath传过去，登录成功后跳转需要访问的页面
       //     setTimeout(() => {
       //       router.replace({
-      //         path: '/admin/login',
+      //         path: '/login',
       //         query: {
       //           redirect: router.currentRoute.fullPath
       //         }

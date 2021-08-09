@@ -539,11 +539,11 @@ export default {
     initUeditorContent() {
       console.log('initUeditorContent初始化编辑器内容')
       // 如果有文章
-      if (this.$route.path !== '/admin/publish') {
+      if (this.$route.path !== '/publish') {
         // 如果有数据
         if (JSON.stringify(this.article) !== '{}') {
           // 标题 | 标签 | 前言
-          if (this.$route.path !== '/admin/publish') {
+          if (this.$route.path !== '/publish') {
             this.articleInfo = {
               original: this.article.original === 'true' ? 'true' : 'false',
               title: this.article.title,

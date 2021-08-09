@@ -159,7 +159,7 @@ export default {
     // 路由跳转
     showPath(item) {
       if (this.$route.path === item.path) return
-      if (item.path === '/admin/publish') {
+      if (item.path === '/publish') {
         window.open(item.path, '_blank')
       } else {
         this.$router.push({ path: item.path })

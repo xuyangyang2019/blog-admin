@@ -198,7 +198,7 @@ export default {
           this.updateInfo = { show: false, wait: false }
           this.$store.commit('admin/SET_ARTICLE', res.data)
           // 如果当前是草稿箱 跳转到draftrevise
-          if (this.$route.path === '/admin/draft') {
+          if (this.$route.path === '/draft') {
             this.$router.push({
               name: 'draftrevise',
               params: { articleId: item._id }
